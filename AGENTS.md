@@ -9,6 +9,8 @@
 
 ## Decisões aprovadas
 
+- Não desenhar sombra oval abaixo do Pudim; removida a pedido do usuário por não combinar com o contexto do jogo.
+
 - HTML5, CSS e JavaScript puros; Canvas e Web Audio. Sem framework, bibliotecas externas ou dependência de rede para jogar.
 - Direção visual: livro infantil ilustrado, com personagem fofinho e próximo da pelúcia. Não substituir as artes por figuras geométricas simplificadas.
 - Tentativas ilimitadas, checkpoints em bandeirinhas, estrelas e laço opcionais. Desafios devem exigir escolha e habilidade, sem punições excessivas.
