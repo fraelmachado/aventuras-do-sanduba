@@ -23,7 +23,13 @@ for(const fps of [30,60,120])test(`continuous garden traversal with spring and o
  }
  assert.ok(s.complete);assert.equal(s.rescues,0);assert.ok(s.bow.taken);assert.equal(s.activeSection,2);
 });
-test('stars can each be collected on their main route platform, only once',()=>{const s=E.create();for(const star of s.stars){const i=s.platforms.findIndex(q=>star.x>=q.baseX&&star.x<=q.baseX+q.w&&star.y===q.baseY-55);place(s,i,star.x-24);tick(s);assert.ok(star.taken);tick(s);assert.ok(!s.events.includes('star'));}assert.equal(s.stars.filter(q=>q.taken).length,5);});
+test('four ground stars collect once; the high star needs a held jump, a tap misses it',()=>{
+ const s=E.create();const ground=s.stars.filter(star=>s.platforms.some(q=>star.x>=q.baseX&&star.x<=q.baseX+q.w&&star.y===q.baseY-55));assert.equal(ground.length,4);
+ for(const star of ground){const i=s.platforms.findIndex(q=>star.x>=q.baseX&&star.x<=q.baseX+q.w&&star.y===q.baseY-55);place(s,i,star.x-24);tick(s);assert.ok(star.taken);tick(s);assert.ok(!s.events.includes('star'));}
+ const high=s.stars.find(star=>!ground.includes(star));assert.ok(high);
+ function reach(held){const r=E.create();place(r,7,high.x-24);for(let j=0;j<70;j++)tick(r,{jump:j===0,jumpHeld:held||j<2});return r.stars.some(st=>st.taken&&st.y===high.y);}
+ assert.equal(reach(true),true);assert.equal(reach(false),false);
+});
 test('spring activates at mushroom pad, not at the ends of its leaf',()=>{const s=E.create(),q=s.platforms[15];place(s,15,q.x+q.w-48);tick(s);assert.ok(s.player.grounded);assert.ok(!s.events.includes('spring'));place(s,15,q.x+q.w/2-24);tick(s);assert.ok(s.events.includes('spring'));});
 test('garden teaches held jumps after gentle opening',()=>{const s=E.create();assert.ok(s.platforms[0].y-s.platforms[1].y<40);for(const i of [5,7])assert.ok(s.platforms[i-1].y-s.platforms[i].y>=85);});
 test('lily motion makes landing width and timing meaningful',()=>{const s=E.create();for(const i of [10,12,16]){const q=s.platforms[i];assert.ok(q.w<=130);assert.ok(q.ax>=35&&q.ay>=15&&q.speed>=1.1);}});

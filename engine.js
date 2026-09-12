@@ -12,13 +12,13 @@ function create(level=0){
   platforms=xs.map((x,i)=>platform(x,ys[i],[0,9,18,27].includes(i)?210:([10,12,16].includes(i)?120:([3,7,14,22].includes(i)?145:170)),{checkpoint:[0,9,18,26].includes(i),kind:i>=19&&i<=25?([20,22,24].includes(i)?'crumbly':'cloud'):i>=10&&i<=17?'leaf':'island',spring:i===15,moving:[10,12,16].includes(i),ax:[10,12,16].includes(i)?35:0,ay:[10,12,16].includes(i)?15:0,phase:i*0.4,speed:1.1}));
   platforms.push(platform(3460,285,165,{kind:'leaf',optional:true}),platform(3680,260,170,{kind:'cloud',optional:true}));
   sections=[{x:0,name:'Passinhos no jardim',hint:'Segure o pulo para subir mais. Solte para um pulinho.'},{x:1980,name:'Lago das folhas',hint:'As folhas passeiam. O cogumelo leva ao lacinho!'},{x:4000,name:'Caminho das nuvens',hint:'Nuvens pontilhadas somem por um instante. Continue pulando!'}];
-  width=6150;starIndices=[2,7,11,17,23];goalIndex=27;bow={x:3730,y:207,taken:false};
+  width=6150;starIndices=[2,{i:7,dx:0,dy:-110},11,17,23];goalIndex=27;bow={x:3730,y:207,taken:false};
  }else{
   ({platforms,sections,width,starIndices,goalIndex,bow,winds,bells}=buildWorld(level,platform));
  }
 
  const goalPlatform=platforms[goalIndex];
- return {winds,bells,bridgeTimers:[0,0,0],level,name:names[level],width,sections,activeSection:0,time:0,platforms,player:{x:70,y:466,w:48,h:64,vx:0,vy:0,grounded:true,face:1,coyote:0.12,buffer:0,support:0,jumpHeld:false,jumpCut:false,springFlight:false,gliding:false,landTimer:0},checkpoint:0,stars:starIndices.map(i=>({x:platforms[i].x+platforms[i].w/2,y:platforms[i].baseY-55,taken:false})),bow,goal:{x:goalPlatform.x+goalPlatform.w/2,y:goalPlatform.y,platform:goalIndex},rescues:0,complete:false,events:[]};
+ return {winds,bells,bridgeTimers:[0,0,0],level,name:names[level],width,sections,activeSection:0,time:0,platforms,player:{x:70,y:466,w:48,h:64,vx:0,vy:0,grounded:true,face:1,coyote:0.12,buffer:0,support:0,jumpHeld:false,jumpCut:false,springFlight:false,gliding:false,landTimer:0},checkpoint:0,stars:starIndices.map(v=>typeof v==='number'?{i:v,dx:0,dy:0}:v).map(({i,dx,dy})=>({x:platforms[i].x+platforms[i].w/2+dx,y:platforms[i].baseY-55+dy,taken:false})),bow,goal:{x:goalPlatform.x+goalPlatform.w/2,y:goalPlatform.y,platform:goalIndex},rescues:0,complete:false,events:[]};
 }
 function step(s,input={},dt){
  if(s.complete)return;dt=Math.min(Math.max(dt,0),1/30);s.events=[];s.time+=dt;const p=s.player;

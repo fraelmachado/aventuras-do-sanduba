@@ -11,7 +11,7 @@ function build(level,P){
   }
   winds.push({x:4570,y:-510,w:130,h:660,lift:180,optional:true});
   platforms.push(P(4600,-330,140,{kind:'cloud',optional:true}));
-  bow={x:4670,y:-385,taken:false};width=5850;goalIndex=14;starIndices=[1,3,6,10,13];
+  bow={x:4670,y:-385,taken:false};width=5850;goalIndex=14;starIndices=[1,3,{i:6,dx:-185,dy:-125},10,13];
   sections=[{x:0,name:'O primeiro voo',hint:'No ar, segure Pular para abrir o guarda-chuva. Solte para descer!'},{x:1590,name:'Os moinhos do vento',hint:'Abra o guarda-chuva nas correntes de ar para subir.'},{x:3570,name:'Ilhas do pôr do sol',hint:'Escolha quando planar e quando pousar. O lacinho está bem alto!'}];
  }else{
   const coords=[[0,530,250],[350,500,120],[550,470,120],[750,500,120],[960,510,250],[1320,450,130],[1560,390,130],[1800,450,130],[2040,400,130],[2310,440,250],[2780,500,150],[3100,400,150],[3460,330,150],[3880,430,150],[4270,390,250],[4620,340,190],[4930,410,330]];
@@ -19,7 +19,7 @@ function build(level,P){
   bells=[{x:180,y:480,group:0,duration:7,near:false},{x:1150,y:460,group:1,duration:9,near:false},{x:2490,y:390,group:2,duration:13,near:false}];
   winds=[{x:2960,y:130,w:125,h:470,lift:165},{x:3300,y:80,w:140,h:420,lift:165}];
   platforms.push(P(1750,265,220,{kind:'moon',optional:true}));
-  bow={x:1840,y:210,taken:false};width=5290;goalIndex=16;starIndices=[2,6,8,11,15];
+  bow={x:1840,y:210,taken:false};width=5290;goalIndex=16;starIndices=[2,6,8,{i:11,dx:-153,dy:-145},15];
   sections=[{x:0,name:'Sininhos na escuridão',hint:'Encoste no sininho para acender a ponte. Você pode tocar de novo!'},{x:960,name:'A melodia das estrelas',hint:'A luz tem seu tempo. Observe o caminho antes de sair.'},{x:2310,name:'O último voo',hint:'Pontes de luz e guarda-chuva: a caminha está esperando por você.'}];
  }
  return {platforms,sections,width,starIndices,goalIndex,bow,winds,bells};
