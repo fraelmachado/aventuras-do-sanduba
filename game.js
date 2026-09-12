@@ -16,11 +16,20 @@
   const saved=load();
   function cards(){for(let i=0;i<3;i++){const w=saved.worlds[i];$('stars-'+i).textContent=w?'★'.repeat(w.stars)+'☆'.repeat(5-w.stars)+(w.bow?' ♧':''):'';}}
 
+  function ensureAudio() {
+    audio ||= new (window.AudioContext||window.webkitAudioContext)();
+    if(audio.state==='suspended')audio.resume().catch(()=>{muted=true;syncMusic();});
+  }
+  function setSound(on,{silent=false}={}) {
+    muted=!on;saved.sound=on;save();
+    $('sound').textContent=on?'♪':'♫';$('sound-home').textContent=on?'♪ Desligar a música':'♫ Ligar a música';
+    for(const b of [$('sound'),$('sound-home')]){b.setAttribute('aria-label',on?'Desativar som':'Ativar som');b.title=on?'Desativar som':'Ativar som';b.classList.toggle('enabled',on);}
+    if(!silent)tone('star');syncMusic();
+  }
   function tone(type) {
     if(muted || type==='land' || type==='section')return;
     try {
-      audio ||= new (window.AudioContext||window.webkitAudioContext)();
-      if(audio.state==='suspended')audio.resume().catch(()=>{muted=true;syncMusic();});
+      ensureAudio();
       const notes = {win:[523,659,784,1047],star:[880,1175],bow:[659,880,1047],spring:[330,660],bell:[659,880,1318],checkpoint:[523,784],rescue:[330,392],jump:[350]}[type]||[];
       notes.forEach((f,i)=>{
         const o=audio.createOscillator(),g=audio.createGain(),at=audio.currentTime+i*.105;
@@ -57,6 +66,7 @@
   }
   function start(level=0) {
     state=PudimEngine.create(level);document.body.dataset.world=String(level+1);mode='playing';clearKeys();particles=[];
+    if(!muted)try{ensureAudio();}catch{muted=true;}
     $('home').hidden=true;$('modal').hidden=true;$('help').disabled=false;$('hud').hidden=false;$('touch').hidden=false;
     document.body.classList.add('playing');renderer.resize();hud();
     $('touch-tip').innerHTML=level===0?'TOQUE: SALTO CURTO<br>SEGURE: SALTO ALTO':'SEGURE NO AR: PLANAR<br>SOLTE: DESCER';
@@ -113,11 +123,7 @@
   $('world-night').onclick=()=>{results=[];start(2);};
   $('continue').onclick=()=>modalAction?.();$('home-button').onclick=home;$('pause').onclick=pause;
   $('replay').onclick=()=>start(state.level);
-  $('sound').onclick=()=>{
-    muted=!muted;$('sound').textContent=muted?'♫':'♪';
-    $('sound').setAttribute('aria-label',muted?'Ativar som':'Desativar som');$('sound').title=muted?'Ativar som':'Desativar som';
-    $('sound').classList.toggle('enabled',!muted);tone('star');syncMusic();
-  };
+  $('sound').onclick=$('sound-home').onclick=()=>setSound(muted);
   $('fullscreen').onclick=async()=>{
     try {if(document.fullscreenElement)await document.exitFullscreen();else if($('play-area').requestFullscreen)await $('play-area').requestFullscreen();else notify('Use o celular deitado para ampliar o cenário.');}
     catch {notify('Não foi possível ampliar. Você pode continuar aqui.');}
@@ -166,6 +172,7 @@
     if(clock>toastUntil)$('toast').classList.remove('show');
     syncMusic();renderer.draw(state,mode,clock,particles);requestAnimationFrame(frame);
   }
+  setSound(!!saved.sound,{silent:true});
   cards();
   $('start').disabled=true;$('start').textContent='Preparando o jardim…';
   renderer.ready.then(()=>{$('start').disabled=false;$('start').innerHTML='Entrar no jardim <span>→</span>';});

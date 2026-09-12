@@ -3,12 +3,18 @@ const assert=require('node:assert/strict');
 const vm=require('node:vm'),fs=require('node:fs');
 const engine=require('./engine.js');
 function storage(seed={}){const m=new Map(Object.entries(seed));return {getItem:k=>m.has(k)?m.get(k):null,setItem:(k,v)=>m.set(k,String(v)),removeItem:k=>m.delete(k)};}
+function FakeAudio(){
+ const param=()=>({value:0,setValueAtTime(){},linearRampToValueAtTime(){},exponentialRampToValueAtTime(){},cancelScheduledValues(){}});
+ return {currentTime:0,state:'running',destination:{},resume(){return Promise.resolve();},
+  createGain(){return {gain:param(),connect(){},disconnect(){}};},
+  createOscillator(){return {type:'',frequency:param(),connect(){},disconnect(){},start(){},stop(){},onended:null};}};
+}
 function harness({store=storage()}={}){
  const listeners={},nodes={},touches=['left','right','jump'].map((key)=>node('touch-'+key,{key}));
  function node(id,dataset={}){return {id,dataset,hidden:false,disabled:false,style:{},textContent:'',innerHTML:'',classList:{add(){},remove(){},toggle(){}},firstElementChild:{style:{}},events:{},focus(){},setAttribute(){},addEventListener(type,fn){this.events[type]=fn;},setPointerCapture(){},querySelectorAll(){return []}};}
  const document={getElementById(id){return nodes[id]??=node(id)},querySelectorAll(){return touches},addEventListener(type,fn){listeners[type]=fn},body:{dataset:{},classList:{add(){},remove(){}}}};
  let frame,state,t=0;
- const context={PudimMusic:require('./music.js'),document,window:{},PudimRenderer:()=>({ready:Promise.resolve(),resize(){},draw(){}}),PudimEngine:{create(l){return state=engine.create(l)},step:engine.step},addEventListener(type,fn){listeners[type]=fn},requestAnimationFrame(fn){frame=fn},Math,JSON,console:{info(){}}};
+ const context={PudimMusic:require('./music.js'),document,window:{AudioContext:FakeAudio},PudimRenderer:()=>({ready:Promise.resolve(),resize(){},draw(){}}),PudimEngine:{create(l){return state=engine.create(l)},step:engine.step},addEventListener(type,fn){listeners[type]=fn},requestAnimationFrame(fn){frame=fn},Math,JSON,console:{info(){}}};
  if(store)context.localStorage=store;
  vm.runInNewContext(fs.readFileSync(require('node:path').join(__dirname,'game.js'),'utf8'),context);
  nodes.start.onclick();
@@ -50,3 +56,11 @@ test('replaying with fewer stars never lowers the saved best',()=>{
  assert.deepEqual(JSON.parse(store.getItem('pudim-nas-nuvens')).worlds[0],{stars:4,bow:true});
 });
 test('game runs when storage is unavailable',()=>{const h=harness({store:null});h.tick(5);assert.ok(h.state);finish(h);assert.equal(h.nodes['modal-title'].textContent,'O jardim é seu!');});
+test('home sound button turns music on, persists, and is restored on the next visit',()=>{
+ const store=storage();const h=harness({store});
+ assert.equal(h.nodes['sound-home'].textContent,'♫ Ligar a música');
+ h.nodes['sound-home'].onclick();
+ assert.equal(h.nodes['sound-home'].textContent,'♪ Desligar a música');assert.equal(h.nodes.sound.textContent,'♪');
+ assert.equal(JSON.parse(store.getItem('pudim-nas-nuvens')).sound,true);
+ const again=harness({store});again.tick(3);assert.equal(again.nodes.sound.textContent,'♪');
+});
