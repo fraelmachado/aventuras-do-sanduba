@@ -1,9 +1,19 @@
 """Rebuild the offline HTML and optionally a ZIP: python3 build.py --zip /path/game.zip"""
 from pathlib import Path
-import argparse, base64, json, zipfile
+import argparse, base64, json, shutil, subprocess, tempfile, zipfile
 root=Path(__file__).resolve().parent
 args=argparse.ArgumentParser();args.add_argument('--zip');opt=args.parse_args()
-assets={key:'data:image/png;base64,'+base64.b64encode((root/'assets'/name).read_bytes()).decode() for key,name in [('garden','jardim.png'),('pig','pudim-poses.png'),('sky','nuvens.png'),('night','noite.png'),('flight','pudim-guarda-chuva.png'),('sleep','pudim-dormindo.png')]}
+if not shutil.which('cwebp'):raise SystemExit('cwebp não encontrado. Instale com: brew install webp')
+# Backgrounds tolerate lossy compression. Green-keyed sprites use high quality plus sharp_yuv
+# so chroma bleed does not leave fringes after the runtime color key. 'lossless' is the escape hatch.
+IMAGES=[('garden','jardim.png','82'),('sky','nuvens.png','82'),('night','noite.png','82'),
+        ('pig','pudim-poses.png','96'),('flight','pudim-guarda-chuva.png','96'),('sleep','pudim-dormindo.png','96')]
+def webp(name,quality):
+ flags=['-lossless'] if quality=='lossless' else ['-q',quality,'-sharp_yuv']
+ with tempfile.NamedTemporaryFile(suffix='.webp') as out:
+  subprocess.run(['cwebp','-quiet','-metadata','none',*flags,str(root/'assets'/name),'-o',out.name],check=True)
+  return 'data:image/webp;base64,'+base64.b64encode(Path(out.name).read_bytes()).decode()
+assets={key:webp(name,quality) for key,name,quality in IMAGES}
 (root/'assets.js').write_text('window.PudimAssets='+json.dumps(assets)+';\n')
 page=(root/'index.html').read_text().replace('<link rel="stylesheet" href="style.css">','<style>\n'+(root/'style.css').read_text()+'\n</style>')
 for name in ['assets.js','renderer.js','worlds.js','engine.js','music.js','game.js']:
@@ -11,9 +21,11 @@ for name in ['assets.js','renderer.js','worlds.js','engine.js','music.js','game.
 favicon='data:image/x-icon;base64,'+base64.b64encode((root/'favicon.ico').read_bytes()).decode()
 page=page.replace('href="favicon.ico"',f'href="{favicon}"')
 assert '<script src=' not in page
-(root/'Pudim nas Nuvens.html').write_text(page)
+target=root/'Pudim nas Nuvens.html';target.write_text(page)
+size=target.stat().st_size
+assert size<4_000_000,f'HTML offline com {size/1e6:.1f} MB; esperado abaixo de 4 MB'
+print(f'HTML offline atualizado: {size/1e6:.1f} MB, seis imagens WebP incorporadas.')
 if opt.zip:
  with zipfile.ZipFile(opt.zip,'w',zipfile.ZIP_DEFLATED) as z:
   for f in sorted(root.rglob('*')):
    if f.is_file() and f.name!='.DS_Store' and f.resolve()!=Path(opt.zip).resolve():z.write(f,'pudim-nas-nuvens/'+str(f.relative_to(root)))
-print('HTML offline atualizado com seis imagens incorporadas.')
