@@ -107,6 +107,7 @@
       tone(event);
       if(event==='bell')notify('As estrelas acenderam! Siga até a próxima ilha.',3);
       if(event==='rescue'){
+        console.info('queda',{mundo:state.level+1,trecho:state.activeSection+1,x:state.lastFall.x});
         state.rescueAt=clock;notify('De volta à bandeirinha. Você consegue! ♡',3);
         const p=state.player;
         for(let i=0;i<12;i++)particles.push({x:p.x+p.w/2+Math.cos(i*.52)*26,y:p.y+p.h/2+Math.sin(i*.52)*20,vx:Math.cos(i*.52)*30,vy:-25+Math.sin(i*.52)*20,life:.7,color:'#fffaf0'});

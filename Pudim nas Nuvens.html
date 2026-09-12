@@ -402,7 +402,7 @@ function step(s,input={},dt){
  }}
  for(const star of s.stars)if(!star.taken&&Math.hypot(p.x+p.w/2-star.x,p.y+p.h/2-star.y)<49){star.taken=true;s.events.push('star');}
  if(!s.bow.taken&&Math.hypot(p.x+p.w/2-s.bow.x,p.y+p.h/2-s.bow.y)<48){s.bow.taken=true;s.events.push('bow');}
- if(p.y>(s.level===0?740:s.platforms[s.checkpoint].y+680)){for(const q of s.platforms){q.remaining=CRUMBLE;q.gone=0;}const q=s.platforms[s.checkpoint];Object.assign(p,{x:q.x+30,y:q.y-p.h,vx:0,vy:0,grounded:true,support:s.checkpoint,coyote:0.12,buffer:0,jumpCut:false,springFlight:false,gliding:false,landTimer:0.16});s.bridgeTimers.fill(0);for(const b of s.bells)b.near=false;s.rescues++;s.events.push('rescue');}
+ if(p.y>(s.level===0?740:s.platforms[s.checkpoint].y+680)){s.lastFall={x:Math.round(p.x),y:p.y};for(const q of s.platforms){q.remaining=CRUMBLE;q.gone=0;}const q=s.platforms[s.checkpoint];Object.assign(p,{x:q.x+30,y:q.y-p.h,vx:0,vy:0,grounded:true,support:s.checkpoint,coyote:0.12,buffer:0,jumpCut:false,springFlight:false,gliding:false,landTimer:0.16});s.bridgeTimers.fill(0);for(const b of s.bells)b.near=false;s.rescues++;s.events.push('rescue');}
  let active=0;for(let i=1;i<s.sections.length;i++)if(p.x+p.w/2>=s.sections[i].x)active=i;if(active!==s.activeSection){s.activeSection=active;s.events.push('section');}
  if(p.grounded&&p.support===s.goal.platform&&p.x+p.w>s.goal.x-25){s.complete=true;s.events.push('win');}
 }
@@ -576,6 +576,7 @@ const api={create,step,names};if(typeof module!=='undefined')module.exports=api;
       tone(event);
       if(event==='bell')notify('As estrelas acenderam! Siga até a próxima ilha.',3);
       if(event==='rescue'){
+        console.info('queda',{mundo:state.level+1,trecho:state.activeSection+1,x:state.lastFall.x});
         state.rescueAt=clock;notify('De volta à bandeirinha. Você consegue! ♡',3);
         const p=state.player;
         for(let i=0;i<12;i++)particles.push({x:p.x+p.w/2+Math.cos(i*.52)*26,y:p.y+p.h/2+Math.sin(i*.52)*20,vx:Math.cos(i*.52)*30,vy:-25+Math.sin(i*.52)*20,life:.7,color:'#fffaf0'});

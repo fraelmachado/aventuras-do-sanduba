@@ -14,11 +14,11 @@ function harness({store=storage()}={}){
  function node(id,dataset={}){return {id,dataset,hidden:false,disabled:false,style:{},textContent:'',innerHTML:'',classList:{add(){},remove(){},toggle(){}},firstElementChild:{style:{}},events:{},focus(){},setAttribute(){},addEventListener(type,fn){this.events[type]=fn;},setPointerCapture(){},querySelectorAll(){return []}};}
  const document={getElementById(id){return nodes[id]??=node(id)},querySelectorAll(){return touches},addEventListener(type,fn){listeners[type]=fn},body:{dataset:{},classList:{add(){},remove(){}}}};
  let frame,state,t=0;
- const context={PudimMusic:require('./music.js'),document,window:{AudioContext:FakeAudio},PudimRenderer:()=>({ready:Promise.resolve(),resize(){},draw(){}}),PudimEngine:{create(l){return state=engine.create(l)},step:engine.step},addEventListener(type,fn){listeners[type]=fn},requestAnimationFrame(fn){frame=fn},Math,JSON,console:{info(){}}};
+ const context={PudimMusic:require('./music.js'),document,window:{AudioContext:FakeAudio},PudimRenderer:()=>({ready:Promise.resolve(),resize(){},draw(){}}),PudimEngine:{create(l){return state=engine.create(l)},step:engine.step},addEventListener(type,fn){listeners[type]=fn},requestAnimationFrame(fn){frame=fn},Math,JSON,console:{logs:[],info(...a){this.logs.push(a);}}};
  if(store)context.localStorage=store;
  vm.runInNewContext(fs.readFileSync(require('node:path').join(__dirname,'game.js'),'utf8'),context);
  nodes.start.onclick();
- return {nodes,touches,store,get state(){return state},key(type,code){listeners[type]({code,preventDefault(){}})},blur(){listeners.blur()},tick(n=1){for(let i=0;i<n;i++)frame(t+=1000/120)}};
+ return {nodes,touches,store,console:context.console,get state(){return state},key(type,code){listeners[type]({code,preventDefault(){}})},blur(){listeners.blur()},tick(n=1){for(let i=0;i<n;i++)frame(t+=1000/120)}};
 }
 test('holding keyboard jump produces higher jump than a tap through actual UI handlers',()=>{
  function peak(hold){const h=harness();h.tick();h.key('keydown','Space');if(!hold)h.key('keyup','Space');let min=999;for(let i=0;i<120;i++){h.tick();min=Math.min(min,h.state.player.y);}return min;}
@@ -67,4 +67,8 @@ test('home sound button turns music on, persists, and is restored on the next vi
 test('a fall marks the respawn moment so the renderer can fade Pudim back in',()=>{
  const h=harness();h.tick();assert.equal(h.state.rescueAt,undefined);h.state.player.y=950;h.tick(2);
  assert.equal(h.state.rescues,1);assert.equal(typeof h.state.rescueAt,'number');
+});
+test('each fall logs world, section and position for the observation session',()=>{
+ const h=harness();h.tick();h.state.player.x=700;h.state.player.y=950;h.tick(2);
+ assert.equal(h.console.logs.length,1);assert.deepEqual(JSON.parse(JSON.stringify(h.console.logs[0])),['queda',{mundo:1,trecho:1,x:700}]);
 });
