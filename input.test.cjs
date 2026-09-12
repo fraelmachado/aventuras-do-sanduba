@@ -64,3 +64,9 @@ test('home sound button turns music on, persists, and is restored on the next vi
  assert.equal(JSON.parse(store.getItem('pudim-nas-nuvens')).sound,true);
  const again=harness({store});again.tick(3);assert.equal(again.nodes.sound.textContent,'♪');
 });
+test('bows earned earlier are worn in every world and the new one joins them',()=>{
+ const store=storage({'pudim-nas-nuvens':JSON.stringify({worlds:[{stars:5,bow:true}],sound:false})});const h=harness({store});
+ h.nodes['world-sky'].onclick();assert.deepEqual([...h.state.wornBows],[0]);
+ Object.assign(h.state.player,{x:h.state.bow.x-24,y:h.state.bow.y-32,vy:0});h.tick(2);
+ assert.equal(h.state.bow.taken,true);assert.deepEqual([...h.state.wornBows],[0,1]);
+});
