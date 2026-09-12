@@ -2,7 +2,11 @@
 
 Abra **Pudim nas Nuvens.html** no navegador. Tudo está incorporado: funciona offline e sem instalar dependências. Também é possível abrir `index.html`, mantendo os outros arquivos na mesma pasta.
 
-Escolha qualquer mundo nos cartões da tela inicial. É possível seguir do jardim até o final ou experimentar diretamente uma fase nova. A partida e as descobertas não são salvas ao fechar o jogo.
+Escolha qualquer mundo nos cartões da tela inicial. É possível seguir do jardim até o final ou experimentar diretamente uma fase nova.
+
+O melhor resultado de cada mundo fica salvo no navegador e aparece no cartão (as estrelinhas e o ♧ do lacinho). Rejogar nunca diminui o que já foi conquistado. Como fica salvo no navegador, é por aparelho — e some se você limpar os dados do site.
+
+Na tela inicial há também o botão **♫ Ligar a música**, ao lado de "Entrar no jardim". A escolha fica lembrada para a próxima vez.
 
 ## Controles
 
@@ -21,7 +25,9 @@ Escolha qualquer mundo nos cartões da tela inicial. É possível seguir do jard
 
 **Céu Estrelado:** cenário noturno próprio, ilhas lunares, três sininhos e pontes de constelações que aparecem por tempo limitado. O último trecho combina vento e guarda-chuva. A chegada à caminha tem uma chuva de estrelas.
 
-Cada mundo tem três trechos, cinco estrelas e um lacinho opcional. As bandeirinhas marcam o ponto de retorno após uma queda. Tentativas ilimitadas; descobertas preservadas durante a partida.
+Cada mundo tem três trechos, cinco estrelas e um lacinho opcional. As bandeirinhas marcam o ponto de retorno após uma queda — Pudim reaparece devagarinho, com uma nuvenzinha. Tentativas ilimitadas.
+
+Quatro estrelas ficam no caminho. **A quinta é escondida e pede vontade de explorar:** no jardim, ela flutua alto e só o pulo segurado alcança; nas nuvens e na noite, ela fica no alto de uma corrente de ar, e é preciso abrir o guarda-chuva e deixar o vento levar.
 
 ## Arquivos e manutenção
 
@@ -33,7 +39,7 @@ HTML5, CSS, JavaScript, Canvas e Web Audio puros, sem framework ou biblioteca ex
 - `game.js`: controles e interface.
 - `assets/`: quatro imagens e registro dos prompts de geração.
 - `assets.js`: cópias incorporadas das imagens para uso offline.
-- `build.py`: regenera os assets incorporados e o HTML único após editar os arquivos separados. Execute `python3 build.py`. ZIP opcional: `python3 build.py --zip /caminho/Pudim.zip`.
+- `build.py`: regenera os assets incorporados e o HTML único após editar os arquivos separados. Precisa do `cwebp` (`brew install webp`), que converte as artes e deixa o HTML em cerca de 2,4 MB. Execute `python3 build.py`. ZIP opcional: `python3 build.py --zip /caminho/Pudim.zip`.
 
-Verificação com Node: `node --test engine.test.cjs input.test.cjs worlds.test.cjs`.
+Verificação com Node: `node --test engine.test.cjs input.test.cjs worlds.test.cjs music.test.cjs`.
 As artes foram criadas pela ferramenta imagegen integrada. O personagem usa a pelúcia enviada como referência. A primeira fase não recebeu alterações de geometria ou dificuldade nesta revisão.
