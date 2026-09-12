@@ -14,12 +14,14 @@ def webp(name,quality):
   subprocess.run(['cwebp','-quiet','-metadata','none',*flags,str(root/'assets'/name),'-o',out.name],check=True)
   return 'data:image/webp;base64,'+base64.b64encode(Path(out.name).read_bytes()).decode()
 assets={key:webp(name,quality) for key,name,quality in IMAGES}
+assets['cap']='data:image/svg+xml;base64,'+base64.b64encode((root/'assets/touquinha.svg').read_bytes()).decode()
 (root/'assets.js').write_text('window.PudimAssets='+json.dumps(assets)+';\n')
 page=(root/'index.html').read_text().replace('<link rel="stylesheet" href="style.css">','<style>\n'+(root/'style.css').read_text()+'\n</style>')
 for name in ['assets.js','renderer.js','worlds.js','engine.js','music.js','game.js']:
  page=page.replace(f'<script src="{name}"></script>','<script>\n'+(root/name).read_text()+'\n</script>')
 favicon='data:image/x-icon;base64,'+base64.b64encode((root/'favicon.ico').read_bytes()).decode()
 page=page.replace('href="favicon.ico"',f'href="{favicon}"')
+page=page.replace('src="assets/touquinha.svg"',f'src="{assets["cap"]}"')
 assert '<script src=' not in page
 target=root/'Pudim nas Nuvens.html';target.write_text(page)
 size=target.stat().st_size

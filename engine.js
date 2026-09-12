@@ -11,7 +11,7 @@ function create(level=0){
   const ys=[530,510,480,525,470,375,485,395,500,520,490,455,500,465,420,460,500,460,520,480,435,480,440,485,450,500,475,500];
   platforms=xs.map((x,i)=>platform(x,ys[i],[0,9,18,27].includes(i)?210:([10,12,16].includes(i)?120:([3,7,14,22].includes(i)?145:170)),{checkpoint:[0,9,18,26].includes(i),kind:i>=19&&i<=25?([20,22,24].includes(i)?'crumbly':'cloud'):i>=10&&i<=17?'leaf':'island',spring:i===15,moving:[10,12,16].includes(i),ax:[10,12,16].includes(i)?35:0,ay:[10,12,16].includes(i)?15:0,phase:i*0.4,speed:1.1}));
   platforms.push(platform(3460,285,165,{kind:'leaf',optional:true}),platform(3680,260,170,{kind:'cloud',optional:true}));
-  sections=[{x:0,name:'Passinhos no jardim',hint:'Segure o pulo para subir mais. Solte para um pulinho.'},{x:1980,name:'Lago das folhas',hint:'As folhas passeiam. O cogumelo leva ao lacinho!'},{x:4000,name:'Caminho das nuvens',hint:'Nuvens pontilhadas somem por um instante. Continue pulando!'}];
+  sections=[{x:0,name:'Passinhos no jardim',hint:'Segure o pulo para subir mais. Solte para um pulinho.'},{x:1980,name:'Lago das folhas',hint:'As folhas passeiam. O cogumelo leva à touquinha!'},{x:4000,name:'Caminho das nuvens',hint:'Nuvens pontilhadas somem por um instante. Continue pulando!'}];
   width=6150;starIndices=[2,{i:7,dx:0,dy:-110},11,17,23];goalIndex=27;bow={x:3730,y:207,taken:false};
  }else{
   ({platforms,sections,width,starIndices,goalIndex,bow,winds,bells}=buildWorld(level,platform));

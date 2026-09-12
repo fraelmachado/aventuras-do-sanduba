@@ -40,20 +40,20 @@ No celular, use um navegador que execute HTML local ou uma hospedagem. A prévia
 | Mundo | Mecânicas e identidade |
 | --- | --- |
 | 1. Jardim dos Pulos | Cenário ilustrado, saltos variáveis, folhas móveis, cogumelo de impulso e nuvens que desaparecem. O usuário aprovou esta fase. |
-| 2. Nuvens de Algodão | Cenário próprio com moinhos e ilhas; guarda-chuva, vãos largos, correntes ascendentes, câmera vertical e lacinho em uma ilha elevada. |
+| 2. Nuvens de Algodão | Cenário próprio com moinhos e ilhas; guarda-chuva, vãos largos, correntes ascendentes, câmera vertical e touquinha em uma ilha elevada. |
 | 3. Céu Estrelado | Céu noturno próprio, sininhos, pontes luminosas temporárias, vento, guarda-chuva e chegada à caminha com chuva de estrelas. |
 
-Cada mundo tem três trechos, cinco estrelas e um lacinho opcional. Bandeirinhas marcam os pontos de retorno. Não há limite de tentativas.
+Cada mundo tem três trechos, cinco estrelas e uma touquinha opcional. Bandeirinhas marcam os pontos de retorno. Não há limite de tentativas.
 
 Quatro das cinco estrelas ficam no caminho principal; a quinta é uma escolha do jogador. No jardim ela flutua alto sobre a plataforma 7 e só o salto segurado alcança — um toque passa por baixo. Nas nuvens e na noite ela fica no alto de uma corrente de ar e exige pairar com o guarda-chuva. As posições são `{i,dx,dy}` em `starIndices` (jardim `{i:7,dy:-110}`, nuvens `{i:6,dx:-185,dy:-125}`, noite `{i:11,dx:-153,dy:-145}`).
 
-O melhor resultado de cada mundo (número de estrelas e se o lacinho foi encontrado) e a preferência de som ficam salvos em `localStorage`, na chave `pudim-nas-nuvens`. Os cartões da tela inicial mostram esse melhor resultado, que nunca é rebaixado ao rejogar. O jogo funciona normalmente quando `localStorage` não está disponível. O progresso dentro de uma partida continua valendo só para aquela partida.
+O melhor resultado de cada mundo (número de estrelas e se a touquinha foi encontrada) e a preferência de som ficam salvos em `localStorage`, na chave `pudim-nas-nuvens`. Os cartões da tela inicial mostram esse melhor resultado, que nunca é rebaixado ao rejogar. O jogo funciona normalmente quando `localStorage` não está disponível. O progresso dentro de uma partida continua valendo só para aquela partida.
 
 O botão "♫ Ligar a música" aparece também na tela inicial, ao lado de "Entrar no jardim", para que a música seja descoberta sem procurar no HUD. O áudio só é criado dentro de um gesto do jogador.
 
 Ao voltar para a bandeirinha depois de uma queda, Pudim reaparece com um fade de 0,55 s e uma nuvenzinha de partículas claras. A física não muda. Cada queda também é registrada como `console.info('queda', {mundo, trecho, x})`, para a sessão de observação descrita em `docs/sessao-de-teste.md`.
 
-O lacinho marca apenas a conquista da fase em que está sendo jogada, como sempre foi. Uma variação em que Pudim vestia todos os lacinhos já conquistados, com uma cor por mundo, foi implementada e revertida a pedido do usuário; não reintroduza sem novo pedido.
+A touquinha marca apenas a conquista da fase em que está sendo jogada, como sempre foi. Uma variação em que Pudim vestia todos os lacinhos já conquistados, com uma cor por mundo, foi implementada e revertida a pedido do usuário; não reintroduza sem novo pedido.
 
 A primeira versão tinha gráficos geométricos e fases repetitivas. Após feedback, o jardim recebeu um redesenho completo; depois as outras duas fases ganharam cenários e mecânicas próprias. A direção aprovada é um livro infantil ilustrado, com Pudim parecendo uma pelúcia viva e desafios gentis, porém reais.
 
@@ -97,7 +97,7 @@ Edite os arquivos separados e depois execute o gerador. Não edite manualmente `
 
 O ZIP contém apenas `Pudim nas Nuvens.html` e `LEIA-ME.md` — o que alguém precisa para jogar. Fontes, testes e artes de referência ficam só na pasta.
 
-Última validação registrada: **55 testes passando**, incluindo travessias a 30/60/120 FPS, lacinhos, controles, pausa, seleção direta dos mundos, resultado final, progresso salvo, preferência de som, estrelas fora do caminho e registro de quedas. Também houve conferência visual em navegador, incluindo layout móvel simulado. A física do jardim foi comparada à versão anterior em 15.000 passos e permaneceu idêntica. Isso não substitui testes de diversão com a criança ou testes em aparelhos físicos.
+Última validação registrada: **56 testes passando**, incluindo travessias a 30/60/120 FPS, touquinhas, controles, pausa, seleção direta dos mundos, resultado final, progresso salvo, preferência de som, estrelas fora do caminho e registro de quedas. Também houve conferência visual em navegador, incluindo layout móvel simulado. A física do jardim foi comparada à versão anterior em 15.000 passos e permaneceu idêntica. Isso não substitui testes de diversão com a criança ou testes em aparelhos físicos.
 
 ## Artes e limitações conhecidas
 
@@ -137,3 +137,8 @@ A vitória inicia o modo `ending` por 4,2 segundos antes do resultado. `state.en
 ## Ícone do Pudim
 
 `assets/pudim.ico` contém a carinha com transparência em 16, 24, 32, 48, 64, 128 e 256 pixels, para uso em atalhos e como favicon. `assets/pudim-icon.png` é a versão PNG de 256 pixels. Arte criada com imagegen integrado a partir do atlas aprovado; `favicon.ico` na raiz é usado pelo `index.html` e incorporado como data URL no HTML offline por `build.py`.
+
+
+## Touquinha de dormir
+
+A touquinha lilás com estrela e pompom substitui o lacinho como item opcional. Ao coletá-la, Pudim a usa ao andar, pular, planar e dormir naquela fase. O melhor resultado continua salvo, mas ele só veste a touquinha após encontrá-la na partida atual. A arte vetorial está em `assets/touquinha.svg` e é incorporada ao HTML offline. Conquistas antigas do lacinho passam a aparecer como touquinhas.

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="100" viewBox="0 0 120 100">
+<defs>
+ <linearGradient id="cloth" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e5d9f5"/><stop offset=".5" stop-color="#bfa4dd"/><stop offset="1" stop-color="#9074b5"/></linearGradient>
+ <linearGradient id="cuff" x2="0" y2="1"><stop stop-color="#fff4eb"/><stop offset="1" stop-color="#ddd0e9"/></linearGradient>
+</defs>
+<path d="M19 76C21 51 32 21 51 16C76 7 79 29 85 39Q93 52 105 48Q99 69 80 54L80 79Z" fill="url(#cloth)" stroke="#8b70a6" stroke-width="2" stroke-linejoin="round"/>
+<path d="M28 70Q32 34 51 24M66 28Q65 46 80 54" fill="none" stroke="#f3e9fb" stroke-width="3" stroke-linecap="round" opacity=".6"/>
+<path d="M53 40L56 47L64 48L58 53L60 61L53 57L46 61L48 53L42 48L50 47Z" fill="#ffe4a6" stroke="#c8a975" stroke-width="1.2"/>
+<rect x="14" y="73" width="71" height="18" rx="8" fill="url(#cuff)" stroke="#a38bb8" stroke-width="1.5"/>
+<path d="M22 80H77" stroke="#c1afd1" stroke-width="1.5" stroke-dasharray="2 4" fill="none"/>
+<circle cx="105" cy="51" r="10" fill="#fff4ed" stroke="#c9b4d9" stroke-width="1.5"/>
+<path d="M101 47L108 55M108 47L101 55" stroke="#e3d5ec" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

@@ -4,7 +4,7 @@ Abra **Pudim nas Nuvens.html** no navegador. Tudo está incorporado: funciona of
 
 Escolha qualquer mundo nos cartões da tela inicial. É possível seguir do jardim até o final ou experimentar diretamente uma fase nova.
 
-O melhor resultado de cada mundo fica salvo no navegador e aparece no cartão (as estrelinhas e o ♧ do lacinho). Rejogar nunca diminui o que já foi conquistado. Como fica salvo no navegador, é por aparelho — e some se você limpar os dados do site.
+O melhor resultado de cada mundo fica salvo no navegador e aparece no cartão (as estrelinhas e a indicação de touquinha). Rejogar nunca diminui o que já foi conquistado. Como fica salvo no navegador, é por aparelho — e some se você limpar os dados do site.
 
 Na tela inicial há também o botão **♫ Ligar a música**, ao lado de "Entrar no jardim". A escolha fica lembrada para a próxima vez.
 
@@ -21,11 +21,11 @@ Na tela inicial há também o botão **♫ Ligar a música**, ao lado de "Entrar
 
 **Jardim dos Pulos:** a fase anterior foi preservada. Folhas móveis, saltos de altura variável, cogumelo e nuvens temporárias.
 
-**Nuvens de Algodão:** céu próprio com moinhos e ilhas. A rota sobe mais de 700 pixels, a câmera acompanha a subida, e vãos largos exigem planar. Correntes de ar ajudam a ganhar altura. Há um lacinho em uma ilha elevada opcional.
+**Nuvens de Algodão:** céu próprio com moinhos e ilhas. A rota sobe mais de 700 pixels, a câmera acompanha a subida, e vãos largos exigem planar. Correntes de ar ajudam a ganhar altura. Há um touquinha em uma ilha elevada opcional.
 
 **Céu Estrelado:** cenário noturno próprio, ilhas lunares, três sininhos e pontes de constelações que aparecem por tempo limitado. O último trecho combina vento e guarda-chuva. A chegada à caminha tem uma chuva de estrelas.
 
-Cada mundo tem três trechos, cinco estrelas e um lacinho opcional. As bandeirinhas marcam o ponto de retorno após uma queda — Pudim reaparece devagarinho, com uma nuvenzinha. Tentativas ilimitadas.
+Cada mundo tem três trechos, cinco estrelas e uma touquinha opcional. As bandeirinhas marcam o ponto de retorno após uma queda — Pudim reaparece devagarinho, com uma nuvenzinha. Tentativas ilimitadas.
 
 Quatro estrelas ficam no caminho. **A quinta é escondida e pede vontade de explorar:** no jardim, ela flutua alto e só o pulo segurado alcança; nas nuvens e na noite, ela fica no alto de uma corrente de ar, e é preciso abrir o guarda-chuva e deixar o vento levar.
 
@@ -43,3 +43,8 @@ HTML5, CSS, JavaScript, Canvas e Web Audio puros, sem framework ou biblioteca ex
 
 Verificação com Node: `node --test engine.test.cjs input.test.cjs worlds.test.cjs music.test.cjs`.
 As artes foram criadas pela ferramenta imagegen integrada. O personagem usa a pelúcia enviada como referência. A primeira fase não recebeu alterações de geometria ou dificuldade nesta revisão.
+
+
+## Touquinha de dormir
+
+A touquinha lilás com estrela e pompom substitui o lacinho como item opcional. Ao coletá-la, Pudim a usa ao andar, pular, planar e dormir naquela fase. O melhor resultado continua salvo, mas ele só veste a touquinha após encontrá-la na partida atual. A arte vetorial está em `assets/touquinha.svg` e é incorporada ao HTML offline. Conquistas antigas do lacinho passam a aparecer como touquinhas.

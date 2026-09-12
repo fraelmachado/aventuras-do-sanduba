@@ -14,7 +14,7 @@
   function load(){try{return {worlds:[],sound:false,...JSON.parse(localStorage.getItem(STORAGE)||'{}')};}catch{return {worlds:[],sound:false};}}
   function save(){try{localStorage.setItem(STORAGE,JSON.stringify(saved));}catch{}}
   const saved=load();
-  function cards(){for(let i=0;i<3;i++){const w=saved.worlds[i];$('stars-'+i).textContent=w?'★'.repeat(w.stars)+'☆'.repeat(5-w.stars)+(w.bow?' ♧':''):'';}}
+  function cards(){for(let i=0;i<3;i++){const w=saved.worlds[i];$('stars-'+i).textContent=w?'★'.repeat(w.stars)+'☆'.repeat(5-w.stars)+(w.bow?' · Touquinha':''):'';}}
 
   function ensureAudio() {
     audio ||= new (window.AudioContext||window.webkitAudioContext)();
@@ -61,7 +61,8 @@
     $('level-name').textContent=section?.name||state.name;
     $('counter').textContent=`★ ${state.stars.filter(s=>s.taken).length} / 5`;
     $('bow-status').classList.toggle('found',state.bow.taken);
-    $('bow-status').title=state.bow.taken?'Lacinho encontrado!':'Um lacinho espera no caminho mais alto';
+    $('bow-status').title=state.bow.taken?'Touquinha encontrada!':'Uma touquinha espera no caminho mais alto';
+    $('bow-status').setAttribute('aria-label',$('bow-status').title);
     $('progress').firstElementChild.style.width=Math.min(100,state.player.x/(state.width||2440)*100)+'%';
   }
   function start(level=0) {
@@ -99,7 +100,7 @@
     const end=state.level===2;
     modal(end?'Bons sonhos, Pudim!':state.level===0?'O jardim é seu!':'Que salto bonito!',
       end?`Você levou Pudim até a caminha!\n${results.reduce((a,r)=>a+(r?.stars||0),0)} estrelas encontradas nesta aventura.\nUma amizade cheia de histórias. ♡`:
-      `${n} de 5 estrelas · ${state.bow.taken?'lacinho encontrado!':'o lacinho ainda espera por você.'}\n${state.level===0?'Você atravessou a clareira, o lago e as nuvens!':'Você aprendeu a voar com o vento!'}\n${n===5&&state.bow.taken?'Todas as descobertas desta fase são suas.':'Você pode voltar para descobrir outros caminhos.'}`,
+      `${n} de 5 estrelas · ${state.bow.taken?'touquinha encontrada!':'a touquinha ainda espera por você.'}\n${state.level===0?'Você atravessou a clareira, o lago e as nuvens!':'Você aprendeu a voar com o vento!'}\n${n===5&&state.bow.taken?'Todas as descobertas desta fase são suas.':'Você pode voltar para descobrir outros caminhos.'}`,
       end?'Começar outra aventura':(state.level===0?'Voar pelas nuvens →':'Acender as estrelas →'),()=>{if(end)results=[];start(end?0:state.level+1);},end?'☾':'✦',end?'UM FINAL CHEIO DE ACONCHEGO':'AVENTURA CONCLUÍDA');
   }
   function events() {
@@ -114,10 +115,10 @@
       }
       if(event==='checkpoint')notify('Bandeirinha acesa! Agora você volta para cá.',3);
       if(event==='section')notify(state.sections?.[state.activeSection]?.hint||'Um novo caminho!',5);
-      if(event==='bow')notify('O caminho secreto guardava o lacinho! ♡');
+      if(event==='bow')notify('O caminho secreto guardava a touquinha! ♡');
       if(['star','bow','checkpoint','land','spring'].includes(event)) {
         const p=state.player,amount=event==='land'?5:14;
-        for(let i=0;i<amount;i++)particles.push({x:p.x+p.w/2,y:p.y+(event==='land'?p.h:20),vx:Math.cos(i*2.4)*60,vy:Math.sin(i*2.4)*60-20,life:event==='land'?.4:1,color:event==='bow'?'#d9a1b9':event==='land'?'#e3e0b8':'#f4d391'});
+        for(let i=0;i<amount;i++)particles.push({x:p.x+p.w/2,y:p.y+(event==='land'?p.h:20),vx:Math.cos(i*2.4)*60,vy:Math.sin(i*2.4)*60-20,life:event==='land'?.4:1,color:event==='bow'?'#c4a9e0':event==='land'?'#e3e0b8':'#f4d391'});
       }
       if(event==='win'){state.endingTime=0;mode='ending';clearKeys();notify('Hora de um descanso, Pudim…',4);}
     }
@@ -136,7 +137,7 @@
   $('help').onclick=()=>{
     const previous=mode;mode='help';
     modal('Aprenda os pequenos truques',
-      '← → ou A / D para andar. Espaço, ↑ ou W para pular.\nJardim: toque para um salto curto; segure para pular alto.\nNuvens e estrelas: segure no ar para abrir o guarda-chuva; solte para descer. As correntes de ar levam você para cima.\nNoite: encoste nos sininhos para acender pontes temporárias. Afaste-se e volte para tocar de novo.\nBandeirinhas são pontos de retorno. Estrelas e lacinhos são opcionais.',
+      '← → ou A / D para andar. Espaço, ↑ ou W para pular.\nJardim: toque para um salto curto; segure para pular alto.\nNuvens e estrelas: segure no ar para abrir o guarda-chuva; solte para descer. As correntes de ar levam você para cima.\nNoite: encoste nos sininhos para acender pontes temporárias. Afaste-se e volte para tocar de novo.\nBandeirinhas são pontos de retorno. Estrelas e touquinhas são opcionais.',
       'Vamos lá!',()=>{mode=previous;$('modal').hidden=true;$('help').disabled=false;(mode==='home'?$('start'):$('pause')).focus({preventScroll:true});});
   };
   const mapping={ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right',Space:'jump',ArrowUp:'jump',KeyW:'jump'};

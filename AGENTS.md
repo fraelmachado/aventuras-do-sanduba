@@ -13,7 +13,7 @@
 
 - HTML5, CSS e JavaScript puros; Canvas e Web Audio. Sem framework, bibliotecas externas ou dependência de rede para jogar.
 - Direção visual: livro infantil ilustrado, com personagem fofinho e próximo da pelúcia. Não substituir as artes por figuras geométricas simplificadas.
-- Tentativas ilimitadas, checkpoints em bandeirinhas, estrelas e laço opcionais. Desafios devem exigir escolha e habilidade, sem punições excessivas.
+- Tentativas ilimitadas, checkpoints em bandeirinhas, estrelas e touquinha opcionais. Desafios devem exigir escolha e habilidade, sem punições excessivas.
 - O usuário aprovou o Jardim dos Pulos. Preserve sua geometria e dificuldade ao trabalhar nas outras fases, salvo novo pedido explícito.
 - Cada mundo deve ter identidade própria. Não repetir uma rota apenas trocando cores.
 - Nuvens: guarda-chuva, vãos largos, correntes de ar e subida pelas ilhas.
@@ -30,7 +30,7 @@ Decisões de 2026-09-12:
 - Uma estrela por mundo sai do caminho principal. **Esta é a única exceção aprovada ao jardim**: apenas a posição da estrela da plataforma 7 mudou; plataformas, ventos, sinos e checkpoints continuam intactos.
 - O retorno à bandeirinha ganha fade e partículas, sem mudar a física.
 - Cada queda é registrada no console para a sessão de observação.
-- **O laço continua marcando apenas a conquista da fase atual.** A variação com cor por mundo, vestida em toda parte depois de conquistada, foi implementada e revertida a pedido do usuário (commit `revert: laço volta a marcar apenas a conquista da fase atual`). Não reintroduzir sem novo pedido explícito.
+- **A touquinha substitui o laço, mantendo a conquista da fase atual.** A variação com cor por mundo, vestida em toda parte depois de conquistada, foi implementada e revertida a pedido do usuário (commit `revert: laço volta a marcar apenas a conquista da fase atual`). Não reintroduzir sem novo pedido explícito.
 
 ## Arquitetura e regras de implementação
 
@@ -75,7 +75,7 @@ Nos testes de `input.test.cjs`, `game.js` roda em um `vm` com outro realm. Array
 
 ## Marco de retomada
 
-As três fases estão implementadas, com seis imagens incorporadas em WebP, seleção direta dos mundos, áudio opcional, tela cheia e suporte a toque. Última suíte registrada: **55 testes passando**. O HTML offline tem 2,4 MB (era 18,4 MB) e o ZIP 2,4 MB com dois arquivos (era 41 MB com 29).
+As três fases estão implementadas, com seis imagens incorporadas em WebP, seleção direta dos mundos, áudio opcional, tela cheia e suporte a toque. Última suíte registrada: **56 testes passando**. O HTML offline tem 2,4 MB (era 18,4 MB) e o ZIP 2,4 MB com dois arquivos (era 41 MB com 29).
 
 Entregue em 2026-09-12: arquivo leve, ZIP limpo, progresso salvo com badge nos cartões, botão de música na tela inicial com preferência lembrada, uma estrela de escolha por mundo, fade ao voltar à bandeirinha e registro de quedas com roteiro em `docs/sessao-de-teste.md`. O laço com cor por mundo foi implementado e revertido a pedido do usuário.
 
@@ -105,3 +105,8 @@ A vitória inicia o modo `ending` por 4,2 segundos antes do resultado. `state.en
 ## Favicon
 
 `favicon.ico` na raiz deriva de `assets/pudim.ico`. O index.html o referencia e build.py incorpora seu conteúdo no HTML offline. Ao substituir o ícone, manter ambas as cópias sincronizadas e regenerar o HTML.
+
+
+## Touquinha (decisão mais recente)
+
+Substitui visualmente o lacinho por touquinha lilás, com estrela e pompom. `assets/touquinha.svg` é a fonte única para item, acessório e HUD; `build.py` a incorpora como `PudimAssets.cap` e também no img do HUD offline. A função nightcap ancora a barra na cabeça; em voo a copa do guarda-chuva cobre a ponta da touca. A pose dormindo tem ancoragem e inclinação próprias. Manter o acessório condicionado à coleta da fase atual. Os nomes internos bow, hasBow e bow-status permanecem por compatibilidade, inclusive no localStorage: NÃO apagar conquistas antigas nem vestir a touca apenas por haver conquista salva. Interfaces e mensagens usam touquinha. Os dois problemas da revisão anterior (validação de progresso e trecho do log de queda) não foram alterados nesta tarefa.

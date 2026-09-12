@@ -3,7 +3,7 @@ window.PudimRenderer = function(canvas) {
   'use strict';
   const c = canvas.getContext('2d');
   let width = 1100, height = 650, camera = 0, cameraY = 0, sprite = null, flight = null, sleeping = null, sleepBounds = null;
-  const garden = new Image(), sky = new Image(), night = new Image(), source = new Image(), flightSource = new Image(), sleepSource = new Image();
+  const garden = new Image(), sky = new Image(), night = new Image(), source = new Image(), flightSource = new Image(), sleepSource = new Image(), capSource = new Image();
   function keyImage(image) {
         // Runtime color key for the intentionally green game sprite atlas.
         const atlas = document.createElement('canvas');
@@ -19,6 +19,7 @@ window.PudimRenderer = function(canvas) {
         a.putImageData(pixels,0,0); return atlas;
   }
   const ready = Promise.all([
+    new Promise(resolve=>{capSource.onload=resolve;capSource.onerror=resolve;capSource.src=PudimAssets.cap;}),
     new Promise(resolve=>{sleepSource.onload=()=>{
       sleeping=keyImage(sleepSource);
       const d=sleeping.getContext('2d').getImageData(0,0,sleeping.width,sleeping.height).data;
@@ -47,12 +48,11 @@ window.PudimRenderer = function(canvas) {
     for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,k=i%2?r*.45:r;c.lineTo(Math.cos(a)*k,Math.sin(a)*k);}
     c.closePath();c.fill();c.restore();
   }
-  function bow(x,y,s=1) {
-    c.save();c.translate(x,y);c.scale(s,s);
-    ellipse(-10,0,12,9,'#995a78',-.4);ellipse(10,0,12,9,'#bd7090',.4);
-    ellipse(-11,-2,7,4,'#e3a3b8',-.4);ellipse(10,-2,7,4,'#ecadc0',.4);
-    c.fillStyle='#b36785';c.beginPath();c.moveTo(-3,2);c.lineTo(-13,22);c.lineTo(-3,18);c.lineTo(0,23);c.lineTo(6,2);c.fill();
-    ellipse(0,0,5,6,'#e8a3b3');c.restore();
+  function nightcap(x,y,w=64,angle=0) {
+    if(!capSource.complete||!capSource.naturalWidth)return;
+    c.save();c.translate(x,y);c.rotate(angle);
+    // Anchor the center of the knitted brim to the crown; leave both ears visible.
+    c.drawImage(capSource,-w*49.5/120,-w*91/120,w,w*100/120);c.restore();
   }
   function pig(x,feet,h,t,{walking=false,air=false,face=1,hasBow=false,land=0,gliding=false}={}) {
     if(!sprite)return;
@@ -68,7 +68,14 @@ window.PudimRenderer = function(canvas) {
       const size=hh/.59;
       c.drawImage(flight,-size*.43,-size*.915,size,size);
     } else c.drawImage(sprite,pose*384+2,215,380,584,-w/2,-hh,w,hh);
-    if(hasBow)bow(w*.25,-hh*.88,h/250);
+    if(hasBow){
+      nightcap(0,-hh*.88,h*.66);
+      if(gliding&&flight){
+        // Canopy passes in front of the tip of the cap, without covering the face.
+        const size=hh/.59;c.save();c.beginPath();c.rect(-size*.43,-size*.915,size,size*.32);c.clip();
+        c.drawImage(flight,-size*.43,-size*.915,size,size);c.restore();
+      }
+    }
     c.restore();
   }
   function cloud(x,y,w,color='#fffdf1') {
@@ -188,7 +195,7 @@ window.PudimRenderer = function(canvas) {
     if(sleeping&&settle>0){
       const h=84*sleepBounds[3]/sleepBounds[2], breath=Math.sin(a*2.4)*.55;
       c.save();c.globalAlpha=settle;c.drawImage(sleeping,...sleepBounds,x-42,y-40-h+breath,84,h-breath);
-      if(state.bow.taken)bow(x-26,y-43-h*.65,.22);
+      if(state.bow.taken)nightcap(x-24,y-40-h*.73+breath,36,-.32);
       c.restore();
       // The blanket is in front of the body, while the head rests on the pillow.
       c.save();c.globalAlpha=settle;round(x-5,y-49+breath,46,23,7,'#b87588');star(x+15,y-38+breath,6,'#f8d99b');c.restore();
@@ -224,7 +231,7 @@ window.PudimRenderer = function(canvas) {
       c.shadowColor='#ffe396';c.shadowBlur=18;star(x,y,17,'#ba813d',-.05);star(x,y-2,15,'#ffda78',-.05);c.shadowBlur=0;star(x-2,y-4,8,'#fff0b6',-.05);
       ellipse(x-6,y-8,2,2,'#fff9e8');
     }
-    if(!state.bow.taken) {const b=state.bow;c.shadowColor='#f5aac2';c.shadowBlur=15;bow(b.x-camera,b.y+Math.sin(t*3)*4,1);c.shadowBlur=0;}
+    if(!state.bow.taken) {const b=state.bow;c.shadowColor='#dbc4f5';c.shadowBlur=15;nightcap(b.x-camera,b.y+17+Math.sin(t*3)*4,54);c.shadowBlur=0;}
     bed(state.goal.x-camera,state.goal.y);
     if(state.level===0) {
       sign(165,405,'Segure para um salto maior ↑');

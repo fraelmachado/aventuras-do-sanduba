@@ -12,3 +12,5 @@
 #mechanic{position:absolute;top:88px;left:0;padding:8px 12px;border-radius:12px;background:#fff9e8e8;color:#78608d;font-size:11px;pointer-events:none}#mechanic:empty{display:none}
 body[data-world="2"] .level-label strong{color:#786095}body[data-world="3"] .level-label strong{color:#595d91}
 @media(max-width:700px){.worlds>button{text-align:center}#mechanic{top:65px;font-size:9px;max-width:95%}.home .tag{font-size:6px;letter-spacing:1px}}
+
+#bow-status img{display:block;object-fit:contain;opacity:.4;filter:grayscale(.5)}#bow-status.found img{opacity:1;filter:none}

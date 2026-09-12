@@ -49,7 +49,7 @@ function finish(h){const s=h.state,q=s.platforms[s.goal.platform];Object.assign(
 test('progress is saved per world and shown on the home cards',()=>{
  const store=storage();const h=harness({store});h.tick();h.state.stars[0].taken=true;h.state.stars[1].taken=true;h.state.bow.taken=true;finish(h);
  assert.deepEqual(JSON.parse(store.getItem('pudim-nas-nuvens')).worlds[0],{stars:2,bow:true});
- const again=harness({store});assert.equal(again.nodes['stars-0'].textContent,'★★☆☆☆ ♧');assert.equal(again.nodes['stars-1'].textContent,'');
+ const again=harness({store});assert.equal(again.nodes['stars-0'].textContent,'★★☆☆☆ · Touquinha');assert.equal(again.nodes['stars-1'].textContent,'');
 });
 test('replaying with fewer stars never lowers the saved best',()=>{
  const store=storage({'pudim-nas-nuvens':JSON.stringify({worlds:[{stars:4,bow:true}],sound:false})});const h=harness({store});h.tick();finish(h);
@@ -71,4 +71,10 @@ test('a fall marks the respawn moment so the renderer can fade Pudim back in',()
 test('each fall logs world, section and position for the observation session',()=>{
  const h=harness();h.tick();h.state.player.x=700;h.state.player.y=950;h.tick(2);
  assert.equal(h.console.logs.length,1);assert.deepEqual(JSON.parse(JSON.stringify(h.console.logs[0])),['queda',{mundo:1,trecho:1,x:700}]);
+});
+
+test('nightcap messages replace the ribbon and wearing resets in each world',()=>{
+ const h=harness();h.tick();h.state.bow.taken=true;h.tick();assert.equal(h.nodes['bow-status'].title,'Touquinha encontrada!');
+ finish(h);assert.ok(h.nodes['modal-copy'].textContent.includes('touquinha encontrada'));
+ h.nodes.continue.onclick();assert.equal(h.state.bow.taken,false);h.tick();assert.ok(h.nodes['bow-status'].title.includes('touquinha'));
 });
