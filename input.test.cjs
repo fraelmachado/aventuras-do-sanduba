@@ -2,15 +2,17 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const vm=require('node:vm'),fs=require('node:fs');
 const engine=require('./engine.js');
-function harness(){
+function storage(seed={}){const m=new Map(Object.entries(seed));return {getItem:k=>m.has(k)?m.get(k):null,setItem:(k,v)=>m.set(k,String(v)),removeItem:k=>m.delete(k)};}
+function harness({store=storage()}={}){
  const listeners={},nodes={},touches=['left','right','jump'].map((key)=>node('touch-'+key,{key}));
  function node(id,dataset={}){return {id,dataset,hidden:false,disabled:false,style:{},textContent:'',innerHTML:'',classList:{add(){},remove(){},toggle(){}},firstElementChild:{style:{}},events:{},focus(){},setAttribute(){},addEventListener(type,fn){this.events[type]=fn;},setPointerCapture(){},querySelectorAll(){return []}};}
  const document={getElementById(id){return nodes[id]??=node(id)},querySelectorAll(){return touches},addEventListener(type,fn){listeners[type]=fn},body:{dataset:{},classList:{add(){},remove(){}}}};
  let frame,state,t=0;
- const context={PudimMusic:require('./music.js'),document,window:{},PudimRenderer:()=>({ready:Promise.resolve(),resize(){},draw(){}}),PudimEngine:{create(l){return state=engine.create(l)},step:engine.step},addEventListener(type,fn){listeners[type]=fn},requestAnimationFrame(fn){frame=fn},Math};
+ const context={PudimMusic:require('./music.js'),document,window:{},PudimRenderer:()=>({ready:Promise.resolve(),resize(){},draw(){}}),PudimEngine:{create(l){return state=engine.create(l)},step:engine.step},addEventListener(type,fn){listeners[type]=fn},requestAnimationFrame(fn){frame=fn},Math,JSON,console:{info(){}}};
+ if(store)context.localStorage=store;
  vm.runInNewContext(fs.readFileSync(require('node:path').join(__dirname,'game.js'),'utf8'),context);
  nodes.start.onclick();
- return {nodes,touches,get state(){return state},key(type,code){listeners[type]({code,preventDefault(){}})},blur(){listeners.blur()},tick(n=1){for(let i=0;i<n;i++)frame(t+=1000/120)}};
+ return {nodes,touches,store,get state(){return state},key(type,code){listeners[type]({code,preventDefault(){}})},blur(){listeners.blur()},tick(n=1){for(let i=0;i<n;i++)frame(t+=1000/120)}};
 }
 test('holding keyboard jump produces higher jump than a tap through actual UI handlers',()=>{
  function peak(hold){const h=harness();h.tick();h.key('keydown','Space');if(!hold)h.key('keyup','Space');let min=999;for(let i=0;i<120;i++){h.tick();min=Math.min(min,h.state.player.y);}return min;}
@@ -37,3 +39,14 @@ test('bedtime delays results and pauses its timer when focus is lost',()=>{
  h.tick(100);const at=s.endingTime;h.blur();h.tick(100);assert.equal(s.endingTime,at);
  h.nodes.continue.onclick();h.tick(540);assert.equal(h.nodes['modal-title'].textContent,'O jardim é seu!');
 });
+function finish(h){const s=h.state,q=s.platforms[s.goal.platform];Object.assign(s.player,{x:s.goal.x,y:q.y-64,grounded:true,support:s.goal.platform});h.tick(540);}
+test('progress is saved per world and shown on the home cards',()=>{
+ const store=storage();const h=harness({store});h.tick();h.state.stars[0].taken=true;h.state.stars[1].taken=true;h.state.bow.taken=true;finish(h);
+ assert.deepEqual(JSON.parse(store.getItem('pudim-nas-nuvens')).worlds[0],{stars:2,bow:true});
+ const again=harness({store});assert.equal(again.nodes['stars-0'].textContent,'★★☆☆☆ ♧');assert.equal(again.nodes['stars-1'].textContent,'');
+});
+test('replaying with fewer stars never lowers the saved best',()=>{
+ const store=storage({'pudim-nas-nuvens':JSON.stringify({worlds:[{stars:4,bow:true}],sound:false})});const h=harness({store});h.tick();finish(h);
+ assert.deepEqual(JSON.parse(store.getItem('pudim-nas-nuvens')).worlds[0],{stars:4,bow:true});
+});
+test('game runs when storage is unavailable',()=>{const h=harness({store:null});h.tick(5);assert.ok(h.state);finish(h);assert.equal(h.nodes['modal-title'].textContent,'O jardim é seu!');});

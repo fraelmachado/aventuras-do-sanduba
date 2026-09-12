@@ -10,6 +10,11 @@
   let pausedMode='playing';
   let state=null, mode='home', last=0, clock=0, accumulator=0;
   let muted=true, audio=null, toastUntil=0, modalAction=null, results=[], particles=[];
+  const STORAGE='pudim-nas-nuvens';
+  function load(){try{return {worlds:[],sound:false,...JSON.parse(localStorage.getItem(STORAGE)||'{}')};}catch{return {worlds:[],sound:false};}}
+  function save(){try{localStorage.setItem(STORAGE,JSON.stringify(saved));}catch{}}
+  const saved=load();
+  function cards(){for(let i=0;i<3;i++){const w=saved.worlds[i];$('stars-'+i).textContent=w?'★'.repeat(w.stars)+'☆'.repeat(5-w.stars)+(w.bow?' ♧':''):'';}}
 
   function tone(type) {
     if(muted || type==='land' || type==='section')return;
@@ -79,6 +84,8 @@
   function complete() {
     mode='result';const n=state.stars.filter(s=>s.taken).length;
     results[state.level]={stars:n,bow:state.bow.taken};
+    const best=saved.worlds[state.level]||{stars:0,bow:false};
+    saved.worlds[state.level]={stars:Math.max(best.stars,n),bow:best.bow||state.bow.taken};save();cards();
     const end=state.level===2;
     modal(end?'Bons sonhos, Pudim!':state.level===0?'O jardim é seu!':'Que salto bonito!',
       end?`Você levou Pudim até a caminha!\n${results.reduce((a,r)=>a+(r?.stars||0),0)} estrelas encontradas nesta aventura.\nUma amizade cheia de histórias. ♡`:
@@ -159,6 +166,7 @@
     if(clock>toastUntil)$('toast').classList.remove('show');
     syncMusic();renderer.draw(state,mode,clock,particles);requestAnimationFrame(frame);
   }
+  cards();
   $('start').disabled=true;$('start').textContent='Preparando o jardim…';
   renderer.ready.then(()=>{$('start').disabled=false;$('start').innerHTML='Entrar no jardim <span>→</span>';});
   requestAnimationFrame(frame);
