@@ -106,7 +106,11 @@
     for(const event of state.events) {
       tone(event);
       if(event==='bell')notify('As estrelas acenderam! Siga até a próxima ilha.',3);
-      if(event==='rescue')notify('De volta à bandeirinha. Você consegue! ♡',3);
+      if(event==='rescue'){
+        state.rescueAt=clock;notify('De volta à bandeirinha. Você consegue! ♡',3);
+        const p=state.player;
+        for(let i=0;i<12;i++)particles.push({x:p.x+p.w/2+Math.cos(i*.52)*26,y:p.y+p.h/2+Math.sin(i*.52)*20,vx:Math.cos(i*.52)*30,vy:-25+Math.sin(i*.52)*20,life:.7,color:'#fffaf0'});
+      }
       if(event==='checkpoint')notify('Bandeirinha acesa! Agora você volta para cá.',3);
       if(event==='section')notify(state.sections?.[state.activeSection]?.hint||'Um novo caminho!',5);
       if(event==='bow')notify('O caminho secreto guardava o lacinho! ♡');

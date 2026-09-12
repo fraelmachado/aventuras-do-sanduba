@@ -64,3 +64,7 @@ test('home sound button turns music on, persists, and is restored on the next vi
  assert.equal(JSON.parse(store.getItem('pudim-nas-nuvens')).sound,true);
  const again=harness({store});again.tick(3);assert.equal(again.nodes.sound.textContent,'♪');
 });
+test('a fall marks the respawn moment so the renderer can fade Pudim back in',()=>{
+ const h=harness();h.tick();assert.equal(h.state.rescueAt,undefined);h.state.player.y=950;h.tick(2);
+ assert.equal(h.state.rescues,1);assert.equal(typeof h.state.rescueAt,'number');
+});

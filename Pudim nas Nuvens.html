@@ -280,8 +280,11 @@ window.PudimRenderer = function(canvas) {
     }
     const p=state.player;
     if(state.endingTime!==undefined)bedtime(state,t);else {
+    // Fade back in after a rescue; physics already moved Pudim to the flag.
+    c.globalAlpha=state.rescueAt===undefined?1:Math.min(1,(t-state.rescueAt)/.55);
     ellipse(p.x+p.w/2-camera,p.y+p.h+4,23,5,'#253f3824');
     pig(p.x+p.w/2-camera,p.y+p.h,87,t,{walking:Math.abs(p.vx)>30&&p.grounded,air:!p.grounded,face:p.face,hasBow:state.bow.taken,land:p.landTimer||0,gliding:p.gliding});
+    c.globalAlpha=1;
     }
     for(const a of particles){c.globalAlpha=Math.max(0,a.life);star(a.x-camera,a.y,a.life*5,a.color,a.life*2);}c.globalAlpha=1;c.restore();
     if(state.complete&&state.level===2){
@@ -572,7 +575,11 @@ const api={create,step,names};if(typeof module!=='undefined')module.exports=api;
     for(const event of state.events) {
       tone(event);
       if(event==='bell')notify('As estrelas acenderam! Siga até a próxima ilha.',3);
-      if(event==='rescue')notify('De volta à bandeirinha. Você consegue! ♡',3);
+      if(event==='rescue'){
+        state.rescueAt=clock;notify('De volta à bandeirinha. Você consegue! ♡',3);
+        const p=state.player;
+        for(let i=0;i<12;i++)particles.push({x:p.x+p.w/2+Math.cos(i*.52)*26,y:p.y+p.h/2+Math.sin(i*.52)*20,vx:Math.cos(i*.52)*30,vy:-25+Math.sin(i*.52)*20,life:.7,color:'#fffaf0'});
+      }
       if(event==='checkpoint')notify('Bandeirinha acesa! Agora você volta para cá.',3);
       if(event==='section')notify(state.sections?.[state.activeSection]?.hint||'Um novo caminho!',5);
       if(event==='bow')notify('O caminho secreto guardava o lacinho! ♡');

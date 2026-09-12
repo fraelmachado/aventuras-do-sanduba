@@ -233,8 +233,11 @@ window.PudimRenderer = function(canvas) {
     }
     const p=state.player;
     if(state.endingTime!==undefined)bedtime(state,t);else {
+    // Fade back in after a rescue; physics already moved Pudim to the flag.
+    c.globalAlpha=state.rescueAt===undefined?1:Math.min(1,(t-state.rescueAt)/.55);
     ellipse(p.x+p.w/2-camera,p.y+p.h+4,23,5,'#253f3824');
     pig(p.x+p.w/2-camera,p.y+p.h,87,t,{walking:Math.abs(p.vx)>30&&p.grounded,air:!p.grounded,face:p.face,hasBow:state.bow.taken,land:p.landTimer||0,gliding:p.gliding});
+    c.globalAlpha=1;
     }
     for(const a of particles){c.globalAlpha=Math.max(0,a.life);star(a.x-camera,a.y,a.life*5,a.color,a.life*2);}c.globalAlpha=1;c.restore();
     if(state.complete&&state.level===2){
