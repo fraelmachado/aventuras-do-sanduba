@@ -15,7 +15,6 @@
   function save(){try{localStorage.setItem(STORAGE,JSON.stringify(saved));}catch{}}
   const saved=load();
   function cards(){for(let i=0;i<3;i++){const w=saved.worlds[i];$('stars-'+i).textContent=w?'★'.repeat(w.stars)+'☆'.repeat(5-w.stars)+(w.bow?' ♧':''):'';}}
-  const earned=()=>[0,1,2].filter(i=>saved.worlds[i]?.bow);
 
   function ensureAudio() {
     audio ||= new (window.AudioContext||window.webkitAudioContext)();
@@ -67,7 +66,6 @@
   }
   function start(level=0) {
     state=PudimEngine.create(level);document.body.dataset.world=String(level+1);mode='playing';clearKeys();particles=[];
-    state.wornBows=earned();
     if(!muted)try{ensureAudio();}catch{muted=true;}
     $('home').hidden=true;$('modal').hidden=true;$('help').disabled=false;$('hud').hidden=false;$('touch').hidden=false;
     document.body.classList.add('playing');renderer.resize();hud();
@@ -111,7 +109,7 @@
       if(event==='rescue')notify('De volta à bandeirinha. Você consegue! ♡',3);
       if(event==='checkpoint')notify('Bandeirinha acesa! Agora você volta para cá.',3);
       if(event==='section')notify(state.sections?.[state.activeSection]?.hint||'Um novo caminho!',5);
-      if(event==='bow'){notify('O caminho secreto guardava o lacinho! ♡');if(!state.wornBows.includes(state.level))state.wornBows.push(state.level);}
+      if(event==='bow')notify('O caminho secreto guardava o lacinho! ♡');
       if(['star','bow','checkpoint','land','spring'].includes(event)) {
         const p=state.player,amount=event==='land'?5:14;
         for(let i=0;i<amount;i++)particles.push({x:p.x+p.w/2,y:p.y+(event==='land'?p.h:20),vx:Math.cos(i*2.4)*60,vy:Math.sin(i*2.4)*60-20,life:event==='land'?.4:1,color:event==='bow'?'#d9a1b9':event==='land'?'#e3e0b8':'#f4d391'});
@@ -172,7 +170,7 @@
     for(const a of particles){a.x+=a.vx*dt;a.y+=a.vy*dt;a.vy+=70*dt;a.life-=dt;}
     particles=particles.filter(a=>a.life>0);
     if(clock>toastUntil)$('toast').classList.remove('show');
-    syncMusic();renderer.draw(state,mode,clock,particles,earned());requestAnimationFrame(frame);
+    syncMusic();renderer.draw(state,mode,clock,particles);requestAnimationFrame(frame);
   }
   setSound(!!saved.sound,{silent:true});
   cards();

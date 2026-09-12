@@ -47,18 +47,14 @@ window.PudimRenderer = function(canvas) {
     for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,k=i%2?r*.45:r;c.lineTo(Math.cos(a)*k,Math.sin(a)*k);}
     c.closePath();c.fill();c.restore();
   }
-  // One palette per world: garden pink, sky blue, night gold. Order: left loop, right loop, two highlights, tail, knot.
-  const BOWS=[['#995a78','#bd7090','#e3a3b8','#ecadc0','#b36785','#e8a3b3'],
-              ['#4f7ba1','#6f9fc7','#b9d7ee','#c9e2f4','#5f8db5','#bcd9f0'],
-              ['#a8802e','#d1a54a','#f3dc9a','#f8e7b0','#b98f3a','#f1d88f']];
-  function bow(x,y,s=1,p=BOWS[0]) {
+  function bow(x,y,s=1) {
     c.save();c.translate(x,y);c.scale(s,s);
-    ellipse(-10,0,12,9,p[0],-.4);ellipse(10,0,12,9,p[1],.4);
-    ellipse(-11,-2,7,4,p[2],-.4);ellipse(10,-2,7,4,p[3],.4);
-    c.fillStyle=p[4];c.beginPath();c.moveTo(-3,2);c.lineTo(-13,22);c.lineTo(-3,18);c.lineTo(0,23);c.lineTo(6,2);c.fill();
-    ellipse(0,0,5,6,p[5]);c.restore();
+    ellipse(-10,0,12,9,'#995a78',-.4);ellipse(10,0,12,9,'#bd7090',.4);
+    ellipse(-11,-2,7,4,'#e3a3b8',-.4);ellipse(10,-2,7,4,'#ecadc0',.4);
+    c.fillStyle='#b36785';c.beginPath();c.moveTo(-3,2);c.lineTo(-13,22);c.lineTo(-3,18);c.lineTo(0,23);c.lineTo(6,2);c.fill();
+    ellipse(0,0,5,6,'#e8a3b3');c.restore();
   }
-  function pig(x,feet,h,t,{walking=false,air=false,face=1,bows=[],land=0,gliding=false}={}) {
+  function pig(x,feet,h,t,{walking=false,air=false,face=1,hasBow=false,land=0,gliding=false}={}) {
     if(!sprite)return;
     const pose=air?3:walking?1+Math.floor(t*9)%2:0;
     const b=walking?Math.sin(t*18)*1.5:Math.sin(t*2.5)*1;
@@ -72,9 +68,7 @@ window.PudimRenderer = function(canvas) {
       const size=hh/.59;
       c.drawImage(flight,-size*.43,-size*.915,size,size);
     } else c.drawImage(sprite,pose*384+2,215,380,584,-w/2,-hh,w,hh);
-    // Slots: right ear, left ear, collar. A bow per world earned.
-    const slots=[[w*.30,-hh*.84],[-w*.30,-hh*.82],[w*.05,-hh*.46]];
-    bows.forEach((world,k)=>{const [sx,sy]=slots[k]||slots[2];bow(sx,sy,h/250*(k?.85:1),BOWS[world]);});
+    if(hasBow)bow(w*.25,-hh*.88,h/250);
     c.restore();
   }
   function cloud(x,y,w,color='#fffdf1') {
@@ -189,12 +183,12 @@ window.PudimRenderer = function(canvas) {
     if(settle<1||!sleeping){
       c.save();c.globalAlpha=1-settle;
       c.translate(px,y-approach*38);c.rotate(-settle*.8);
-      pig(0,0,87*(1-settle*.22),t,{walking:a<.8,bows:state.wornBows||[]});c.restore();
+      pig(0,0,87*(1-settle*.22),t,{walking:a<.8,hasBow:state.bow.taken});c.restore();
     }
     if(sleeping&&settle>0){
       const h=84*sleepBounds[3]/sleepBounds[2], breath=Math.sin(a*2.4)*.55;
       c.save();c.globalAlpha=settle;c.drawImage(sleeping,...sleepBounds,x-42,y-40-h+breath,84,h-breath);
-      if(state.bow.taken)bow(x-26,y-43-h*.65,.22,BOWS[state.level]);
+      if(state.bow.taken)bow(x-26,y-43-h*.65,.22);
       c.restore();
       // The blanket is in front of the body, while the head rests on the pillow.
       c.save();c.globalAlpha=settle;round(x-5,y-49+breath,46,23,7,'#b87588');star(x+15,y-38+breath,6,'#f8d99b');c.restore();
@@ -210,14 +204,14 @@ window.PudimRenderer = function(canvas) {
     c.font='bold 11px Trebuchet MS';const w=c.measureText(text).width+28;
     round(x-camera-w/2,y,w,30,9,'#fff9e8ed');c.fillStyle='#68563d';c.textAlign='center';c.fillText(text,x-camera,y+19);
   }
-  function draw(state,mode,t,particles,homeBows=[]) {
+  function draw(state,mode,t,particles) {
     const home=!state||mode==='home';
     if(!home)camera=Math.max(0,Math.min(Math.max(0,(state.width||2440)-width),state.player.x-width*.32));else camera=0;
     background(state?.level||0,t,home);
     cameraY=!home&&state.level>0?Math.min(0,state.player.y-290):0;
     if(home) {
       const mobile=width<800,x=mobile?width*.72:width*.74,feet=mobile?height*.92:height*.85,h=mobile?205:345;
-      leaf({w:h*.86},x-h*.43,feet+5,t);pig(x,feet,h,t,{bows:homeBows});
+      leaf({w:h*.86},x-h*.43,feet+5,t);pig(x,feet,h,t);
       star(x-h*.44,feet-h*.5,12,'#e7c477',.2);star(x+h*.43,feet-h*.65,8,'#ffedaa',-.2);return;
     }
     c.save();c.translate(0,-cameraY);
@@ -230,7 +224,7 @@ window.PudimRenderer = function(canvas) {
       c.shadowColor='#ffe396';c.shadowBlur=18;star(x,y,17,'#ba813d',-.05);star(x,y-2,15,'#ffda78',-.05);c.shadowBlur=0;star(x-2,y-4,8,'#fff0b6',-.05);
       ellipse(x-6,y-8,2,2,'#fff9e8');
     }
-    if(!state.bow.taken) {const b=state.bow;c.shadowColor='#f5aac2';c.shadowBlur=15;bow(b.x-camera,b.y+Math.sin(t*3)*4,1,BOWS[state.level]);c.shadowBlur=0;}
+    if(!state.bow.taken) {const b=state.bow;c.shadowColor='#f5aac2';c.shadowBlur=15;bow(b.x-camera,b.y+Math.sin(t*3)*4,1);c.shadowBlur=0;}
     bed(state.goal.x-camera,state.goal.y);
     if(state.level===0) {
       sign(165,405,'Segure para um salto maior ↑');
@@ -240,7 +234,7 @@ window.PudimRenderer = function(canvas) {
     const p=state.player;
     if(state.endingTime!==undefined)bedtime(state,t);else {
     ellipse(p.x+p.w/2-camera,p.y+p.h+4,23,5,'#253f3824');
-    pig(p.x+p.w/2-camera,p.y+p.h,87,t,{walking:Math.abs(p.vx)>30&&p.grounded,air:!p.grounded,face:p.face,bows:state.wornBows||[],land:p.landTimer||0,gliding:p.gliding});
+    pig(p.x+p.w/2-camera,p.y+p.h,87,t,{walking:Math.abs(p.vx)>30&&p.grounded,air:!p.grounded,face:p.face,hasBow:state.bow.taken,land:p.landTimer||0,gliding:p.gliding});
     }
     for(const a of particles){c.globalAlpha=Math.max(0,a.life);star(a.x-camera,a.y,a.life*5,a.color,a.life*2);}c.globalAlpha=1;c.restore();
     if(state.complete&&state.level===2){
