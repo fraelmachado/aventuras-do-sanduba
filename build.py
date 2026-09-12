@@ -26,6 +26,7 @@ size=target.stat().st_size
 assert size<4_000_000,f'HTML offline com {size/1e6:.1f} MB; esperado abaixo de 4 MB'
 print(f'HTML offline atualizado: {size/1e6:.1f} MB, seis imagens WebP incorporadas.')
 if opt.zip:
+ # Only what someone needs to play. Sources, tests and reference art stay in the folder.
  with zipfile.ZipFile(opt.zip,'w',zipfile.ZIP_DEFLATED) as z:
-  for f in sorted(root.rglob('*')):
-   if f.is_file() and f.name!='.DS_Store' and f.resolve()!=Path(opt.zip).resolve():z.write(f,'pudim-nas-nuvens/'+str(f.relative_to(root)))
+  for name in ['Pudim nas Nuvens.html','LEIA-ME.md']:z.write(root/name,'Pudim nas Nuvens/'+name)
+ print(f'ZIP gerado em {opt.zip} com {len(z.namelist())} arquivos.')
