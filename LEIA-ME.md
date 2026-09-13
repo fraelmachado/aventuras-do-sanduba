@@ -1,6 +1,6 @@
 # Sanduba nas Nuvens — três aventuras
 
-Abra **Pudim nas Nuvens.html** no navegador. Tudo está incorporado: funciona offline e sem instalar dependências. Também é possível abrir `index.html`, mantendo os outros arquivos na mesma pasta.
+Abra **Sanduba nas Nuvens.html** no navegador. Tudo está incorporado: funciona offline e sem instalar dependências. Também é possível abrir `index.html`, mantendo os outros arquivos na mesma pasta.
 
 Escolha qualquer mundo nos cartões da tela inicial. É possível seguir do jardim até o final ou experimentar diretamente uma fase nova.
 
@@ -39,7 +39,7 @@ HTML5, CSS, JavaScript, Canvas e Web Audio puros, sem framework ou biblioteca ex
 - `game.js`: controles e interface.
 - `assets/`: quatro imagens e registro dos prompts de geração.
 - `assets.js`: cópias incorporadas das imagens para uso offline.
-- `build.py`: regenera os assets incorporados e o HTML único após editar os arquivos separados. Precisa do `cwebp` (`brew install webp`), que converte as artes e deixa o HTML em cerca de 2,4 MB. Execute `python3 build.py`. ZIP opcional: `python3 build.py --zip /caminho/Pudim.zip`.
+- `build.py`: regenera os assets incorporados e o HTML único após editar os arquivos separados. Precisa do `cwebp` (`brew install webp`), que converte as artes e deixa o HTML em cerca de 2,4 MB. Execute `python3 build.py`. ZIP opcional: `python3 build.py --zip /caminho/Sanduba.zip`.
 
 Verificação com Node: `node --test engine.test.cjs input.test.cjs worlds.test.cjs music.test.cjs`.
 As artes foram criadas pela ferramenta imagegen integrada. O personagem usa a pelúcia enviada como referência. A primeira fase não recebeu alterações de geometria ou dificuldade nesta revisão.

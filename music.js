@@ -51,5 +51,5 @@
   return {sync};
  }
  const api={tracks,create};
- if(typeof module==='object'&&module.exports)module.exports=api;else root.PudimMusic=api;
+ if(typeof module==='object'&&module.exports)module.exports=api;else root.SandubaMusic=api;
 })(typeof window!=='undefined'?window:globalThis);

@@ -12,7 +12,7 @@ Abra essa pasta como projeto na próxima sessão. O arquivo `AGENTS.md` registra
 
 ## Jogar
 
-Abra `Pudim nas Nuvens.html` em um navegador. Ele contém todos os scripts e imagens e funciona offline. Os cartões da tela inicial permitem escolher qualquer mundo, sem precisar concluir os anteriores.
+Abra `Sanduba nas Nuvens.html` em um navegador. Ele contém todos os scripts e imagens e funciona offline. Os cartões da tela inicial permitem escolher qualquer mundo, sem precisar concluir os anteriores.
 
 Para desenvolver, prefira servir a pasta e abrir `index.html`:
 
@@ -47,7 +47,7 @@ Cada mundo tem três trechos, cinco estrelas e uma touquinha opcional. Bandeirin
 
 Quatro das cinco estrelas ficam no caminho principal; a quinta é uma escolha do jogador. No jardim ela flutua alto sobre a plataforma 7 e só o salto segurado alcança — um toque passa por baixo. Nas nuvens e na noite ela fica no alto de uma corrente de ar e exige pairar com o guarda-chuva. As posições são `{i,dx,dy}` em `starIndices` (jardim `{i:7,dy:-110}`, nuvens `{i:6,dx:-185,dy:-125}`, noite `{i:11,dx:-153,dy:-145}`).
 
-O melhor resultado de cada mundo (número de estrelas e se a touquinha foi encontrada) e a preferência de som ficam salvos em `localStorage`, na chave `pudim-nas-nuvens`. Os cartões da tela inicial mostram esse melhor resultado, que nunca é rebaixado ao rejogar. O jogo funciona normalmente quando `localStorage` não está disponível. O progresso dentro de uma partida continua valendo só para aquela partida.
+O melhor resultado de cada mundo (número de estrelas e se a touquinha foi encontrada) e a preferência de som ficam salvos em `localStorage`, na chave `sanduba-nas-nuvens`. A chave antiga `pudim-nas-nuvens` ainda é lida como reserva, para que quem jogou antes do rename não perca o progresso; o primeiro save grava na chave nova. Os cartões da tela inicial mostram esse melhor resultado, que nunca é rebaixado ao rejogar. O jogo funciona normalmente quando `localStorage` não está disponível. O progresso dentro de uma partida continua valendo só para aquela partida.
 
 O botão "♫ Ligar a música" aparece também na tela inicial, ao lado de "Entrar no jardim", para que a música seja descoberta sem procurar no HUD. O áudio só é criado dentro de um gesto do jogador.
 
@@ -70,7 +70,7 @@ A primeira versão tinha gráficos geométricos e fases repetitivas. Após feedb
 | `music.js` | Três trilhas originais sintetizadas em Web Audio. |
 | `assets/` | Imagens originais, prompts e referência da pelúcia quando disponível. |
 | `assets.js` | **Gerado:** imagens incorporadas como data URLs. |
-| `Pudim nas Nuvens.html` | **Gerado:** versão independente para jogar offline. |
+| `Sanduba nas Nuvens.html` | **Gerado:** versão independente para jogar offline. |
 | `build.py` | Regenera os arquivos incorporados e, opcionalmente, um ZIP. |
 | `engine.test.cjs` | Regressão do jardim, física e rotas. |
 | `input.test.cjs` | Controles e transições da interface em um ambiente simulado. |
@@ -88,14 +88,14 @@ Necessário apenas para desenvolvimento: Node.js com suporte a `node:test`, Pyth
 ```sh
 node --test engine.test.cjs input.test.cjs worlds.test.cjs music.test.cjs
 python3 build.py
-python3 build.py --zip ./Pudim-nas-Nuvens.zip
+python3 build.py --zip ./Sanduba-nas-Nuvens.zip
 ```
 
-Edite os arquivos separados e depois execute o gerador. Não edite manualmente `assets.js` nem `Pudim nas Nuvens.html`: serão sobrescritos.
+Edite os arquivos separados e depois execute o gerador. Não edite manualmente `assets.js` nem `Sanduba nas Nuvens.html`: serão sobrescritos.
 
 `build.py` converte as seis artes para WebP com `cwebp` antes de incorporá-las: cenários com perda (`-q 82`) e sprites de fundo verde em alta qualidade (`-q 96 -sharp_yuv`), para que a remoção de cor em runtime não deixe franjas. Isso levou o HTML offline de 18,4 MB para 2,4 MB, e o gerador aborta se passar de 4 MB. Se algum sprite mostrar franja verde, troque a qualidade daquela imagem por `'lossless'` em `IMAGES`.
 
-O ZIP contém apenas `Pudim nas Nuvens.html` e `LEIA-ME.md` — o que alguém precisa para jogar. Fontes, testes e artes de referência ficam só na pasta.
+O ZIP contém apenas `Sanduba nas Nuvens.html` e `LEIA-ME.md` — o que alguém precisa para jogar. Fontes, testes e artes de referência ficam só na pasta.
 
 Última validação registrada: **56 testes passando**, incluindo travessias a 30/60/120 FPS, touquinhas, controles, pausa, seleção direta dos mundos, resultado final, progresso salvo, preferência de som, estrelas fora do caminho e registro de quedas. Também houve conferência visual em navegador, incluindo layout móvel simulado. A física do jardim foi comparada à versão anterior em 15.000 passos e permaneceu idêntica. Isso não substitui testes de diversão com a criança ou testes em aparelhos físicos.
 
@@ -103,7 +103,7 @@ O ZIP contém apenas `Pudim nas Nuvens.html` e `LEIA-ME.md` — o que alguém pr
 
 As imagens foram geradas com imagegen; os prompts estão em `assets/PROMPTS.md` e `assets/PROMPTS-CEUS.md`. A pelúcia fornecida pelo usuário é a referência de identidade.
 
-O atlas `pudim-poses.png` contém quatro poses sobre verde uniforme. O renderer remove essa cor ao carregar; não é um PNG com transparência nativa. O recorte atual pressupõe células de 384 pixels, com origem vertical 215 e altura 584. Ao substituir a arte, ajuste e valide esses valores. Todos os recursos necessários ao jogo são incorporados no HTML final.
+O atlas `sanduba-poses.png` contém quatro poses sobre verde uniforme. O renderer remove essa cor ao carregar; não é um PNG com transparência nativa. O recorte atual pressupõe células de 384 pixels, com origem vertical 215 e altura 584. Ao substituir a arte, ajuste e valide esses valores. Todos os recursos necessários ao jogo são incorporados no HTML final.
 
 `assets/referencia-pelucia.png` não é usada pelo jogo e não entra mais no ZIP. Parece uma foto pessoal: não mova nem apague esse arquivo sem o usuário decidir.
 
@@ -114,12 +114,12 @@ O progresso agora persiste no navegador (`localStorage`), por dispositivo. Não 
 
 ## Pose do guarda-chuva
 
-Ao planar, `renderer.js` usa `assets/pudim-guarda-chuva.png`: uma pose integrada com a patinha segurando o cabo ao lado do rosto. Não sobreponha novamente um cabo à pose de salto. O fundo verde usa a mesma remoção de cor do atlas. A imagem inteira é dimensionada pela altura do corpo (`hh / 0.59`), com ancoragem horizontal 0.43 e vertical 0.915 para manter os pés alinhados. Ao trocar esta arte, confira escala, ancoragem, recorte e espelhamento nos dois sentidos. `build.py` incorpora a imagem como `PudimAssets.flight`.
+Ao planar, `renderer.js` usa `assets/sanduba-guarda-chuva.png`: uma pose integrada com a patinha segurando o cabo ao lado do rosto. Não sobreponha novamente um cabo à pose de salto. O fundo verde usa a mesma remoção de cor do atlas. A imagem inteira é dimensionada pela altura do corpo (`hh / 0.59`), com ancoragem horizontal 0.43 e vertical 0.915 para manter os pés alinhados. Ao trocar esta arte, confira escala, ancoragem, recorte e espelhamento nos dois sentidos. `build.py` incorpora a imagem como `SandubaAssets.flight`.
 
 
 ### Continuidade de cor
 
-O atlas `assets/pudim-poses.png` é a referência de cor da pelúcia: rosa claro quente, com realces creme e sombras suaves. A pose do guarda-chuva foi harmonizada com esse atlas, preservando duas pernas separadas e a patinha no cabo. Use o atlas como referência em futuras edições para evitar mudanças de rosa entre animações.
+O atlas `assets/sanduba-poses.png` é a referência de cor da pelúcia: rosa claro quente, com realces creme e sombras suaves. A pose do guarda-chuva foi harmonizada com esse atlas, preservando duas pernas separadas e a patinha no cabo. Use o atlas como referência em futuras edições para evitar mudanças de rosa entre animações.
 
 
 ## Música de fundo
@@ -131,12 +131,12 @@ Três composições originais sintetizadas em `music.js`, sem downloads nem depe
 
 ## Descanso ao concluir cada fase
 
-A vitória inicia o modo `ending` por 4,2 segundos antes do resultado. `state.endingTime` avança apenas nesse modo; pausa, perda de foco e ajuda congelam a sequência. A física já concluída permanece intacta. O renderer aproxima Sanduba, faz a transição para `assets/pudim-dormindo.png`, desenha a coberta em primeiro plano e anima respiração e pequenos zês. O recorte da nova arte é calculado pelo alfa após remover o verde. A música acompanha o descanso e para no resultado. Repetir ou avançar cria um estado novo sem endingTime.
+A vitória inicia o modo `ending` por 4,2 segundos antes do resultado. `state.endingTime` avança apenas nesse modo; pausa, perda de foco e ajuda congelam a sequência. A física já concluída permanece intacta. O renderer aproxima Sanduba, faz a transição para `assets/sanduba-dormindo.png`, desenha a coberta em primeiro plano e anima respiração e pequenos zês. O recorte da nova arte é calculado pelo alfa após remover o verde. A música acompanha o descanso e para no resultado. Repetir ou avançar cria um estado novo sem endingTime.
 
 
 ## Ícone do Sanduba
 
-`assets/pudim.ico` contém a carinha com transparência em 16, 24, 32, 48, 64, 128 e 256 pixels, para uso em atalhos e como favicon. `assets/pudim-icon.png` é a versão PNG de 256 pixels. Arte criada com imagegen integrado a partir do atlas aprovado; `favicon.ico` na raiz é usado pelo `index.html` e incorporado como data URL no HTML offline por `build.py`.
+`assets/sanduba.ico` contém a carinha com transparência em 16, 24, 32, 48, 64, 128 e 256 pixels, para uso em atalhos e como favicon. `assets/sanduba-icon.png` é a versão PNG de 256 pixels. Arte criada com imagegen integrado a partir do atlas aprovado; `favicon.ico` na raiz é usado pelo `index.html` e incorporado como data URL no HTML offline por `build.py`.
 
 
 ## Touquinha de dormir

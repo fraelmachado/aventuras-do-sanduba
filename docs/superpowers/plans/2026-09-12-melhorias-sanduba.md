@@ -1,4 +1,4 @@
-# Melhorias do Pudim nas Nuvens — Plano de Implementação
+# Melhorias do Sanduba nas Nuvens — Plano de Implementação
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -16,7 +16,7 @@
 - Sem framework, biblioteca externa, rede ou pacote npm. Node 22 e Python 3 apenas para desenvolvimento.
 - Textos de interface em português brasileiro; identificadores e comentários de código em inglês, como o restante do código.
 - Não alterar geometria nem dificuldade do Jardim dos Pulos. A única exceção aprovada neste plano é mover a posição de **uma** estrela por mundo (Tarefa 6); plataformas, ventos, sinos e checkpoints não mudam.
-- `assets.js` e `Pudim nas Nuvens.html` são gerados por `build.py`. Nunca editar à mão; nunca imprimir seu conteúdo no terminal (são megabytes de base64).
+- `assets.js` e `Sanduba nas Nuvens.html` são gerados por `build.py`. Nunca editar à mão; nunca imprimir seu conteúdo no terminal (são megabytes de base64).
 - `input.jump` é borda de pressão; `input.jumpHeld` é estado sustentado. Não misturar.
 - Suíte completa: `node --test engine.test.cjs input.test.cjs worlds.test.cjs music.test.cjs`. Deve passar ao fim de cada tarefa.
 - Após alterar qualquer fonte, executar `python3 build.py`. Só gerar ZIP na Tarefa 9.
@@ -30,12 +30,12 @@
 Oito melhorias, em ordem de valor/esforço, acordadas com o usuário:
 
 1. **Arquivo leve.** O HTML offline tem 18 MB porque os seis PNG de 1536×1024 pesam 2–3 MB cada. Converter no build para WebP: cenários com perda (q 82), sprites com fundo verde em alta qualidade (q 96 + `-sharp_yuv`) para não criar franjas no recorte de cor. Medições feitas: cenários somam ~700 KB, sprites ~930 KB. Meta: HTML final abaixo de 4 MB.
-2. **ZIP limpo.** Hoje tem 41 MB e inclui o HTML gerado, `assets.js` e `assets/` (as mesmas imagens três vezes), além de `assets/referencia-pelucia.png`, que parece foto pessoal. O ZIP deve conter só `Pudim nas Nuvens.html` e `LEIA-ME.md`.
+2. **ZIP limpo.** Hoje tem 41 MB e inclui o HTML gerado, `assets.js` e `assets/` (as mesmas imagens três vezes), além de `assets/referencia-pelucia.png`, que parece foto pessoal. O ZIP deve conter só `Sanduba nas Nuvens.html` e `LEIA-ME.md`.
 3. **Progresso salvo.** Guardar por mundo o melhor número de estrelas e se o laço foi encontrado, em `localStorage`. Mostrar nos cartões da tela inicial. Nunca rebaixar o melhor resultado. O jogo deve funcionar sem `localStorage`.
 4. **Som descobrível.** Botão "♫ Ligar a música" na tela inicial, além do botão do HUD. Preferência salva junto com o progresso e restaurada na próxima abertura. O áudio só é criado dentro de um gesto do usuário.
-5. **Laços como recompensa.** Cada mundo tem um laço de cor própria (rosa, azul, dourado). Pudim usa todos os laços já conquistados em qualquer mundo e na tela inicial. O laço do mundo atual entra assim que é pego.
+5. **Laços como recompensa.** Cada mundo tem um laço de cor própria (rosa, azul, dourado). Sanduba usa todos os laços já conquistados em qualquer mundo e na tela inicial. O laço do mundo atual entra assim que é pego.
 6. **Estrelas com escolha.** Uma estrela por mundo sai do caminho principal: no jardim, uma estrela alta que só o salto segurado alcança; nas nuvens e na noite, uma estrela no alto de uma corrente de ar, que exige pairar com o guarda-chuva. As outras quatro continuam no caminho.
-7. **Retorno suave.** Ao voltar à bandeirinha, Pudim reaparece com fade de ~0,55 s e uma nuvenzinha de partículas. A física não muda.
+7. **Retorno suave.** Ao voltar à bandeirinha, Sanduba reaparece com fade de ~0,55 s e uma nuvenzinha de partículas. A física não muda.
 8. **Observar a criança.** Registrar no console cada queda (mundo, trecho, posição da queda) e deixar um roteiro curto de observação em `docs/sessao-de-teste.md`.
 
 ---
@@ -84,7 +84,7 @@ git add -A
 git commit -m "chore: linha de base antes das melhorias de 2026-09-12"
 ```
 
-Esperado: um commit contendo código, testes, `assets/`, `assets.js` e `Pudim nas Nuvens.html`. O ZIP e `.DS_Store` ficam de fora.
+Esperado: um commit contendo código, testes, `assets/`, `assets.js` e `Sanduba nas Nuvens.html`. O ZIP e `.DS_Store` ficam de fora.
 
 - [ ] **Step 3: Confirmar suíte verde na linha de base**
 
@@ -99,13 +99,13 @@ Esperado: `# pass 47`, `# fail 0`.
 - Modify: `build.py` (arquivo inteiro, 20 linhas)
 
 **Interfaces:**
-- Produces: `assets.js` continua definindo `window.PudimAssets` com as mesmas seis chaves (`garden`, `pig`, `sky`, `night`, `flight`, `sleep`), agora com `data:image/webp;base64,...`. O renderer não muda: `Image` e `drawImage` aceitam WebP em todos os navegadores atuais (Safari desde 14).
+- Produces: `assets.js` continua definindo `window.SandubaAssets` com as mesmas seis chaves (`garden`, `pig`, `sky`, `night`, `flight`, `sleep`), agora com `data:image/webp;base64,...`. O renderer não muda: `Image` e `drawImage` aceitam WebP em todos os navegadores atuais (Safari desde 14).
 
 - [ ] **Step 1: Escrever a checagem que falha**
 
 A checagem é o próprio `build.py`: ele passa a abortar se o HTML final passar de 4 MB. Antes da mudança, o HTML tem 18 MB, então a checagem falha. Registrar o tamanho atual:
 
-Run: `stat -f %z "Pudim nas Nuvens.html"`
+Run: `stat -f %z "Sanduba nas Nuvens.html"`
 Esperado: `18393805` (ou próximo).
 
 - [ ] **Step 2: Reescrever `build.py`**
@@ -120,28 +120,28 @@ if not shutil.which('cwebp'):raise SystemExit('cwebp não encontrado. Instale co
 # Backgrounds tolerate lossy compression. Green-keyed sprites use high quality plus sharp_yuv
 # so chroma bleed does not leave fringes after the runtime color key. 'lossless' is the escape hatch.
 IMAGES=[('garden','jardim.png','82'),('sky','nuvens.png','82'),('night','noite.png','82'),
-        ('pig','pudim-poses.png','96'),('flight','pudim-guarda-chuva.png','96'),('sleep','pudim-dormindo.png','96')]
+        ('pig','sanduba-poses.png','96'),('flight','sanduba-guarda-chuva.png','96'),('sleep','sanduba-dormindo.png','96')]
 def webp(name,quality):
  flags=['-lossless'] if quality=='lossless' else ['-q',quality,'-sharp_yuv']
  with tempfile.NamedTemporaryFile(suffix='.webp') as out:
   subprocess.run(['cwebp','-quiet','-metadata','none',*flags,str(root/'assets'/name),'-o',out.name],check=True)
   return 'data:image/webp;base64,'+base64.b64encode(Path(out.name).read_bytes()).decode()
 assets={key:webp(name,quality) for key,name,quality in IMAGES}
-(root/'assets.js').write_text('window.PudimAssets='+json.dumps(assets)+';\n')
+(root/'assets.js').write_text('window.SandubaAssets='+json.dumps(assets)+';\n')
 page=(root/'index.html').read_text().replace('<link rel="stylesheet" href="style.css">','<style>\n'+(root/'style.css').read_text()+'\n</style>')
 for name in ['assets.js','renderer.js','worlds.js','engine.js','music.js','game.js']:
  page=page.replace(f'<script src="{name}"></script>','<script>\n'+(root/name).read_text()+'\n</script>')
 favicon='data:image/x-icon;base64,'+base64.b64encode((root/'favicon.ico').read_bytes()).decode()
 page=page.replace('href="favicon.ico"',f'href="{favicon}"')
 assert '<script src=' not in page
-target=root/'Pudim nas Nuvens.html';target.write_text(page)
+target=root/'Sanduba nas Nuvens.html';target.write_text(page)
 size=target.stat().st_size
 assert size<4_000_000,f'HTML offline com {size/1e6:.1f} MB; esperado abaixo de 4 MB'
 print(f'HTML offline atualizado: {size/1e6:.1f} MB, seis imagens WebP incorporadas.')
 if opt.zip:
  with zipfile.ZipFile(opt.zip,'w',zipfile.ZIP_DEFLATED) as z:
   for f in sorted(root.rglob('*')):
-   if f.is_file() and f.name!='.DS_Store' and f.resolve()!=Path(opt.zip).resolve():z.write(f,'pudim-nas-nuvens/'+str(f.relative_to(root)))
+   if f.is_file() and f.name!='.DS_Store' and f.resolve()!=Path(opt.zip).resolve():z.write(f,'sanduba-nas-nuvens/'+str(f.relative_to(root)))
 ```
 
 O bloco do ZIP fica igual por enquanto; a Tarefa 2 o troca.
@@ -158,15 +158,15 @@ python3 -m http.server 8767 --bind 127.0.0.1
 ```
 
 Abrir `http://127.0.0.1:8767/index.html` e, com o console aberto, verificar:
-- Tela inicial: Pudim grande sobre a folha, sem borda verde ou cinza ao redor do corpo.
+- Tela inicial: Sanduba grande sobre a folha, sem borda verde ou cinza ao redor do corpo.
 - Jardim: parado, andando e pulando (as quatro poses do atlas).
 - Nuvens: segurar Pular no ar e observar a pose do guarda-chuva, nos dois sentidos.
 - Qualquer mundo: chegar à caminha e observar a pose dormindo durante os 4,2 s.
 - Três cenários sem blocos ou faixas visíveis.
 
-Se alguma pose mostrar franja verde, trocar a qualidade daquela imagem em `IMAGES` para `'lossless'` (por exemplo `('pig','pudim-poses.png','lossless')`), rodar `python3 build.py` de novo e conferir. O limite de 4 MB comporta os três sprites em lossless (3,7 MB) somente se os cenários ficarem com perda; se estourar, ajustar o limite para `6_000_000` e registrar no README.
+Se alguma pose mostrar franja verde, trocar a qualidade daquela imagem em `IMAGES` para `'lossless'` (por exemplo `('pig','sanduba-poses.png','lossless')`), rodar `python3 build.py` de novo e conferir. O limite de 4 MB comporta os três sprites em lossless (3,7 MB) somente se os cenários ficarem com perda; se estourar, ajustar o limite para `6_000_000` e registrar no README.
 
-Abrir também `Pudim nas Nuvens.html` diretamente (duplo clique) e confirmar que as imagens aparecem.
+Abrir também `Sanduba nas Nuvens.html` diretamente (duplo clique) e confirmar que as imagens aparecem.
 
 - [ ] **Step 5: Rodar a suíte e commitar**
 
@@ -174,7 +174,7 @@ Run: `node --test engine.test.cjs input.test.cjs worlds.test.cjs music.test.cjs 
 Esperado: `# pass 47`.
 
 ```bash
-git add build.py assets.js "Pudim nas Nuvens.html"
+git add build.py assets.js "Sanduba nas Nuvens.html"
 git commit -m "build: incorporar imagens como WebP e limitar o HTML offline a 4 MB"
 ```
 
@@ -187,7 +187,7 @@ git commit -m "build: incorporar imagens como WebP e limitar o HTML offline a 4 
 
 - [ ] **Step 1: Ver o conteúdo atual do ZIP para saber o que muda**
 
-Run: `unzip -l Pudim-nas-Nuvens.zip | tail -3`
+Run: `unzip -l Sanduba-nas-Nuvens.zip | tail -3`
 Esperado: dezenas de arquivos, ~41 MB descompactados.
 
 - [ ] **Step 2: Substituir o bloco do ZIP**
@@ -198,14 +198,14 @@ Trocar as três últimas linhas de `build.py` por:
 if opt.zip:
  # Only what someone needs to play. Sources, tests and reference art stay in the folder.
  with zipfile.ZipFile(opt.zip,'w',zipfile.ZIP_DEFLATED) as z:
-  for name in ['Pudim nas Nuvens.html','LEIA-ME.md']:z.write(root/name,'Pudim nas Nuvens/'+name)
+  for name in ['Sanduba nas Nuvens.html','LEIA-ME.md']:z.write(root/name,'Sanduba nas Nuvens/'+name)
  print(f'ZIP gerado em {opt.zip} com {len(z.namelist())} arquivos.')
 ```
 
 - [ ] **Step 3: Gerar e verificar**
 
-Run: `python3 build.py --zip ./Pudim-nas-Nuvens.zip && unzip -l Pudim-nas-Nuvens.zip`
-Esperado: exatamente duas entradas, `Pudim nas Nuvens/Pudim nas Nuvens.html` e `Pudim nas Nuvens/LEIA-ME.md`; total abaixo de 4 MB.
+Run: `python3 build.py --zip ./Sanduba-nas-Nuvens.zip && unzip -l Sanduba-nas-Nuvens.zip`
+Esperado: exatamente duas entradas, `Sanduba nas Nuvens/Sanduba nas Nuvens.html` e `Sanduba nas Nuvens/LEIA-ME.md`; total abaixo de 4 MB.
 
 - [ ] **Step 4: Commitar**
 
@@ -227,7 +227,7 @@ Observação para o relatório final: `assets/referencia-pelucia.png` não é us
 - Test: `input.test.cjs` (harness + 3 testes)
 
 **Interfaces:**
-- Produces: em `game.js`, objeto `saved` com formato `{worlds:[{stars:number,bow:boolean}|null, ...], sound:boolean}`, funções `load()`, `save()`, `cards()`; chave de `localStorage` `'pudim-nas-nuvens'`. Elementos `#stars-0`, `#stars-1`, `#stars-2`. As Tarefas 4 e 5 leem e gravam `saved`.
+- Produces: em `game.js`, objeto `saved` com formato `{worlds:[{stars:number,bow:boolean}|null, ...], sound:boolean}`, funções `load()`, `save()`, `cards()`; chave de `localStorage` `'sanduba-nas-nuvens'`. Elementos `#stars-0`, `#stars-1`, `#stars-2`. As Tarefas 4 e 5 leem e gravam `saved`.
 - O harness de `input.test.cjs` passa a aceitar `harness({store})`, onde `store` é o retorno de `storage(seed)` ou `null` para simular ausência de `localStorage`.
 
 - [ ] **Step 1: Atualizar o harness de teste**
@@ -241,7 +241,7 @@ function harness({store=storage()}={}){
  function node(id,dataset={}){return {id,dataset,hidden:false,disabled:false,style:{},textContent:'',innerHTML:'',classList:{add(){},remove(){},toggle(){}},firstElementChild:{style:{}},events:{},focus(){},setAttribute(){},addEventListener(type,fn){this.events[type]=fn;},setPointerCapture(){},querySelectorAll(){return []}};}
  const document={getElementById(id){return nodes[id]??=node(id)},querySelectorAll(){return touches},addEventListener(type,fn){listeners[type]=fn},body:{dataset:{},classList:{add(){},remove(){}}}};
  let frame,state,t=0;
- const context={PudimMusic:require('./music.js'),document,window:{},PudimRenderer:()=>({ready:Promise.resolve(),resize(){},draw(){}}),PudimEngine:{create(l){return state=engine.create(l)},step:engine.step},addEventListener(type,fn){listeners[type]=fn},requestAnimationFrame(fn){frame=fn},Math,JSON,console:{info(){}}};
+ const context={SandubaMusic:require('./music.js'),document,window:{},SandubaRenderer:()=>({ready:Promise.resolve(),resize(){},draw(){}}),SandubaEngine:{create(l){return state=engine.create(l)},step:engine.step},addEventListener(type,fn){listeners[type]=fn},requestAnimationFrame(fn){frame=fn},Math,JSON,console:{info(){}}};
  if(store)context.localStorage=store;
  vm.runInNewContext(fs.readFileSync(require('node:path').join(__dirname,'game.js'),'utf8'),context);
  nodes.start.onclick();
@@ -259,12 +259,12 @@ Acrescentar ao fim de `input.test.cjs`:
 function finish(h){const s=h.state,q=s.platforms[s.goal.platform];Object.assign(s.player,{x:s.goal.x,y:q.y-64,grounded:true,support:s.goal.platform});h.tick(540);}
 test('progress is saved per world and shown on the home cards',()=>{
  const store=storage();const h=harness({store});h.tick();h.state.stars[0].taken=true;h.state.stars[1].taken=true;h.state.bow.taken=true;finish(h);
- assert.deepEqual(JSON.parse(store.getItem('pudim-nas-nuvens')).worlds[0],{stars:2,bow:true});
+ assert.deepEqual(JSON.parse(store.getItem('sanduba-nas-nuvens')).worlds[0],{stars:2,bow:true});
  const again=harness({store});assert.equal(again.nodes['stars-0'].textContent,'★★☆☆☆ ♧');assert.equal(again.nodes['stars-1'].textContent,'');
 });
 test('replaying with fewer stars never lowers the saved best',()=>{
- const store=storage({'pudim-nas-nuvens':JSON.stringify({worlds:[{stars:4,bow:true}],sound:false})});const h=harness({store});h.tick();finish(h);
- assert.deepEqual(JSON.parse(store.getItem('pudim-nas-nuvens')).worlds[0],{stars:4,bow:true});
+ const store=storage({'sanduba-nas-nuvens':JSON.stringify({worlds:[{stars:4,bow:true}],sound:false})});const h=harness({store});h.tick();finish(h);
+ assert.deepEqual(JSON.parse(store.getItem('sanduba-nas-nuvens')).worlds[0],{stars:4,bow:true});
 });
 test('game runs when storage is unavailable',()=>{const h=harness({store:null});h.tick(5);assert.ok(h.state);finish(h);assert.equal(h.nodes['modal-title'].textContent,'O jardim é seu!');});
 ```
@@ -297,7 +297,7 @@ Em `style.css`, logo após a regra `.worlds small{...}` (a primeira ocorrência,
 Logo após `let muted=true, audio=null, ...;` no topo do IIFE, acrescentar:
 
 ```js
-  const STORAGE='pudim-nas-nuvens';
+  const STORAGE='sanduba-nas-nuvens';
   function load(){try{return {worlds:[],sound:false,...JSON.parse(localStorage.getItem(STORAGE)||'{}')};}catch{return {worlds:[],sound:false};}}
   function save(){try{localStorage.setItem(STORAGE,JSON.stringify(saved));}catch{}}
   const saved=load();
@@ -329,7 +329,7 @@ Esperado: `# pass 50`, `# fail 0`.
 - [ ] **Step 9: Commitar**
 
 ```bash
-git add index.html style.css game.js input.test.cjs assets.js "Pudim nas Nuvens.html"
+git add index.html style.css game.js input.test.cjs assets.js "Sanduba nas Nuvens.html"
 git commit -m "feat: salvar melhor resultado por mundo e mostrar nos cartões"
 ```
 
@@ -372,7 +372,7 @@ test('home sound button turns music on, persists, and is restored on the next vi
  assert.equal(h.nodes['sound-home'].textContent,'♫ Ligar a música');
  h.nodes['sound-home'].onclick();
  assert.equal(h.nodes['sound-home'].textContent,'♪ Desligar a música');assert.equal(h.nodes.sound.textContent,'♪');
- assert.equal(JSON.parse(store.getItem('pudim-nas-nuvens')).sound,true);
+ assert.equal(JSON.parse(store.getItem('sanduba-nas-nuvens')).sound,true);
  const again=harness({store});again.tick(3);assert.equal(again.nodes.sound.textContent,'♪');
 });
 ```
@@ -426,7 +426,7 @@ vira:
       ensureAudio();
 ```
 
-Em `start()`, após `state=PudimEngine.create(level);…clearKeys();particles=[];`, acrescentar (o clique no botão é o gesto que libera o áudio):
+Em `start()`, após `state=SandubaEngine.create(level);…clearKeys();particles=[];`, acrescentar (o clique no botão é o gesto que libera o áudio):
 
 ```js
     if(!muted)try{ensureAudio();}catch{muted=true;}
@@ -466,7 +466,7 @@ Esperado: `# pass 51`.
 - [ ] **Step 7: Commitar**
 
 ```bash
-git add index.html style.css game.js input.test.cjs assets.js "Pudim nas Nuvens.html"
+git add index.html style.css game.js input.test.cjs assets.js "Sanduba nas Nuvens.html"
 git commit -m "feat: botão de música na tela inicial e preferência de som lembrada"
 ```
 
@@ -487,7 +487,7 @@ git commit -m "feat: botão de música na tela inicial e preferência de som lem
 
 ```js
 test('bows earned earlier are worn in every world and the new one joins them',()=>{
- const store=storage({'pudim-nas-nuvens':JSON.stringify({worlds:[{stars:5,bow:true}],sound:false})});const h=harness({store});
+ const store=storage({'sanduba-nas-nuvens':JSON.stringify({worlds:[{stars:5,bow:true}],sound:false})});const h=harness({store});
  h.nodes['world-sky'].onclick();assert.deepEqual(h.state.wornBows,[0]);
  Object.assign(h.state.player,{x:h.state.bow.x-24,y:h.state.bow.y-32,vy:0});h.tick(2);
  assert.equal(h.state.bow.taken,true);assert.deepEqual(h.state.wornBows,[0,1]);
@@ -505,7 +505,7 @@ Após a declaração de `cards()`, acrescentar:
   const earned=()=>[0,1,2].filter(i=>saved.worlds[i]?.bow);
 ```
 
-Em `start()`, imediatamente após `state=PudimEngine.create(level);`, acrescentar:
+Em `start()`, imediatamente após `state=SandubaEngine.create(level);`, acrescentar:
 
 ```js
 state.wornBows=earned();
@@ -569,14 +569,14 @@ Run: `node --test engine.test.cjs input.test.cjs worlds.test.cjs music.test.cjs 
 
 `python3 build.py`, servir. Conferir:
 - O laço solto no jardim é rosa, nas nuvens é azul, na noite é dourado.
-- Pegar o laço do jardim: Pudim passa a usá-lo na orelha direita. Voltar ao início: o Pudim grande da tela inicial usa o laço rosa.
-- Com dois ou três laços salvos (pode forçar via console: `localStorage.setItem('pudim-nas-nuvens',JSON.stringify({worlds:[{stars:5,bow:true},{stars:5,bow:true},{stars:5,bow:true}],sound:false}))` e recarregar): os três laços aparecem sem cobrir o rosto. Ajustar os números de `slots` se algum ficar mal posicionado; anotar os valores finais no AGENTS.md na Tarefa 9.
+- Pegar o laço do jardim: Sanduba passa a usá-lo na orelha direita. Voltar ao início: o Sanduba grande da tela inicial usa o laço rosa.
+- Com dois ou três laços salvos (pode forçar via console: `localStorage.setItem('sanduba-nas-nuvens',JSON.stringify({worlds:[{stars:5,bow:true},{stars:5,bow:true},{stars:5,bow:true}],sound:false}))` e recarregar): os três laços aparecem sem cobrir o rosto. Ajustar os números de `slots` se algum ficar mal posicionado; anotar os valores finais no AGENTS.md na Tarefa 9.
 - Pose do guarda-chuva e pose dormindo: os laços não flutuam fora do corpo. Se na pose de voo ficarem estranhos, é aceitável ocultá-los enquanto `gliding` (acrescentar `if(!gliding)` antes do `forEach`) e registrar.
 
 - [ ] **Step 7: Commitar**
 
 ```bash
-git add renderer.js game.js input.test.cjs assets.js "Pudim nas Nuvens.html"
+git add renderer.js game.js input.test.cjs assets.js "Sanduba nas Nuvens.html"
 git commit -m "feat: laço com cor por mundo, vestido em toda parte depois de conquistado"
 ```
 
@@ -594,7 +594,7 @@ git commit -m "feat: laço com cor por mundo, vestido em toda parte depois de co
 - Produces: entradas de `starIndices` podem ser um número (comportamento atual) ou `{i,dx,dy}`: estrela em `platforms[i].x+w/2+dx`, `platforms[i].baseY-55+dy`.
 
 Posições escolhidas (física: salto de 620 px/s e gravidade 1450 dão 132 px de altura; o toque cortado a 265 px/s dá 24 px):
-- Jardim: estrela 7 → `{i:7,dx:0,dy:-110}`. Fica em (1622, 230), acima da plataforma 7 (topo em 395). Centro de Pudim parado: 363; no ápice do salto segurado: 230,5. Toque: 319. Raio de coleta 49.
+- Jardim: estrela 7 → `{i:7,dx:0,dy:-110}`. Fica em (1622, 230), acima da plataforma 7 (topo em 395). Centro de Sanduba parado: 363; no ápice do salto segurado: 230,5. Toque: 319. Raio de coleta 49.
 - Nuvens: estrela 6 → `{i:6,dx:-185,dy:-125}`. Fica em (2250, 20), no centro da corrente de ar entre as plataformas 5 e 6 (x 2170–2330, y −50–520).
 - Noite: estrela 11 → `{i:11,dx:-153,dy:-145}`. Fica em (3022, 200), no centro da corrente entre as plataformas 10 e 11 (x 2960–3085, y 130–600).
 
@@ -665,7 +665,7 @@ Run: `node --test engine.test.cjs input.test.cjs worlds.test.cjs music.test.cjs 
 - [ ] **Step 6: Commitar**
 
 ```bash
-git add engine.js worlds.js engine.test.cjs worlds.test.cjs assets.js "Pudim nas Nuvens.html"
+git add engine.js worlds.js engine.test.cjs worlds.test.cjs assets.js "Sanduba nas Nuvens.html"
 git commit -m "feat: uma estrela por mundo fora do caminho, alcançada por salto alto ou corrente de ar"
 ```
 
@@ -675,7 +675,7 @@ git commit -m "feat: uma estrela por mundo fora do caminho, alcançada por salto
 
 **Files:**
 - Modify: `game.js` (`events()`)
-- Modify: `renderer.js` (`draw()`, desenho do Pudim)
+- Modify: `renderer.js` (`draw()`, desenho do Sanduba)
 - Test: `input.test.cjs` (1 teste)
 
 **Interfaces:**
@@ -684,7 +684,7 @@ git commit -m "feat: uma estrela por mundo fora do caminho, alcançada por salto
 - [ ] **Step 1: Teste que falha**
 
 ```js
-test('a fall marks the respawn moment so the renderer can fade Pudim back in',()=>{
+test('a fall marks the respawn moment so the renderer can fade Sanduba back in',()=>{
  const h=harness();h.tick();assert.equal(h.state.rescueAt,undefined);h.state.player.y=950;h.tick(2);
  assert.equal(h.state.rescues,1);assert.equal(typeof h.state.rescueAt,'number');
 });
@@ -719,7 +719,7 @@ vira:
 
 ```js
     if(state.endingTime!==undefined)bedtime(state,t);else {
-    // Fade back in after a rescue; physics already moved Pudim to the flag.
+    // Fade back in after a rescue; physics already moved Sanduba to the flag.
     c.globalAlpha=state.rescueAt===undefined?1:Math.min(1,(t-state.rescueAt)/.55);
     ellipse(p.x+p.w/2-camera,p.y+p.h+4,23,5,'#253f3824');
     pig(p.x+p.w/2-camera,p.y+p.h,87,t,{walking:Math.abs(p.vx)>30&&p.grounded,air:!p.grounded,face:p.face,bows:state.wornBows||[],land:p.landTimer||0,gliding:p.gliding});
@@ -731,12 +731,12 @@ vira:
 
 Run: `node --test engine.test.cjs input.test.cjs worlds.test.cjs music.test.cjs 2>&1 | tail -3` → `# pass 55`.
 
-`python3 build.py`, servir, cair de propósito no jardim: Pudim surge na bandeirinha em meio segundo, com partículas claras. Pausar logo após cair e retomar: nada trava.
+`python3 build.py`, servir, cair de propósito no jardim: Sanduba surge na bandeirinha em meio segundo, com partículas claras. Pausar logo após cair e retomar: nada trava.
 
 - [ ] **Step 5: Commitar**
 
 ```bash
-git add game.js renderer.js input.test.cjs assets.js "Pudim nas Nuvens.html"
+git add game.js renderer.js input.test.cjs assets.js "Sanduba nas Nuvens.html"
 git commit -m "feat: fade e nuvenzinha ao voltar para a bandeirinha"
 ```
 
@@ -751,11 +751,11 @@ git commit -m "feat: fade e nuvenzinha ao voltar para a bandeirinha"
 - Test: `engine.test.cjs` (1 assert), `input.test.cjs` (1 teste)
 
 **Interfaces:**
-- Produces: `state.lastFall={x,y}` com a posição de Pudim no instante da queda, gravado pelo engine antes de reposicioná-lo. `game.js` registra `console.info('queda', {mundo, trecho, x})`.
+- Produces: `state.lastFall={x,y}` com a posição de Sanduba no instante da queda, gravado pelo engine antes de reposicioná-lo. `game.js` registra `console.info('queda', {mundo, trecho, x})`.
 
 - [ ] **Step 1: Testes que falham**
 
-Em `engine.test.cjs`, no teste `fall preserves collected stars and bow`, após `assert.equal(s.rescues,1);` acrescentar `assert.ok(s.lastFall.y>=950);assert.ok(s.lastFall.x>0);` (a gravidade move Pudim um pouco antes da checagem de queda, por isso `>=`).
+Em `engine.test.cjs`, no teste `fall preserves collected stars and bow`, após `assert.equal(s.rescues,1);` acrescentar `assert.ok(s.lastFall.y>=950);assert.ok(s.lastFall.x>0);` (a gravidade move Sanduba um pouco antes da checagem de queda, por isso `>=`).
 
 Em `input.test.cjs`, trocar `console:{info(){}}` no harness por `console:{logs:[],info(...a){this.logs.push(a);}}` e expor no retorno: acrescentar `console:context.console` ao objeto retornado (`return {nodes,touches,store,console:context.console,…}`). Acrescentar o teste:
 
@@ -792,7 +792,7 @@ Criar `docs/sessao-de-teste.md`:
 Objetivo: ver onde ela se diverte, onde trava e o que ignora. Não ensinar; só responder se ela perguntar.
 
 ## Antes
-- Abrir `Pudim nas Nuvens.html` no computador ou servir a pasta e abrir no celular.
+- Abrir `Sanduba nas Nuvens.html` no computador ou servir a pasta e abrir no celular.
 - Abrir o console do navegador (Chrome/Safari: Cmd+Option+J) e deixar em segundo plano. Cada queda aparece como `queda {mundo, trecho, x}`.
 - Não ligar o som por ela: observar se ela descobre o botão.
 
@@ -808,7 +808,7 @@ Objetivo: ver onde ela se diverte, onde trava e o que ignora. Não ensinar; só 
 
 ## Depois
 - Copiar as linhas `queda` do console e agrupar por mundo/trecho. Três ou mais quedas no mesmo `x` indicam um vão para revisar.
-- Perguntar: qual parte foi a mais legal? Qual foi chata? O que ela queria que o Pudim fizesse?
+- Perguntar: qual parte foi a mais legal? Qual foi chata? O que ela queria que o Sanduba fizesse?
 - Registrar as respostas aqui e só então decidir mudanças de dificuldade.
 ```
 
@@ -816,7 +816,7 @@ Objetivo: ver onde ela se diverte, onde trava e o que ignora. Não ensinar; só 
 
 ```bash
 python3 build.py
-git add engine.js game.js engine.test.cjs input.test.cjs docs/sessao-de-teste.md assets.js "Pudim nas Nuvens.html"
+git add engine.js game.js engine.test.cjs input.test.cjs docs/sessao-de-teste.md assets.js "Sanduba nas Nuvens.html"
 git commit -m "feat: registrar quedas no console e roteiro de observação com a criança"
 ```
 
@@ -826,12 +826,12 @@ git commit -m "feat: registrar quedas no console e roteiro de observação com a
 
 **Files:**
 - Modify: `README.md`, `AGENTS.md`, `LEIA-ME.md`
-- Regenerar: `assets.js`, `Pudim nas Nuvens.html`, `Pudim-nas-Nuvens.zip`
+- Regenerar: `assets.js`, `Sanduba nas Nuvens.html`, `Sanduba-nas-Nuvens.zip`
 
 - [ ] **Step 1: README.md**
 
 Atualizar estas seções:
-- "Testar e gerar a distribuição": mencionar que `build.py` exige `cwebp` (`brew install webp`), converte as imagens para WebP e aborta acima de 4 MB; o ZIP contém apenas `Pudim nas Nuvens.html` e `LEIA-ME.md`. Trocar "47 testes passando" pelo número real da última execução.
+- "Testar e gerar a distribuição": mencionar que `build.py` exige `cwebp` (`brew install webp`), converte as imagens para WebP e aborta acima de 4 MB; o ZIP contém apenas `Sanduba nas Nuvens.html` e `LEIA-ME.md`. Trocar "47 testes passando" pelo número real da última execução.
 - "Estado atual": progresso salvo em `localStorage` (melhor resultado por mundo e preferência de som); laços com cor por mundo vestidos após conquista; uma estrela de escolha por mundo (jardim: salto segurado; nuvens e noite: pairar na corrente de ar); fade ao voltar à bandeirinha; `console.info('queda', …)` para observação.
 - "Estrutura": `docs/sessao-de-teste.md`, `.gitignore`.
 - "Artes e limitações": `assets/referencia-pelucia.png` não entra no ZIP; a pasta é um repositório git local.
@@ -845,25 +845,25 @@ Atualizar estas seções:
 
 - [ ] **Step 3: LEIA-ME.md**
 
-Acrescentar: o progresso fica salvo no navegador; o botão "♫ Ligar a música" na tela inicial; cada mundo tem uma estrela escondida que pede salto alto ou pairar no vento; os laços conquistados ficam com o Pudim. Trocar a linha de verificação para incluir `music.test.cjs`.
+Acrescentar: o progresso fica salvo no navegador; o botão "♫ Ligar a música" na tela inicial; cada mundo tem uma estrela escondida que pede salto alto ou pairar no vento; os laços conquistados ficam com o Sanduba. Trocar a linha de verificação para incluir `music.test.cjs`.
 
 - [ ] **Step 4: Verificação final**
 
 ```bash
 node --test engine.test.cjs input.test.cjs worlds.test.cjs music.test.cjs 2>&1 | tail -8
-python3 build.py --zip ./Pudim-nas-Nuvens.zip
-unzip -l Pudim-nas-Nuvens.zip
-stat -f %z "Pudim nas Nuvens.html"
+python3 build.py --zip ./Sanduba-nas-Nuvens.zip
+unzip -l Sanduba-nas-Nuvens.zip
+stat -f %z "Sanduba nas Nuvens.html"
 ```
 
 Esperado: `# fail 0`; ZIP com duas entradas; HTML abaixo de 4 000 000 bytes.
 
-Abrir `Pudim nas Nuvens.html` por duplo clique (sem servidor) e percorrer: tela inicial com badges e botão de música; jardim com estrela alta; laço rosa vestido após pegar; queda com fade; nuvens com estrela na corrente; noite; caminha. Repetir a tela inicial em largura de celular via DevTools e conferir que os cartões e o botão de música cabem.
+Abrir `Sanduba nas Nuvens.html` por duplo clique (sem servidor) e percorrer: tela inicial com badges e botão de música; jardim com estrela alta; laço rosa vestido após pegar; queda com fade; nuvens com estrela na corrente; noite; caminha. Repetir a tela inicial em largura de celular via DevTools e conferir que os cartões e o botão de música cabem.
 
 - [ ] **Step 5: Commit final**
 
 ```bash
-git add README.md AGENTS.md LEIA-ME.md assets.js "Pudim nas Nuvens.html"
+git add README.md AGENTS.md LEIA-ME.md assets.js "Sanduba nas Nuvens.html"
 git commit -m "docs: registrar melhorias de 2026-09-12 e novo fluxo de build"
 ```
 

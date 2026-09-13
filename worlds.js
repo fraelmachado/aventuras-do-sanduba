@@ -24,5 +24,5 @@ function build(level,P){
  }
  return {platforms,sections,width,starIndices,goalIndex,bow,winds,bells};
 }
-if(typeof module!=='undefined')module.exports=build;else root.PudimWorlds=build;
+if(typeof module!=='undefined')module.exports=build;else root.SandubaWorlds=build;
 })(typeof window!=='undefined'?window:globalThis);

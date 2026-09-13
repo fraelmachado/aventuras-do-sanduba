@@ -1,7 +1,7 @@
 (function(root){
 'use strict';
 const names=['Jardim dos Pulos','Nuvens de Algodão','Céu Estrelado'];
-const buildWorld=typeof module!=='undefined'?require('./worlds.js'):root.PudimWorlds;
+const buildWorld=typeof module!=='undefined'?require('./worlds.js'):root.SandubaWorlds;
 const CRUMBLE=0.85,REAPPEAR=2.8;
 function platform(x,y,w=170,extra={}){return {x,y,baseX:x,baseY:y,w,h:30,kind:'island',spring:false,checkpoint:false,moving:false,ax:0,ay:0,phase:0,speed:1,remaining:CRUMBLE,gone:0,...extra};}
 function create(level=0){
@@ -56,5 +56,5 @@ function step(s,input={},dt){
  let active=0;for(let i=1;i<s.sections.length;i++)if(p.x+p.w/2>=s.sections[i].x)active=i;if(active!==s.activeSection){s.activeSection=active;s.events.push('section');}
  if(p.grounded&&p.support===s.goal.platform&&p.x+p.w>s.goal.x-25){s.complete=true;s.events.push('win');}
 }
-const api={create,step,names};if(typeof module!=='undefined')module.exports=api;else root.PudimEngine=api;
+const api={create,step,names};if(typeof module!=='undefined')module.exports=api;else root.SandubaEngine=api;
 })(typeof window!=='undefined'?window:globalThis);

@@ -3,7 +3,7 @@
 Objetivo: ver onde ela se diverte, onde trava e o que ignora. Não ensinar; só responder se ela perguntar.
 
 ## Antes
-- Abrir `Pudim nas Nuvens.html` no computador ou servir a pasta e abrir no celular.
+- Abrir `Sanduba nas Nuvens.html` no computador ou servir a pasta e abrir no celular.
 - Abrir o console do navegador (Chrome/Safari: Cmd+Option+J) e deixar em segundo plano. Cada queda aparece como `queda {mundo, trecho, x}`.
 - Não ligar o som por ela: observar se ela descobre o botão.
 
@@ -19,5 +19,5 @@ Objetivo: ver onde ela se diverte, onde trava e o que ignora. Não ensinar; só 
 
 ## Depois
 - Copiar as linhas `queda` do console e agrupar por mundo/trecho. Três ou mais quedas no mesmo `x` indicam um vão para revisar.
-- Perguntar: qual parte foi a mais legal? Qual foi chata? O que ela queria que o Pudim fizesse?
+- Perguntar: qual parte foi a mais legal? Qual foi chata? O que ela queria que o Sanduba fizesse?
 - Registrar as respostas aqui e só então decidir mudanças de dificuldade.

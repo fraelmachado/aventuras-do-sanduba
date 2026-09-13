@@ -1,5 +1,5 @@
 /* Illustrated Canvas renderer. Coordinates are logical world pixels. */
-window.PudimRenderer = function(canvas) {
+window.SandubaRenderer = function(canvas) {
   'use strict';
   const c = canvas.getContext('2d');
   let width = 1100, height = 650, camera = 0, cameraY = 0, sprite = null, flight = null, sleeping = null, sleepBounds = null;
@@ -19,22 +19,22 @@ window.PudimRenderer = function(canvas) {
         a.putImageData(pixels,0,0); return atlas;
   }
   const ready = Promise.all([
-    new Promise(resolve=>{capSource.onload=resolve;capSource.onerror=resolve;capSource.src=PudimAssets.cap;}),
+    new Promise(resolve=>{capSource.onload=resolve;capSource.onerror=resolve;capSource.src=SandubaAssets.cap;}),
     new Promise(resolve=>{sleepSource.onload=()=>{
       sleeping=keyImage(sleepSource);
       const d=sleeping.getContext('2d').getImageData(0,0,sleeping.width,sleeping.height).data;
       let l=sleeping.width,r=0,top=sleeping.height,b=0;
       for(let y=0;y<sleeping.height;y++)for(let x=0;x<sleeping.width;x++)if(d[(y*sleeping.width+x)*4+3]>100){l=Math.min(l,x);r=Math.max(r,x);top=Math.min(top,y);b=Math.max(b,y);}
       sleepBounds=[l,top,r-l+1,b-top+1];resolve();
-    };sleepSource.onerror=resolve;sleepSource.src=PudimAssets.sleep;}),
-    new Promise(resolve=>{flightSource.onload=()=>{flight=keyImage(flightSource);resolve();};flightSource.onerror=resolve;flightSource.src=PudimAssets.flight;}),
-    ...[[sky,PudimAssets.sky],[night,PudimAssets.night]].map(([im,src])=>new Promise(resolve=>{im.onload=resolve;im.onerror=resolve;im.src=src;})),
-    new Promise(resolve => { garden.onload = resolve; garden.onerror = resolve; garden.src = PudimAssets.garden; }),
+    };sleepSource.onerror=resolve;sleepSource.src=SandubaAssets.sleep;}),
+    new Promise(resolve=>{flightSource.onload=()=>{flight=keyImage(flightSource);resolve();};flightSource.onerror=resolve;flightSource.src=SandubaAssets.flight;}),
+    ...[[sky,SandubaAssets.sky],[night,SandubaAssets.night]].map(([im,src])=>new Promise(resolve=>{im.onload=resolve;im.onerror=resolve;im.src=src;})),
+    new Promise(resolve => { garden.onload = resolve; garden.onerror = resolve; garden.src = SandubaAssets.garden; }),
     new Promise(resolve => {
       source.onload = () => {
         sprite = keyImage(source); resolve();
       };
-      source.onerror = resolve; source.src = PudimAssets.pig;
+      source.onerror = resolve; source.src = SandubaAssets.pig;
     })
   ]);
   function ellipse(x,y,rx,ry,color,rotation=0) {

@@ -2,16 +2,17 @@
 (() => {
   'use strict';
   const $ = id => document.getElementById(id);
-  const renderer = PudimRenderer($('world'));
+  const renderer = SandubaRenderer($('world'));
   const keys = {left:false,right:false,jump:false,jumpHeld:false};
   const held = new Map();
-  const music = PudimMusic.create();
+  const music = SandubaMusic.create();
   function syncMusic() { music.sync(audio,state?.level??0,!muted&&(mode==='playing'||mode==='ending')); }
   let pausedMode='playing';
   let state=null, mode='home', last=0, clock=0, accumulator=0;
   let muted=true, audio=null, toastUntil=0, modalAction=null, results=[], particles=[];
-  const STORAGE='pudim-nas-nuvens';
-  function load(){try{return {worlds:[],sound:false,...JSON.parse(localStorage.getItem(STORAGE)||'{}')};}catch{return {worlds:[],sound:false};}}
+  const STORAGE='sanduba-nas-nuvens';
+  // ponytail: lê a chave antiga como reserva para não perder o progresso de quem jogou antes do rename; o próximo save() já grava na chave nova. Remover quando ninguém mais tiver save antigo.
+  function load(){try{return {worlds:[],sound:false,...JSON.parse(localStorage.getItem(STORAGE)||localStorage.getItem('pudim-nas-nuvens')||'{}')};}catch{return {worlds:[],sound:false};}}
   function save(){try{localStorage.setItem(STORAGE,JSON.stringify(saved));}catch{}}
   const saved=load();
   function cards(){for(let i=0;i<3;i++){const w=saved.worlds[i];$('stars-'+i).textContent=w?'★'.repeat(w.stars)+'☆'.repeat(5-w.stars)+(w.bow?' · Touquinha':''):'';}}
@@ -66,7 +67,7 @@
     $('progress').firstElementChild.style.width=Math.min(100,state.player.x/(state.width||2440)*100)+'%';
   }
   function start(level=0) {
-    state=PudimEngine.create(level);document.body.dataset.world=String(level+1);mode='playing';clearKeys();particles=[];
+    state=SandubaEngine.create(level);document.body.dataset.world=String(level+1);mode='playing';clearKeys();particles=[];
     if(!muted)try{ensureAudio();}catch{muted=true;}
     $('home').hidden=true;$('modal').hidden=true;$('help').disabled=false;$('hud').hidden=false;$('touch').hidden=false;
     document.body.classList.add('playing');renderer.resize();hud();
@@ -168,7 +169,7 @@
     if(mode==='playing') {
       accumulator+=dt;
       while(accumulator>=1/120&&mode==='playing') {
-        PudimEngine.step(state,keys,1/120);keys.jump=false;accumulator-=1/120;events();
+        SandubaEngine.step(state,keys,1/120);keys.jump=false;accumulator-=1/120;events();
       }
       hud();
     }

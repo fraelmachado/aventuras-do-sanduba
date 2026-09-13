@@ -14,7 +14,7 @@ function harness({store=storage()}={}){
  function node(id,dataset={}){return {id,dataset,hidden:false,disabled:false,style:{},textContent:'',innerHTML:'',classList:{add(){},remove(){},toggle(){}},firstElementChild:{style:{}},events:{},focus(){},setAttribute(){},addEventListener(type,fn){this.events[type]=fn;},setPointerCapture(){},querySelectorAll(){return []}};}
  const document={getElementById(id){return nodes[id]??=node(id)},querySelectorAll(){return touches},addEventListener(type,fn){listeners[type]=fn},body:{dataset:{},classList:{add(){},remove(){}}}};
  let frame,state,t=0;
- const context={PudimMusic:require('./music.js'),document,window:{AudioContext:FakeAudio},PudimRenderer:()=>({ready:Promise.resolve(),resize(){},draw(){}}),PudimEngine:{create(l){return state=engine.create(l)},step:engine.step},addEventListener(type,fn){listeners[type]=fn},requestAnimationFrame(fn){frame=fn},Math,JSON,console:{logs:[],info(...a){this.logs.push(a);}}};
+ const context={SandubaMusic:require('./music.js'),document,window:{AudioContext:FakeAudio},SandubaRenderer:()=>({ready:Promise.resolve(),resize(){},draw(){}}),SandubaEngine:{create(l){return state=engine.create(l)},step:engine.step},addEventListener(type,fn){listeners[type]=fn},requestAnimationFrame(fn){frame=fn},Math,JSON,console:{logs:[],info(...a){this.logs.push(a);}}};
  if(store)context.localStorage=store;
  vm.runInNewContext(fs.readFileSync(require('node:path').join(__dirname,'game.js'),'utf8'),context);
  nodes.start.onclick();
@@ -48,12 +48,17 @@ test('bedtime delays results and pauses its timer when focus is lost',()=>{
 function finish(h){const s=h.state,q=s.platforms[s.goal.platform];Object.assign(s.player,{x:s.goal.x,y:q.y-64,grounded:true,support:s.goal.platform});h.tick(540);}
 test('progress is saved per world and shown on the home cards',()=>{
  const store=storage();const h=harness({store});h.tick();h.state.stars[0].taken=true;h.state.stars[1].taken=true;h.state.bow.taken=true;finish(h);
- assert.deepEqual(JSON.parse(store.getItem('pudim-nas-nuvens')).worlds[0],{stars:2,bow:true});
+ assert.deepEqual(JSON.parse(store.getItem('sanduba-nas-nuvens')).worlds[0],{stars:2,bow:true});
  const again=harness({store});assert.equal(again.nodes['stars-0'].textContent,'★★☆☆☆ · Touquinha');assert.equal(again.nodes['stars-1'].textContent,'');
 });
 test('replaying with fewer stars never lowers the saved best',()=>{
- const store=storage({'pudim-nas-nuvens':JSON.stringify({worlds:[{stars:4,bow:true}],sound:false})});const h=harness({store});h.tick();finish(h);
- assert.deepEqual(JSON.parse(store.getItem('pudim-nas-nuvens')).worlds[0],{stars:4,bow:true});
+ const store=storage({'sanduba-nas-nuvens':JSON.stringify({worlds:[{stars:4,bow:true}],sound:false})});const h=harness({store});h.tick();finish(h);
+ assert.deepEqual(JSON.parse(store.getItem('sanduba-nas-nuvens')).worlds[0],{stars:4,bow:true});
+});
+test('progress saved before the rename is still read and migrates to the new key',()=>{
+ const store=storage({'pudim-nas-nuvens':JSON.stringify({worlds:[{stars:3,bow:true}],sound:false})});const h=harness({store});h.tick();
+ assert.equal(h.nodes['stars-0'].textContent,'★★★☆☆ · Touquinha');
+ finish(h);assert.deepEqual(JSON.parse(store.getItem('sanduba-nas-nuvens')).worlds[0],{stars:3,bow:true});
 });
 test('game runs when storage is unavailable',()=>{const h=harness({store:null});h.tick(5);assert.ok(h.state);finish(h);assert.equal(h.nodes['modal-title'].textContent,'O jardim é seu!');});
 test('home sound button turns music on, persists, and is restored on the next visit',()=>{
@@ -61,7 +66,7 @@ test('home sound button turns music on, persists, and is restored on the next vi
  assert.equal(h.nodes['sound-home'].textContent,'♫ Ligar a música');
  h.nodes['sound-home'].onclick();
  assert.equal(h.nodes['sound-home'].textContent,'♪ Desligar a música');assert.equal(h.nodes.sound.textContent,'♪');
- assert.equal(JSON.parse(store.getItem('pudim-nas-nuvens')).sound,true);
+ assert.equal(JSON.parse(store.getItem('sanduba-nas-nuvens')).sound,true);
  const again=harness({store});again.tick(3);assert.equal(again.nodes.sound.textContent,'♪');
 });
 test('a fall marks the respawn moment so the renderer can fade Sanduba back in',()=>{

@@ -24,7 +24,7 @@
 Decisões de 2026-09-12:
 
 - O HTML offline incorpora as artes em WebP e deve ficar abaixo de 4 MB. `build.py` aborta acima disso.
-- O ZIP entregue contém só `Pudim nas Nuvens.html` e `LEIA-ME.md`.
+- O ZIP entregue contém só `Sanduba nas Nuvens.html` e `LEIA-ME.md`.
 - O melhor resultado por mundo e a preferência de som ficam em `localStorage`; nunca rebaixe o melhor resultado e nunca dependa de `localStorage` existir.
 - O botão de música aparece também na tela inicial. O áudio só é criado dentro de um gesto do jogador.
 - Uma estrela por mundo sai do caminho principal. **Esta é a única exceção aprovada ao jardim**: apenas a posição da estrela da plataforma 7 mudou; plataformas, ventos, sinos e checkpoints continuam intactos.
@@ -40,10 +40,10 @@ Decisões de 2026-09-12:
 - Preserve a limpeza de teclas ao pausar/perder foco e a captura de ponteiros. Um toque rápido deve sobreviver até o próximo passo de física.
 - `renderer.js` desenha sem controlar a física. A câmera vertical acompanha as fases novas; a física usa coordenadas do mundo, que podem ter Y negativo.
 - A fase noturna usa `bridgeTimers` por grupo. Pontes apagadas não são sólidas. O sino toca ao entrar em sua área; afaste-se e retorne para reativar. Durações atuais: 7, 9 e 13 segundos. Os relógios param com a pausa.
-- `assets.js` e `Pudim nas Nuvens.html` são gerados. Nunca trate esses arquivos grandes como fonte principal de edição; evite despejar base64 no contexto.
+- `assets.js` e `Sanduba nas Nuvens.html` são gerados. Nunca trate esses arquivos grandes como fonte principal de edição; evite despejar base64 no contexto.
 - Artes fonte e prompts estão em `assets/`. O sprite usa remoção de verde em runtime; preserve o contrato do atlas ou atualize o renderer junto.
 - Depois de mudar o tamanho visível da área de jogo, redimensione o renderer. Isso inclui início/retorno ao menu, rotação e tela cheia.
-- `game.js` guarda o progresso em `saved` (`{worlds:[{stars,bow}|null,...], sound}`), com `load()`, `save()` e `cards()`. Chave de `localStorage`: `pudim-nas-nuvens`. `load`/`save` engolem exceções de propósito: o jogo tem de rodar sem `localStorage`.
+- `game.js` guarda o progresso em `saved` (`{worlds:[{stars,bow}|null,...], sound}`), com `load()`, `save()` e `cards()`. Chave de `localStorage`: `sanduba-nas-nuvens`, com leitura de reserva na chave antiga `pudim-nas-nuvens` (migração do rename; pode sair quando não houver mais saves antigos). `load`/`save` engolem exceções de propósito: o jogo tem de rodar sem `localStorage`.
 - Som: `setSound(on,{silent})` é o único caminho para ligar/desligar; ele sincroniza os dois botões (`#sound` e `#sound-home`), grava a preferência e chama `syncMusic()`. `ensureAudio()` cria/retoma o AudioContext e só deve ser chamado dentro de um gesto do usuário ou em `start()`.
 - `starIndices` aceita um número (comportamento antigo) ou `{i,dx,dy}`: a estrela fica em `platforms[i].x+w/2+dx`, `platforms[i].baseY-55+dy`. Raio de coleta 49.
 - `state.rescueAt` guarda o `clock` do resgate; o renderer usa para o fade de 0,55 s. `state.lastFall={x,y}` é gravado pelo engine antes de reposicionar Sanduba, e `game.js` o registra com `console.info('queda',…)`.
@@ -55,7 +55,7 @@ Decisões de 2026-09-12:
 2. Para mudanças de comportamento, acrescente testes relevantes e execute-os. Não reescreva o jardim sem necessidade.
 3. Execute `node --test engine.test.cjs input.test.cjs worlds.test.cjs music.test.cjs`.
 4. Para mudanças visuais ou de controles, confira no navegador em computador e largura móvel; verifique console, menus e proporção do Canvas. Rotas automáticas não comprovam a qualidade da experiência.
-5. Execute `python3 build.py`. Se for entregar o ZIP, execute `python3 build.py --zip ./Pudim-nas-Nuvens.zip`.
+5. Execute `python3 build.py`. Se for entregar o ZIP, execute `python3 build.py --zip ./Sanduba-nas-Nuvens.zip`.
 6. Teste o HTML independente final quando houver mudanças de empacotamento ou recursos.
 7. Atualize README/AGENTS quando decisões, comandos, arquivos ou limitações mudarem. Relate o resultado sem inventar validações.
 8. A pasta é um repositório git local (sem remoto). Faça um commit ao fim de cada mudança concluída, com a suíte verde.
@@ -84,12 +84,12 @@ Pendente de decisão do usuário: `assets/referencia-pelucia.png` (parece foto p
 
 ## Pose do guarda-chuva
 
-Ao planar, `renderer.js` usa `assets/pudim-guarda-chuva.png`: uma pose integrada com a patinha segurando o cabo ao lado do rosto. Não sobreponha novamente um cabo à pose de salto. O fundo verde usa a mesma remoção de cor do atlas. A imagem inteira é dimensionada pela altura do corpo (`hh / 0.59`), com ancoragem horizontal 0.43 e vertical 0.915 para manter os pés alinhados. Ao trocar esta arte, confira escala, ancoragem, recorte e espelhamento nos dois sentidos. `build.py` incorpora a imagem como `PudimAssets.flight`.
+Ao planar, `renderer.js` usa `assets/sanduba-guarda-chuva.png`: uma pose integrada com a patinha segurando o cabo ao lado do rosto. Não sobreponha novamente um cabo à pose de salto. O fundo verde usa a mesma remoção de cor do atlas. A imagem inteira é dimensionada pela altura do corpo (`hh / 0.59`), com ancoragem horizontal 0.43 e vertical 0.915 para manter os pés alinhados. Ao trocar esta arte, confira escala, ancoragem, recorte e espelhamento nos dois sentidos. `build.py` incorpora a imagem como `SandubaAssets.flight`.
 
 
 ### Continuidade de cor
 
-O atlas `assets/pudim-poses.png` é a referência de cor da pelúcia: rosa claro quente, com realces creme e sombras suaves. A pose do guarda-chuva foi harmonizada com esse atlas, preservando duas pernas separadas e a patinha no cabo. Use o atlas como referência em futuras edições para evitar mudanças de rosa entre animações.
+O atlas `assets/sanduba-poses.png` é a referência de cor da pelúcia: rosa claro quente, com realces creme e sombras suaves. A pose do guarda-chuva foi harmonizada com esse atlas, preservando duas pernas separadas e a patinha no cabo. Use o atlas como referência em futuras edições para evitar mudanças de rosa entre animações.
 
 
 ## Trilhas musicais
@@ -99,19 +99,19 @@ O atlas `assets/pudim-poses.png` é a referência de cor da pelúcia: rosa claro
 
 ## Descanso ao concluir cada fase
 
-A vitória inicia o modo `ending` por 4,2 segundos antes do resultado. `state.endingTime` avança apenas nesse modo; pausa, perda de foco e ajuda congelam a sequência. A física já concluída permanece intacta. O renderer aproxima Sanduba, faz a transição para `assets/pudim-dormindo.png`, desenha a coberta em primeiro plano e anima respiração e pequenos zês. O recorte da nova arte é calculado pelo alfa após remover o verde. A música acompanha o descanso e para no resultado. Repetir ou avançar cria um estado novo sem endingTime.
+A vitória inicia o modo `ending` por 4,2 segundos antes do resultado. `state.endingTime` avança apenas nesse modo; pausa, perda de foco e ajuda congelam a sequência. A física já concluída permanece intacta. O renderer aproxima Sanduba, faz a transição para `assets/sanduba-dormindo.png`, desenha a coberta em primeiro plano e anima respiração e pequenos zês. O recorte da nova arte é calculado pelo alfa após remover o verde. A música acompanha o descanso e para no resultado. Repetir ou avançar cria um estado novo sem endingTime.
 
 
 ## Favicon
 
-`favicon.ico` na raiz deriva de `assets/pudim.ico`. O index.html o referencia e build.py incorpora seu conteúdo no HTML offline. Ao substituir o ícone, manter ambas as cópias sincronizadas e regenerar o HTML.
+`favicon.ico` na raiz deriva de `assets/sanduba.ico`. O index.html o referencia e build.py incorpora seu conteúdo no HTML offline. Ao substituir o ícone, manter ambas as cópias sincronizadas e regenerar o HTML.
 
 
 ## Touquinha (decisão mais recente)
 
-Substitui visualmente o lacinho por touquinha lilás, com estrela e pompom. `assets/touquinha.svg` é a fonte única para item, acessório e HUD; `build.py` a incorpora como `PudimAssets.cap` e também no img do HUD offline. A função nightcap ancora a barra na cabeça; em voo a copa do guarda-chuva cobre a ponta da touca. A pose dormindo tem ancoragem e inclinação próprias. Manter o acessório condicionado à coleta da fase atual. Os nomes internos bow, hasBow e bow-status permanecem por compatibilidade, inclusive no localStorage: NÃO apagar conquistas antigas nem vestir a touca apenas por haver conquista salva. Interfaces e mensagens usam touquinha. Os dois problemas da revisão anterior (validação de progresso e trecho do log de queda) não foram alterados nesta tarefa.
+Substitui visualmente o lacinho por touquinha lilás, com estrela e pompom. `assets/touquinha.svg` é a fonte única para item, acessório e HUD; `build.py` a incorpora como `SandubaAssets.cap` e também no img do HUD offline. A função nightcap ancora a barra na cabeça; em voo a copa do guarda-chuva cobre a ponta da touca. A pose dormindo tem ancoragem e inclinação próprias. Manter o acessório condicionado à coleta da fase atual. Os nomes internos bow, hasBow e bow-status permanecem por compatibilidade, inclusive no localStorage: NÃO apagar conquistas antigas nem vestir a touca apenas por haver conquista salva. Interfaces e mensagens usam touquinha. Os dois problemas da revisão anterior (validação de progresso e trecho do log de queda) não foram alterados nesta tarefa.
 
 
 ## Nome do personagem
 
-O nome aprovado agora é **Sanduba**, e o título visível é **Sanduba nas Nuvens**. Os nomes técnicos legados (arquivo Pudim nas Nuvens.html, imagens, identificadores JS e chave do localStorage) permanecem para preservar links, recursos e progresso. Não usar Pudim em textos apresentados ao jogador.
+O nome aprovado agora é **Sanduba**, e o título visível é **Sanduba nas Nuvens**. Os nomes técnicos legados (arquivo Sanduba nas Nuvens.html, imagens, identificadores JS e chave do localStorage) permanecem para preservar links, recursos e progresso. Não usar Sanduba em textos apresentados ao jogador.
