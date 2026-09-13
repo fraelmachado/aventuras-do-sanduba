@@ -87,7 +87,7 @@
   }
   function pause() {
     if(mode!=='playing'&&mode!=='ending')return;pausedMode=mode;mode='paused';
-    modal('Pausa para um abraço','Pudim continua daqui quando você voltar.','Continuar a aventura',resume);
+    modal('Pausa para um abraço','Sanduba continua daqui quando você voltar.','Continuar a aventura',resume);
   }
   function resume() {
     mode=pausedMode;$('modal').hidden=true;$('help').disabled=false;clearKeys();$('pause').focus({preventScroll:true});
@@ -98,8 +98,8 @@
     const best=saved.worlds[state.level]||{stars:0,bow:false};
     saved.worlds[state.level]={stars:Math.max(best.stars,n),bow:best.bow||state.bow.taken};save();cards();
     const end=state.level===2;
-    modal(end?'Bons sonhos, Pudim!':state.level===0?'O jardim é seu!':'Que salto bonito!',
-      end?`Você levou Pudim até a caminha!\n${results.reduce((a,r)=>a+(r?.stars||0),0)} estrelas encontradas nesta aventura.\nUma amizade cheia de histórias. ♡`:
+    modal(end?'Bons sonhos, Sanduba!':state.level===0?'O jardim é seu!':'Que salto bonito!',
+      end?`Você levou Sanduba até a caminha!\n${results.reduce((a,r)=>a+(r?.stars||0),0)} estrelas encontradas nesta aventura.\nUma amizade cheia de histórias. ♡`:
       `${n} de 5 estrelas · ${state.bow.taken?'touquinha encontrada!':'a touquinha ainda espera por você.'}\n${state.level===0?'Você atravessou a clareira, o lago e as nuvens!':'Você aprendeu a voar com o vento!'}\n${n===5&&state.bow.taken?'Todas as descobertas desta fase são suas.':'Você pode voltar para descobrir outros caminhos.'}`,
       end?'Começar outra aventura':(state.level===0?'Voar pelas nuvens →':'Acender as estrelas →'),()=>{if(end)results=[];start(end?0:state.level+1);},end?'☾':'✦',end?'UM FINAL CHEIO DE ACONCHEGO':'AVENTURA CONCLUÍDA');
   }
@@ -120,7 +120,7 @@
         const p=state.player,amount=event==='land'?5:14;
         for(let i=0;i<amount;i++)particles.push({x:p.x+p.w/2,y:p.y+(event==='land'?p.h:20),vx:Math.cos(i*2.4)*60,vy:Math.sin(i*2.4)*60-20,life:event==='land'?.4:1,color:event==='bow'?'#c4a9e0':event==='land'?'#e3e0b8':'#f4d391'});
       }
-      if(event==='win'){state.endingTime=0;mode='ending';clearKeys();notify('Hora de um descanso, Pudim…',4);}
+      if(event==='win'){state.endingTime=0;mode='ending';clearKeys();notify('Hora de um descanso, Sanduba…',4);}
     }
   }
   $('start').onclick=()=>{results=[];start();};

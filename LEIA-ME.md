@@ -1,4 +1,4 @@
-# Pudim nas Nuvens — três aventuras
+# Sanduba nas Nuvens — três aventuras
 
 Abra **Pudim nas Nuvens.html** no navegador. Tudo está incorporado: funciona offline e sem instalar dependências. Também é possível abrir `index.html`, mantendo os outros arquivos na mesma pasta.
 
@@ -25,7 +25,7 @@ Na tela inicial há também o botão **♫ Ligar a música**, ao lado de "Entrar
 
 **Céu Estrelado:** cenário noturno próprio, ilhas lunares, três sininhos e pontes de constelações que aparecem por tempo limitado. O último trecho combina vento e guarda-chuva. A chegada à caminha tem uma chuva de estrelas.
 
-Cada mundo tem três trechos, cinco estrelas e uma touquinha opcional. As bandeirinhas marcam o ponto de retorno após uma queda — Pudim reaparece devagarinho, com uma nuvenzinha. Tentativas ilimitadas.
+Cada mundo tem três trechos, cinco estrelas e uma touquinha opcional. As bandeirinhas marcam o ponto de retorno após uma queda — Sanduba reaparece devagarinho, com uma nuvenzinha. Tentativas ilimitadas.
 
 Quatro estrelas ficam no caminho. **A quinta é escondida e pede vontade de explorar:** no jardim, ela flutua alto e só o pulo segurado alcança; nas nuvens e na noite, ela fica no alto de uma corrente de ar, e é preciso abrir o guarda-chuva e deixar o vento levar.
 
@@ -47,4 +47,4 @@ As artes foram criadas pela ferramenta imagegen integrada. O personagem usa a pe
 
 ## Touquinha de dormir
 
-A touquinha lilás com estrela e pompom substitui o lacinho como item opcional. Ao coletá-la, Pudim a usa ao andar, pular, planar e dormir naquela fase. O melhor resultado continua salvo, mas ele só veste a touquinha após encontrá-la na partida atual. A arte vetorial está em `assets/touquinha.svg` e é incorporada ao HTML offline. Conquistas antigas do lacinho passam a aparecer como touquinhas.
+A touquinha lilás com estrela e pompom substitui o lacinho como item opcional. Ao coletá-la, Sanduba a usa ao andar, pular, planar e dormir naquela fase. O melhor resultado continua salvo, mas ele só veste a touquinha após encontrá-la na partida atual. A arte vetorial está em `assets/touquinha.svg` e é incorporada ao HTML offline. Conquistas antigas do lacinho passam a aparecer como touquinhas.

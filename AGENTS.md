@@ -1,15 +1,15 @@
-# Contexto para agentes — Pudim nas Nuvens
+# Contexto para agentes — Sanduba nas Nuvens
 
 ## Comece aqui
 
 - A raiz oficial é `/Users/fraelmachado/Projects/pudim-nas-nuvens`. Trabalhe nesta pasta, não nas antigas cópias em Documents/Codex.
 - Leia `README.md`, este arquivo e o código relevante antes de alterar algo. Verifique alterações locais e eventuais instruções adicionais.
 - Converse em português brasileiro. O usuário prefere execução direta dentro do escopo autorizado, sem pedidos repetidos de confirmação.
-- O jogo foi criado para a filha de 10 anos do usuário e usa o porquinho de pelúcia **Pudim** como protagonista.
+- O jogo foi criado para a filha de 10 anos do usuário e usa o porquinho de pelúcia **Sanduba** como protagonista.
 
 ## Decisões aprovadas
 
-- Não desenhar sombra oval abaixo do Pudim; removida a pedido do usuário por não combinar com o contexto do jogo.
+- Não desenhar sombra oval abaixo do Sanduba; removida a pedido do usuário por não combinar com o contexto do jogo.
 
 - HTML5, CSS e JavaScript puros; Canvas e Web Audio. Sem framework, bibliotecas externas ou dependência de rede para jogar.
 - Direção visual: livro infantil ilustrado, com personagem fofinho e próximo da pelúcia. Não substituir as artes por figuras geométricas simplificadas.
@@ -46,7 +46,7 @@ Decisões de 2026-09-12:
 - `game.js` guarda o progresso em `saved` (`{worlds:[{stars,bow}|null,...], sound}`), com `load()`, `save()` e `cards()`. Chave de `localStorage`: `pudim-nas-nuvens`. `load`/`save` engolem exceções de propósito: o jogo tem de rodar sem `localStorage`.
 - Som: `setSound(on,{silent})` é o único caminho para ligar/desligar; ele sincroniza os dois botões (`#sound` e `#sound-home`), grava a preferência e chama `syncMusic()`. `ensureAudio()` cria/retoma o AudioContext e só deve ser chamado dentro de um gesto do usuário ou em `start()`.
 - `starIndices` aceita um número (comportamento antigo) ou `{i,dx,dy}`: a estrela fica em `platforms[i].x+w/2+dx`, `platforms[i].baseY-55+dy`. Raio de coleta 49.
-- `state.rescueAt` guarda o `clock` do resgate; o renderer usa para o fade de 0,55 s. `state.lastFall={x,y}` é gravado pelo engine antes de reposicionar Pudim, e `game.js` o registra com `console.info('queda',…)`.
+- `state.rescueAt` guarda o `clock` do resgate; o renderer usa para o fade de 0,55 s. `state.lastFall={x,y}` é gravado pelo engine antes de reposicionar Sanduba, e `game.js` o registra com `console.info('queda',…)`.
 - `build.py` exige `cwebp`. Qualidade 82 para cenários, 96 + `-sharp_yuv` para os sprites de fundo verde; `'lossless'` é a saída de emergência se aparecer franja. A conferência feita comparou a máscara alfa PNG × WebP: menos de 0,02% dos pixels ganham franja e menos de 0,08% perdem opacidade, tudo na borda anti-serrilhada.
 
 ## Fluxo para continuar
@@ -99,7 +99,7 @@ O atlas `assets/pudim-poses.png` é a referência de cor da pelúcia: rosa claro
 
 ## Descanso ao concluir cada fase
 
-A vitória inicia o modo `ending` por 4,2 segundos antes do resultado. `state.endingTime` avança apenas nesse modo; pausa, perda de foco e ajuda congelam a sequência. A física já concluída permanece intacta. O renderer aproxima Pudim, faz a transição para `assets/pudim-dormindo.png`, desenha a coberta em primeiro plano e anima respiração e pequenos zês. O recorte da nova arte é calculado pelo alfa após remover o verde. A música acompanha o descanso e para no resultado. Repetir ou avançar cria um estado novo sem endingTime.
+A vitória inicia o modo `ending` por 4,2 segundos antes do resultado. `state.endingTime` avança apenas nesse modo; pausa, perda de foco e ajuda congelam a sequência. A física já concluída permanece intacta. O renderer aproxima Sanduba, faz a transição para `assets/pudim-dormindo.png`, desenha a coberta em primeiro plano e anima respiração e pequenos zês. O recorte da nova arte é calculado pelo alfa após remover o verde. A música acompanha o descanso e para no resultado. Repetir ou avançar cria um estado novo sem endingTime.
 
 
 ## Favicon
@@ -110,3 +110,8 @@ A vitória inicia o modo `ending` por 4,2 segundos antes do resultado. `state.en
 ## Touquinha (decisão mais recente)
 
 Substitui visualmente o lacinho por touquinha lilás, com estrela e pompom. `assets/touquinha.svg` é a fonte única para item, acessório e HUD; `build.py` a incorpora como `PudimAssets.cap` e também no img do HUD offline. A função nightcap ancora a barra na cabeça; em voo a copa do guarda-chuva cobre a ponta da touca. A pose dormindo tem ancoragem e inclinação próprias. Manter o acessório condicionado à coleta da fase atual. Os nomes internos bow, hasBow e bow-status permanecem por compatibilidade, inclusive no localStorage: NÃO apagar conquistas antigas nem vestir a touca apenas por haver conquista salva. Interfaces e mensagens usam touquinha. Os dois problemas da revisão anterior (validação de progresso e trecho do log de queda) não foram alterados nesta tarefa.
+
+
+## Nome do personagem
+
+O nome aprovado agora é **Sanduba**, e o título visível é **Sanduba nas Nuvens**. Os nomes técnicos legados (pasta pudim-nas-nuvens, arquivo Pudim nas Nuvens.html, imagens, identificadores JS e chave do localStorage) permanecem para preservar links, recursos e progresso. Não usar Pudim em textos apresentados ao jogador.

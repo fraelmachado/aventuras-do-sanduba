@@ -37,7 +37,7 @@ test('victory opens result, replay resets current level and next advances',()=>{
  const h=harness();h.tick();const s=h.state,q=s.platforms[s.goal.platform];Object.assign(s.player,{x:s.goal.x,y:q.y-64,grounded:true,support:s.goal.platform});h.tick(540);assert.equal(h.nodes['modal-title'].textContent,'O jardim é seu!');h.nodes.replay.onclick();assert.equal(h.state.level,0);assert.equal(h.state.complete,false);
  Object.assign(h.state.player,{x:h.state.goal.x,y:q.y-64,grounded:true,support:h.state.goal.platform});h.tick(540);h.nodes.continue.onclick();assert.equal(h.state.level,1);
 });
-test('world cards open new adventures directly and show their control tips',()=>{const h=harness();h.nodes['world-sky'].onclick();assert.equal(h.state.level,1);assert.ok(h.nodes['touch-tip'].innerHTML.includes('PLANAR'));h.nodes['world-night'].onclick();assert.equal(h.state.level,2);const q=h.state.platforms[h.state.goal.platform];Object.assign(h.state.player,{x:h.state.goal.x,y:q.y-64,grounded:true,support:h.state.goal.platform});h.tick(540);assert.equal(h.nodes['modal-title'].textContent,'Bons sonhos, Pudim!');assert.ok(!h.nodes['modal-copy'].textContent.includes('NaN'));});
+test('world cards open new adventures directly and show their control tips',()=>{const h=harness();h.nodes['world-sky'].onclick();assert.equal(h.state.level,1);assert.ok(h.nodes['touch-tip'].innerHTML.includes('PLANAR'));h.nodes['world-night'].onclick();assert.equal(h.state.level,2);const q=h.state.platforms[h.state.goal.platform];Object.assign(h.state.player,{x:h.state.goal.x,y:q.y-64,grounded:true,support:h.state.goal.platform});h.tick(540);assert.equal(h.nodes['modal-title'].textContent,'Bons sonhos, Sanduba!');assert.ok(!h.nodes['modal-copy'].textContent.includes('NaN'));});
 
 test('bedtime delays results and pauses its timer when focus is lost',()=>{
  const h=harness();h.tick();const s=h.state,q=s.platforms[s.goal.platform];Object.assign(s.player,{x:s.goal.x,y:q.y-64,grounded:true,support:s.goal.platform});h.tick(2);
@@ -64,7 +64,7 @@ test('home sound button turns music on, persists, and is restored on the next vi
  assert.equal(JSON.parse(store.getItem('pudim-nas-nuvens')).sound,true);
  const again=harness({store});again.tick(3);assert.equal(again.nodes.sound.textContent,'♪');
 });
-test('a fall marks the respawn moment so the renderer can fade Pudim back in',()=>{
+test('a fall marks the respawn moment so the renderer can fade Sanduba back in',()=>{
  const h=harness();h.tick();assert.equal(h.state.rescueAt,undefined);h.state.player.y=950;h.tick(2);
  assert.equal(h.state.rescues,1);assert.equal(typeof h.state.rescueAt,'number');
 });

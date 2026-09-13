@@ -1,6 +1,6 @@
-# Pudim nas Nuvens
+# Sanduba nas Nuvens
 
-Jogo de plataforma para uma criança de 10 anos, inspirado em seu porquinho de pelúcia, chamado **Pudim**. Desenvolvido em HTML5, CSS e JavaScript puros, sem framework, bibliotecas externas ou serviços de rede.
+Jogo de plataforma para uma criança de 10 anos, inspirado em seu porquinho de pelúcia, chamado **Sanduba**. Desenvolvido em HTML5, CSS e JavaScript puros, sem framework, bibliotecas externas ou serviços de rede.
 
 ## Pasta oficial
 
@@ -51,11 +51,11 @@ O melhor resultado de cada mundo (número de estrelas e se a touquinha foi encon
 
 O botão "♫ Ligar a música" aparece também na tela inicial, ao lado de "Entrar no jardim", para que a música seja descoberta sem procurar no HUD. O áudio só é criado dentro de um gesto do jogador.
 
-Ao voltar para a bandeirinha depois de uma queda, Pudim reaparece com um fade de 0,55 s e uma nuvenzinha de partículas claras. A física não muda. Cada queda também é registrada como `console.info('queda', {mundo, trecho, x})`, para a sessão de observação descrita em `docs/sessao-de-teste.md`.
+Ao voltar para a bandeirinha depois de uma queda, Sanduba reaparece com um fade de 0,55 s e uma nuvenzinha de partículas claras. A física não muda. Cada queda também é registrada como `console.info('queda', {mundo, trecho, x})`, para a sessão de observação descrita em `docs/sessao-de-teste.md`.
 
-A touquinha marca apenas a conquista da fase em que está sendo jogada, como sempre foi. Uma variação em que Pudim vestia todos os lacinhos já conquistados, com uma cor por mundo, foi implementada e revertida a pedido do usuário; não reintroduza sem novo pedido.
+A touquinha marca apenas a conquista da fase em que está sendo jogada, como sempre foi. Uma variação em que Sanduba vestia todos os lacinhos já conquistados, com uma cor por mundo, foi implementada e revertida a pedido do usuário; não reintroduza sem novo pedido.
 
-A primeira versão tinha gráficos geométricos e fases repetitivas. Após feedback, o jardim recebeu um redesenho completo; depois as outras duas fases ganharam cenários e mecânicas próprias. A direção aprovada é um livro infantil ilustrado, com Pudim parecendo uma pelúcia viva e desafios gentis, porém reais.
+A primeira versão tinha gráficos geométricos e fases repetitivas. Após feedback, o jardim recebeu um redesenho completo; depois as outras duas fases ganharam cenários e mecânicas próprias. A direção aprovada é um livro infantil ilustrado, com Sanduba parecendo uma pelúcia viva e desafios gentis, porém reais.
 
 ## Estrutura
 
@@ -124,21 +124,21 @@ O atlas `assets/pudim-poses.png` é a referência de cor da pelúcia: rosa claro
 
 ## Música de fundo
 
-Três composições originais sintetizadas em `music.js`, sem downloads nem dependências: **Passeio entre flores** (jardim, 80 BPM), **Valsa de algodão** (nuvens, 66 BPM) e **Boa noite, Pudim** (estrelas, 54 BPM). Melodias suaves com acompanhamento de acordes, em ciclos de 32 tempos. O botão ♫ ativa música e efeitos. Pausa, ajuda, resultado e saída da partida silenciam a trilha; retomar continua a sequência e trocar de mundo seleciona outra composição. O som começa desligado e requer um toque no botão do jogador.
+Três composições originais sintetizadas em `music.js`, sem downloads nem dependências: **Passeio entre flores** (jardim, 80 BPM), **Valsa de algodão** (nuvens, 66 BPM) e **Boa noite, Sanduba** (estrelas, 54 BPM). Melodias suaves com acompanhamento de acordes, em ciclos de 32 tempos. O botão ♫ ativa música e efeitos. Pausa, ajuda, resultado e saída da partida silenciam a trilha; retomar continua a sequência e trocar de mundo seleciona outra composição. O som começa desligado e requer um toque no botão do jogador.
 
 `music.test.cjs` verifica composições distintas, agendamento sem duplicação, interrupção e troca de mundo. A qualidade musical pode ser refinada com feedback de escuta.
 
 
 ## Descanso ao concluir cada fase
 
-A vitória inicia o modo `ending` por 4,2 segundos antes do resultado. `state.endingTime` avança apenas nesse modo; pausa, perda de foco e ajuda congelam a sequência. A física já concluída permanece intacta. O renderer aproxima Pudim, faz a transição para `assets/pudim-dormindo.png`, desenha a coberta em primeiro plano e anima respiração e pequenos zês. O recorte da nova arte é calculado pelo alfa após remover o verde. A música acompanha o descanso e para no resultado. Repetir ou avançar cria um estado novo sem endingTime.
+A vitória inicia o modo `ending` por 4,2 segundos antes do resultado. `state.endingTime` avança apenas nesse modo; pausa, perda de foco e ajuda congelam a sequência. A física já concluída permanece intacta. O renderer aproxima Sanduba, faz a transição para `assets/pudim-dormindo.png`, desenha a coberta em primeiro plano e anima respiração e pequenos zês. O recorte da nova arte é calculado pelo alfa após remover o verde. A música acompanha o descanso e para no resultado. Repetir ou avançar cria um estado novo sem endingTime.
 
 
-## Ícone do Pudim
+## Ícone do Sanduba
 
 `assets/pudim.ico` contém a carinha com transparência em 16, 24, 32, 48, 64, 128 e 256 pixels, para uso em atalhos e como favicon. `assets/pudim-icon.png` é a versão PNG de 256 pixels. Arte criada com imagegen integrado a partir do atlas aprovado; `favicon.ico` na raiz é usado pelo `index.html` e incorporado como data URL no HTML offline por `build.py`.
 
 
 ## Touquinha de dormir
 
-A touquinha lilás com estrela e pompom substitui o lacinho como item opcional. Ao coletá-la, Pudim a usa ao andar, pular, planar e dormir naquela fase. O melhor resultado continua salvo, mas ele só veste a touquinha após encontrá-la na partida atual. A arte vetorial está em `assets/touquinha.svg` e é incorporada ao HTML offline. Conquistas antigas do lacinho passam a aparecer como touquinhas.
+A touquinha lilás com estrela e pompom substitui o lacinho como item opcional. Ao coletá-la, Sanduba a usa ao andar, pular, planar e dormir naquela fase. O melhor resultado continua salvo, mas ele só veste a touquinha após encontrá-la na partida atual. A arte vetorial está em `assets/touquinha.svg` e é incorporada ao HTML offline. Conquistas antigas do lacinho passam a aparecer como touquinhas.

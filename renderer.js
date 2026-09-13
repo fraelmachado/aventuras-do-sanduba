@@ -240,7 +240,7 @@ window.PudimRenderer = function(canvas) {
     }
     const p=state.player;
     if(state.endingTime!==undefined)bedtime(state,t);else {
-    // Fade back in after a rescue; physics already moved Pudim to the flag.
+    // Fade back in after a rescue; physics already moved Sanduba to the flag.
     c.globalAlpha=state.rescueAt===undefined?1:Math.min(1,(t-state.rescueAt)/.55);
     pig(p.x+p.w/2-camera,p.y+p.h,87,t,{walking:Math.abs(p.vx)>30&&p.grounded,air:!p.grounded,face:p.face,hasBow:state.bow.taken,land:p.landTimer||0,gliding:p.gliding});
     c.globalAlpha=1;
@@ -248,7 +248,7 @@ window.PudimRenderer = function(canvas) {
     for(const a of particles){c.globalAlpha=Math.max(0,a.life);star(a.x-camera,a.y,a.life*5,a.color,a.life*2);}c.globalAlpha=1;c.restore();
     if(state.complete&&state.level===2){
       for(let k=0;k<28;k++){const x=(k*97+t*8)%width,y=(k*61+t*24)%height;star(x,y,3+k%4,k%2?'#ffe1a0':'#dfb3db',t*.2);}
-      c.font='italic 26px Georgia';c.textAlign='center';c.fillStyle='#fff1c8';c.fillText('Bons sonhos, Pudim…',width/2,120);
+      c.font='italic 26px Georgia';c.textAlign='center';c.fillStyle='#fff1c8';c.fillText('Bons sonhos, Sanduba…',width/2,120);
     }
   }
 
