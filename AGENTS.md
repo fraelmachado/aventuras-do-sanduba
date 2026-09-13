@@ -58,7 +58,7 @@ Decisões de 2026-09-12:
 5. Execute `python3 build.py`. Se for entregar o ZIP, execute `python3 build.py --zip ./Sanduba-nas-Nuvens.zip`.
 6. Teste o HTML independente final quando houver mudanças de empacotamento ou recursos.
 7. Atualize README/AGENTS quando decisões, comandos, arquivos ou limitações mudarem. Relate o resultado sem inventar validações.
-8. A pasta é um repositório git local (sem remoto). Faça um commit ao fim de cada mudança concluída, com a suíte verde.
+8. A pasta é um repositório git com remoto em `https://github.com/fraelmachado/sanduba-nas-nuvens.git` (`origin/main`). Faça um commit ao fim de cada mudança concluída, com a suíte verde. Só faça push quando pedirem.
 
 Cuidado ao conferir no navegador: o Chrome serve `engine.js`, `game.js` e companhia do cache. Recarregue ignorando o cache, senão você confere a versão antiga e conclui errado.
 
