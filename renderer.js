@@ -3,7 +3,7 @@ window.SandubaRenderer = function(canvas) {
   'use strict';
   const c = canvas.getContext('2d');
   let width = 1100, height = 650, camera = 0, cameraY = 0, sprite = null, flight = null, sleeping = null, sleepBounds = null;
-  const garden = new Image(), sky = new Image(), night = new Image(), source = new Image(), flightSource = new Image(), sleepSource = new Image(), capSource = new Image();
+  const garden = new Image(), sky = new Image(), night = new Image(), yard = new Image(), source = new Image(), flightSource = new Image(), sleepSource = new Image(), capSource = new Image();
   function keyImage(image) {
         // Runtime color key for the intentionally green game sprite atlas.
         const atlas = document.createElement('canvas');
@@ -28,7 +28,7 @@ window.SandubaRenderer = function(canvas) {
       sleepBounds=[l,top,r-l+1,b-top+1];resolve();
     };sleepSource.onerror=resolve;sleepSource.src=SandubaAssets.sleep;}),
     new Promise(resolve=>{flightSource.onload=()=>{flight=keyImage(flightSource);resolve();};flightSource.onerror=resolve;flightSource.src=SandubaAssets.flight;}),
-    ...[[sky,SandubaAssets.sky],[night,SandubaAssets.night]].map(([im,src])=>new Promise(resolve=>{im.onload=resolve;im.onerror=resolve;im.src=src;})),
+    ...[[sky,SandubaAssets.sky],[night,SandubaAssets.night],...(SandubaAssets.yard?[[yard,SandubaAssets.yard]]:[])].map(([im,src])=>new Promise(resolve=>{im.onload=resolve;im.onerror=resolve;im.src=src;})),
     new Promise(resolve => { garden.onload = resolve; garden.onerror = resolve; garden.src = SandubaAssets.garden; }),
     new Promise(resolve => {
       source.onload = () => {
@@ -90,16 +90,16 @@ window.SandubaRenderer = function(canvas) {
     ellipse(x,y-22*size,2.7*size,2.7*size,'#eebf55');
   }
   function background(level,t,home) {
-    const picture=level===1?sky:level===2?night:garden;
+    const picture=level===1?sky:level===2?night:level===3&&yard.naturalWidth?yard:garden;
     if(picture.complete&&picture.naturalWidth) {
       const dw=Math.max(width+180,height*1.5),dh=dw/1.5;
       const drift=home?Math.sin(t*.05)*8:Math.sin(camera/2100)*65;
-      c.drawImage(picture,(width-dw)/2-drift,(height-dh)*.35,dw,dh);
+      c.drawImage(picture,(width-dw)/2-drift,(height-dh)*.35-cameraY*.14,dw,dh);
     } else {c.fillStyle='#d8e7c6';c.fillRect(0,0,width,height);}
 
     if(!home) {
       // Calm the distant painting so real platforms remain easy to identify.
-      const mist=c.createLinearGradient(0,80,0,650);mist.addColorStop(0,'#f4f6db10');mist.addColorStop(.5,level===2?'#13194618':level===1?'#ebf3ff28':'#f3f6d352');mist.addColorStop(1,'#1e6b670a');c.fillStyle=mist;c.fillRect(0,0,width,height);
+      const mist=c.createLinearGradient(0,80,0,650);mist.addColorStop(0,'#f4f6db10');mist.addColorStop(.5,level===2?'#13194618':level===1?'#ebf3ff28':level===3?'#fdf0d44a':'#f3f6d352');mist.addColorStop(1,'#1e6b670a');c.fillStyle=mist;c.fillRect(0,0,width,height);
     }
     for(let i=0;i<32;i++) {
       const x=((i*137-camera*.15+t*(4+i%3))%(width+60)+width+60)%(width+60)-30;

@@ -40,6 +40,7 @@ body[data-world="2"] .level-label strong{color:#786095}body[data-world="3"] .lev
  <button id="world-garden"><span class="world-num">01</span><span><strong>Jardim dos Pulos</strong><small>Saltos, folhas e descobertas</small><em class="world-stars" id="stars-0"></em></span><span class="world-art">✿</span></button>
  <button id="world-sky"><span class="world-num">02</span><span><strong>Nuvens de Algodão</strong><small>Abra as asas do guarda-chuva</small><em class="world-stars" id="stars-1"></em></span><span class="world-art">☂</span></button>
  <button id="world-night"><span class="world-num">03</span><span><strong>Céu Estrelado</strong><small>Acenda o caminho de casa</small><em class="world-stars" id="stars-2"></em></span><span class="world-art">☾</span></button>
+ <button id="world-tree"><span class="world-num">04</span><span><strong>Quintal das Molas</strong><small>Suba saltando até a casa da árvore</small><em class="world-stars" id="stars-3"></em></span><span class="world-art">🍄</span></button>
  </div>
  <footer>Um mundo pequenininho, uma amizade gigante. <span>♡</span></footer>
 </main>
@@ -52,7 +53,7 @@ window.SandubaRenderer = function(canvas) {
   'use strict';
   const c = canvas.getContext('2d');
   let width = 1100, height = 650, camera = 0, cameraY = 0, sprite = null, flight = null, sleeping = null, sleepBounds = null;
-  const garden = new Image(), sky = new Image(), night = new Image(), source = new Image(), flightSource = new Image(), sleepSource = new Image(), capSource = new Image();
+  const garden = new Image(), sky = new Image(), night = new Image(), yard = new Image(), source = new Image(), flightSource = new Image(), sleepSource = new Image(), capSource = new Image();
   function keyImage(image) {
         // Runtime color key for the intentionally green game sprite atlas.
         const atlas = document.createElement('canvas');
@@ -77,7 +78,7 @@ window.SandubaRenderer = function(canvas) {
       sleepBounds=[l,top,r-l+1,b-top+1];resolve();
     };sleepSource.onerror=resolve;sleepSource.src=SandubaAssets.sleep;}),
     new Promise(resolve=>{flightSource.onload=()=>{flight=keyImage(flightSource);resolve();};flightSource.onerror=resolve;flightSource.src=SandubaAssets.flight;}),
-    ...[[sky,SandubaAssets.sky],[night,SandubaAssets.night]].map(([im,src])=>new Promise(resolve=>{im.onload=resolve;im.onerror=resolve;im.src=src;})),
+    ...[[sky,SandubaAssets.sky],[night,SandubaAssets.night],...(SandubaAssets.yard?[[yard,SandubaAssets.yard]]:[])].map(([im,src])=>new Promise(resolve=>{im.onload=resolve;im.onerror=resolve;im.src=src;})),
     new Promise(resolve => { garden.onload = resolve; garden.onerror = resolve; garden.src = SandubaAssets.garden; }),
     new Promise(resolve => {
       source.onload = () => {
@@ -139,16 +140,16 @@ window.SandubaRenderer = function(canvas) {
     ellipse(x,y-22*size,2.7*size,2.7*size,'#eebf55');
   }
   function background(level,t,home) {
-    const picture=level===1?sky:level===2?night:garden;
+    const picture=level===1?sky:level===2?night:level===3&&yard.naturalWidth?yard:garden;
     if(picture.complete&&picture.naturalWidth) {
       const dw=Math.max(width+180,height*1.5),dh=dw/1.5;
       const drift=home?Math.sin(t*.05)*8:Math.sin(camera/2100)*65;
-      c.drawImage(picture,(width-dw)/2-drift,(height-dh)*.35,dw,dh);
+      c.drawImage(picture,(width-dw)/2-drift,(height-dh)*.35-cameraY*.14,dw,dh);
     } else {c.fillStyle='#d8e7c6';c.fillRect(0,0,width,height);}
 
     if(!home) {
       // Calm the distant painting so real platforms remain easy to identify.
-      const mist=c.createLinearGradient(0,80,0,650);mist.addColorStop(0,'#f4f6db10');mist.addColorStop(.5,level===2?'#13194618':level===1?'#ebf3ff28':'#f3f6d352');mist.addColorStop(1,'#1e6b670a');c.fillStyle=mist;c.fillRect(0,0,width,height);
+      const mist=c.createLinearGradient(0,80,0,650);mist.addColorStop(0,'#f4f6db10');mist.addColorStop(.5,level===2?'#13194618':level===1?'#ebf3ff28':level===3?'#fdf0d44a':'#f3f6d352');mist.addColorStop(1,'#1e6b670a');c.fillStyle=mist;c.fillRect(0,0,width,height);
     }
     for(let i=0;i<32;i++) {
       const x=((i*137-camera*.15+t*(4+i%3))%(width+60)+width+60)%(width+60)-30;
@@ -341,6 +342,18 @@ function build(level,P){
   platforms.push(P(4600,-330,140,{kind:'cloud',optional:true}));
   bow={x:4670,y:-385,taken:false};width=5850;goalIndex=14;starIndices=[1,3,{i:6,dx:-185,dy:-125},10,13];
   sections=[{x:0,name:'O primeiro voo',hint:'No ar, segure Pular para abrir o guarda-chuva. Solte para descer!'},{x:1590,name:'Os moinhos do vento',hint:'Abra o guarda-chuva nas correntes de ar para subir.'},{x:3570,name:'Ilhas do pôr do sol',hint:'Escolha quando planar e quando pousar. A touquinha está bem alta!'}];
+ }else if(level===3){
+  // Primeira fase vertical: 2795px de subida. O cogumelo (spring) só dispara no centro da
+  // plataforma, então o salto longo parte do meio dela — e não da borda, como um pulo normal.
+  // As três seções avançam em colunas da esquerda para a direita porque `activeSection` é medido por x.
+  const coords=[[0,530,420],[500,455,170],[200,365,180],[470,200,160],[200,115,180],[480,-50,160],[210,-135,180],[450,-300,200],
+                [760,-390,160],[1010,-480,170],[760,-645,160],[1000,-735,170],[750,-900,160],[1000,-990,170],[1250,-1155,220],
+                [1560,-1245,170],[1310,-1335,170],[1580,-1500,160],[1320,-1590,170],[1560,-1755,200],[1310,-1845,170],[1580,-2010,160],[1330,-2100,170],[1520,-2265,260]];
+  const springs=[2,4,6,9,11,13,16,18,20,22],leaves=[3,5,8,10,12,15,17,21],checks=[0,7,14,19,23],moving={8:{ax:40,ay:0},12:{ax:38,ay:0},15:{ax:0,ay:26}};
+  platforms=coords.map(([x,y,w],i)=>P(x,y,w,{kind:leaves.includes(i)?'leaf':'island',spring:springs.includes(i),checkpoint:checks.includes(i),moving:!!moving[i],ax:moving[i]?.ax||0,ay:moving[i]?.ay||0,phase:i*0.4,speed:0.9}));
+  platforms.push(P(1060,-2010,160,{kind:'leaf',optional:true}));
+  bow={x:1140,y:-2100,taken:false};width=1950;goalIndex=23;starIndices=[1,5,{i:11,dx:0,dy:-130},15,{i:24,dx:-45,dy:0}];
+  sections=[{x:0,name:'O chão do quintal',hint:'Pise bem no meio do cogumelo para saltar mais alto!'},{x:700,name:'O varal das folhas',hint:'As folhas passeiam. Espere a hora certa de saltar.'},{x:1200,name:'A casa da árvore',hint:'Quase lá! A casa da árvore está te esperando.'}];
  }else{
   const coords=[[0,530,250],[350,500,120],[550,470,120],[750,500,120],[960,510,250],[1320,450,130],[1560,390,130],[1800,450,130],[2040,400,130],[2310,440,250],[2780,500,150],[3100,400,150],[3460,330,150],[3880,430,150],[4270,390,250],[4620,340,190],[4930,410,330]];
   platforms=coords.map(([x,y,w],i)=>P(x,y,w,{kind:[0,4,9,14,15,16].includes(i)?'moon':'bridge',checkpoint:[0,4,9,14].includes(i),group:i<4?0:i<9?1:2}));
@@ -358,12 +371,12 @@ if(typeof module!=='undefined')module.exports=build;else root.SandubaWorlds=buil
 </script><script>
 (function(root){
 'use strict';
-const names=['Jardim dos Pulos','Nuvens de Algodão','Céu Estrelado'];
+const names=['Jardim dos Pulos','Nuvens de Algodão','Céu Estrelado','Quintal das Molas'];
 const buildWorld=typeof module!=='undefined'?require('./worlds.js'):root.SandubaWorlds;
 const CRUMBLE=0.85,REAPPEAR=2.8;
 function platform(x,y,w=170,extra={}){return {x,y,baseX:x,baseY:y,w,h:30,kind:'island',spring:false,checkpoint:false,moving:false,ax:0,ay:0,phase:0,speed:1,remaining:CRUMBLE,gone:0,...extra};}
 function create(level=0){
- level=Math.max(0,Math.min(2,level));let platforms,sections,width,starIndices,goalIndex,bow,winds=[],bells=[];
+ level=Math.max(0,Math.min(3,level));let platforms,sections,width,starIndices,goalIndex,bow,winds=[],bells=[];
  if(level===0){
   const xs=[0,260,475,690,905,1120,1335,1550,1765,1980,2220,2440,2660,2880,3100,3320,3540,3760,4000,4240,4460,4680,4900,5120,5340,5560,5760,5940];
   const ys=[530,510,480,525,470,375,485,395,500,520,490,455,500,465,420,460,500,460,520,480,435,480,440,485,450,500,475,500];
@@ -405,7 +418,7 @@ function step(s,input={},dt){
    p.y=q.y-p.h;p.vy=0;p.grounded=true;p.support=i;p.springFlight=false;p.gliding=false;
    if(!wasGrounded){p.landTimer=0.16;s.events.push('land');}
    if(q.checkpoint&&i!==s.checkpoint){s.checkpoint=i;s.events.push('checkpoint');}
-   if(q.spring&&(s.level>0||(p.x+p.w-7>q.x+q.w/2-22&&p.x+7<q.x+q.w/2+22))){p.vy=-840;p.grounded=false;p.coyote=0;p.springFlight=true;p.jumpCut=false;s.events.push('spring');}break;
+   if(q.spring&&p.x+p.w-7>q.x+q.w/2-22&&p.x+7<q.x+q.w/2+22){p.vy=-840;p.grounded=false;p.coyote=0;p.springFlight=true;p.jumpCut=false;s.events.push('spring');}break;
   }
  }}
  for(const star of s.stars)if(!star.taken&&Math.hypot(p.x+p.w/2-star.x,p.y+p.h/2-star.y)<49){star.taken=true;s.events.push('star');}
@@ -453,7 +466,7 @@ const api={create,step,names};if(typeof module!=='undefined')module.exports=api;
    if(!context)return;
    if(ctx!==context||level!==world){if(ctx)stop();ctx=context;level=world;step=0;}
    if(!playing){if(active)stop();return;}
-   const t=tracks[level];if(!t)return;
+   const t=tracks[level]||tracks[0];if(!t)return;
    if(!active){active=true;next=ctx.currentTime+.04;}
    const beat=60/t.bpm,interval=beat/2;
    // Drop missed beats after a suspended tab instead of catching up audibly.
@@ -492,7 +505,7 @@ const api={create,step,names};if(typeof module!=='undefined')module.exports=api;
   function load(){try{return {worlds:[],sound:false,...JSON.parse(localStorage.getItem(STORAGE)||localStorage.getItem('pudim-nas-nuvens')||'{}')};}catch{return {worlds:[],sound:false};}}
   function save(){try{localStorage.setItem(STORAGE,JSON.stringify(saved));}catch{}}
   const saved=load();
-  function cards(){for(let i=0;i<3;i++){const w=saved.worlds[i];$('stars-'+i).textContent=w?'★'.repeat(w.stars)+'☆'.repeat(5-w.stars)+(w.bow?' · Touquinha':''):'';}}
+  function cards(){for(let i=0;i<4;i++){const w=saved.worlds[i];$('stars-'+i).textContent=w?'★'.repeat(w.stars)+'☆'.repeat(5-w.stars)+(w.bow?' · Touquinha':''):'';}}
 
   function ensureAudio() {
     audio ||= new (window.AudioContext||window.webkitAudioContext)();
@@ -533,9 +546,9 @@ const api={create,step,names};if(typeof module!=='undefined')module.exports=api;
   function hud() {
     if(!state)return;
     const section=state.sections?.[state.activeSection||0];
-    $('level-number').textContent=`${['JARDIM','NUVENS','ESTRELAS'][state.level]} · TRECHO ${(state.activeSection||0)+1} / 3`;
+    $('level-number').textContent=`${['JARDIM','NUVENS','ESTRELAS','QUINTAL'][state.level]} · TRECHO ${(state.activeSection||0)+1} / 3`;
     const lit=Math.max(...state.bridgeTimers);
-    $('mechanic').textContent=state.level===0?'':state.level===1?(state.player.gliding?'☂ Guarda-chuva aberto · solte para descer':'☂ Segure Pular no ar para planar'):lit>0?`♫ Pontes acesas · ${lit.toFixed(1)} s`:'♫ Encoste no sininho para revelar a ponte';
+    $('mechanic').textContent=state.level===0?'':state.level===3?'⬆ Pise no cogumelo vermelho para saltar mais alto':state.level===1?(state.player.gliding?'☂ Guarda-chuva aberto · solte para descer':'☂ Segure Pular no ar para planar'):lit>0?`♫ Pontes acesas · ${lit.toFixed(1)} s`:'♫ Encoste no sininho para revelar a ponte';
     $('level-name').textContent=section?.name||state.name;
     $('counter').textContent=`★ ${state.stars.filter(s=>s.taken).length} / 5`;
     $('bow-status').classList.toggle('found',state.bow.taken);
@@ -575,11 +588,12 @@ const api={create,step,names};if(typeof module!=='undefined')module.exports=api;
     results[state.level]={stars:n,bow:state.bow.taken};
     const best=saved.worlds[state.level]||{stars:0,bow:false};
     saved.worlds[state.level]={stars:Math.max(best.stars,n),bow:best.bow||state.bow.taken};save();cards();
-    const end=state.level===2;
-    modal(end?'Bons sonhos, Sanduba!':state.level===0?'O jardim é seu!':'Que salto bonito!',
-      end?`Você levou Sanduba até a caminha!\n${results.reduce((a,r)=>a+(r?.stars||0),0)} estrelas encontradas nesta aventura.\nUma amizade cheia de histórias. ♡`:
-      `${n} de 5 estrelas · ${state.bow.taken?'touquinha encontrada!':'a touquinha ainda espera por você.'}\n${state.level===0?'Você atravessou a clareira, o lago e as nuvens!':'Você aprendeu a voar com o vento!'}\n${n===5&&state.bow.taken?'Todas as descobertas desta fase são suas.':'Você pode voltar para descobrir outros caminhos.'}`,
-      end?'Começar outra aventura':(state.level===0?'Voar pelas nuvens →':'Acender as estrelas →'),()=>{if(end)results=[];start(end?0:state.level+1);},end?'☾':'✦',end?'UM FINAL CHEIO DE ACONCHEGO':'AVENTURA CONCLUÍDA');
+    const bedtime=state.level===2,last=bedtime||state.level===3;
+    const feito=['Você atravessou a clareira, o lago e as nuvens!','Você aprendeu a voar com o vento!','','Você subiu o quintal inteiro, de cogumelo em cogumelo!'][state.level];
+    modal(bedtime?'Bons sonhos, Sanduba!':state.level===0?'O jardim é seu!':state.level===3?'Que altura, Sanduba!':'Que salto bonito!',
+      bedtime?`Você levou Sanduba até a caminha!\n${results.reduce((a,r)=>a+(r?.stars||0),0)} estrelas encontradas nesta aventura.\nUma amizade cheia de histórias. ♡`:
+      `${n} de 5 estrelas · ${state.bow.taken?'touquinha encontrada!':'a touquinha ainda espera por você.'}\n${feito}\n${n===5&&state.bow.taken?'Todas as descobertas desta fase são suas.':'Você pode voltar para descobrir outros caminhos.'}`,
+      last?'Começar outra aventura':(state.level===0?'Voar pelas nuvens →':'Acender as estrelas →'),()=>{if(last)results=[];start(last?0:state.level+1);},bedtime?'☾':'✦',bedtime?'UM FINAL CHEIO DE ACONCHEGO':'AVENTURA CONCLUÍDA');
   }
   function events() {
     for(const event of state.events) {
@@ -605,6 +619,7 @@ const api={create,step,names};if(typeof module!=='undefined')module.exports=api;
   $('world-garden').onclick=()=>{results=[];start(0);};
   $('world-sky').onclick=()=>{results=[];start(1);};
   $('world-night').onclick=()=>{results=[];start(2);};
+  $('world-tree').onclick=()=>{results=[];start(3);};
   $('continue').onclick=()=>modalAction?.();$('home-button').onclick=home;$('pause').onclick=pause;
   $('replay').onclick=()=>start(state.level);
   $('sound').onclick=$('sound-home').onclick=()=>setSound(muted);

@@ -21,3 +21,42 @@ for(const [level,from,wind] of [[1,5,3],[2,10,0]])test(`world ${level+1} hidden 
  for(let f=0;f<600&&!landed;f++){const p=s.player,c=p.x+p.w/2;E.step(s,{right:c<tx-6,left:c>tx+6,jumpHeld:true},1/60);if(p.grounded&&p.support===from+1)landed=true;}
  a.ok(landed,'can still land on the next platform after the detour');a.equal(s.rescues,0);
 });
+
+// O quintal é uma subida: um vão impossível não aparece num teste de lógica, só quando
+// alguém joga e trava. Esta checagem refaz a balística do engine para cada par de
+// plataformas e falha antes disso, sempre no pior caso das plataformas que se movem.
+const G = 1450, VX = 275;
+// De onde o salto parte: a mola só dispara no centro da plataforma, então é de lá que se sai.
+// Num pulo normal dá para correr até a borda.
+function salto(from, to) {
+ const vy = from.spring ? 840 : 620;
+ const centro = from.baseX + from.w / 2;
+ const [origemDir, origemEsq] = from.spring
+  ? [centro - from.ax, centro + from.ax]
+  : [from.baseX + from.w - from.ax, from.baseX + from.ax];
+ const alvoEsq = to.baseX - to.ax, alvoDir = to.baseX + to.w + to.ax;
+ const vao = alvoEsq > origemDir ? alvoEsq - origemDir : alvoDir < origemEsq ? origemEsq - alvoDir : 0;
+ const subida = (from.baseY - from.ay) - (to.baseY + to.ay);
+ const apice = vy * vy / (2 * G);
+ // Tempo até voltar a passar pela altura do alvo, já descendo: é a janela para cruzar o vão.
+ const janela = subida <= apice ? (vy + Math.sqrt(vy * vy - 2 * G * subida)) / G : 0;
+ return { apice, subida, vao, alcance: VX * janela };
+}
+function exigeSalto(s, i, j, rotulo) {
+ const r = salto(s.platforms[i], s.platforms[j]);
+ a.ok(r.apice >= r.subida + 25, `${rotulo}: sobe no máximo ${r.apice | 0}px e precisa de ${r.subida}px`);
+ a.ok(r.alcance >= r.vao + 25, `${rotulo}: alcança ${r.alcance | 0}px na horizontal e o vão tem ${r.vao}px`);
+}
+test('o quintal das molas encadeia saltos alcançáveis', () => {
+ const s = E.create(3);
+ for (let i = 0; i < s.goal.platform; i++) exigeSalto(s, i, i + 1, `plataforma ${i}→${i + 1}`);
+});
+test('o galho da touquinha no quintal é alcançável', () => {
+ const s = E.create(3), galho = s.platforms.length - 1;
+ exigeSalto(s, 20, galho, `desvio ${20}→${galho}`);
+ // A touquinha tem de exigir um pulinho a partir do galho, não cair no colo de quem pousa.
+ const p = s.platforms[galho], centro = { x: p.x + p.w / 2, y: p.y - 32 };
+ const d = Math.hypot(centro.x - s.bow.x, centro.y - s.bow.y);
+ a.ok(d > 48, `touquinha a ${d | 0}px de quem pousa no galho: seria recolhida sem esforço`);
+ a.ok(d < 48 + 132, `touquinha a ${d | 0}px: fora do alcance de um pulo a partir do galho`);
+});

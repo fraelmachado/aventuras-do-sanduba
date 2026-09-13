@@ -1,11 +1,11 @@
 (function(root){
 'use strict';
-const names=['Jardim dos Pulos','Nuvens de Algodão','Céu Estrelado'];
+const names=['Jardim dos Pulos','Nuvens de Algodão','Céu Estrelado','Quintal das Molas'];
 const buildWorld=typeof module!=='undefined'?require('./worlds.js'):root.SandubaWorlds;
 const CRUMBLE=0.85,REAPPEAR=2.8;
 function platform(x,y,w=170,extra={}){return {x,y,baseX:x,baseY:y,w,h:30,kind:'island',spring:false,checkpoint:false,moving:false,ax:0,ay:0,phase:0,speed:1,remaining:CRUMBLE,gone:0,...extra};}
 function create(level=0){
- level=Math.max(0,Math.min(2,level));let platforms,sections,width,starIndices,goalIndex,bow,winds=[],bells=[];
+ level=Math.max(0,Math.min(3,level));let platforms,sections,width,starIndices,goalIndex,bow,winds=[],bells=[];
  if(level===0){
   const xs=[0,260,475,690,905,1120,1335,1550,1765,1980,2220,2440,2660,2880,3100,3320,3540,3760,4000,4240,4460,4680,4900,5120,5340,5560,5760,5940];
   const ys=[530,510,480,525,470,375,485,395,500,520,490,455,500,465,420,460,500,460,520,480,435,480,440,485,450,500,475,500];
@@ -47,7 +47,7 @@ function step(s,input={},dt){
    p.y=q.y-p.h;p.vy=0;p.grounded=true;p.support=i;p.springFlight=false;p.gliding=false;
    if(!wasGrounded){p.landTimer=0.16;s.events.push('land');}
    if(q.checkpoint&&i!==s.checkpoint){s.checkpoint=i;s.events.push('checkpoint');}
-   if(q.spring&&(s.level>0||(p.x+p.w-7>q.x+q.w/2-22&&p.x+7<q.x+q.w/2+22))){p.vy=-840;p.grounded=false;p.coyote=0;p.springFlight=true;p.jumpCut=false;s.events.push('spring');}break;
+   if(q.spring&&p.x+p.w-7>q.x+q.w/2-22&&p.x+7<q.x+q.w/2+22){p.vy=-840;p.grounded=false;p.coyote=0;p.springFlight=true;p.jumpCut=false;s.events.push('spring');}break;
   }
  }}
  for(const star of s.stars)if(!star.taken&&Math.hypot(p.x+p.w/2-star.x,p.y+p.h/2-star.y)<49){star.taken=true;s.events.push('star');}

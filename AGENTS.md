@@ -34,7 +34,11 @@ Decisões de 2026-09-12:
 
 ## Arquitetura e regras de implementação
 
-- `worlds.js` descreve fases 2/3; a fase 1 permanece em `engine.js`.
+- `worlds.js` descreve fases 2/3/4; a fase 1 permanece em `engine.js`. Índices de mundo vão de 0 a 3.
+- A fase 4, **Quintal das Molas**, é a primeira vertical: 2795px de subida em três colunas da esquerda para a direita. As colunas existem porque `activeSection` é medido por `x`; uma fase que suba em zigue-zague sem avançar na horizontal embaralha o nome do trecho no HUD.
+- O cogumelo (`spring`) só dispara quando o Sanduba pisa no **centro** da plataforma, em todas as fases. O atalho antigo (`s.level>0`) liberava a plataforma inteira e tornava impossível parar em cima de um cogumelo: a fase virava pinball. Não reintroduza.
+- `worlds.test.cjs` refaz a balística do engine para cada par de plataformas do quintal. Um vão impossível numa fase vertical não aparece em teste de lógica, só quando alguém trava jogando. Ao mexer nas coordenadas, rode a suíte: ela conhece a origem correta do salto (borda no pulo normal, centro na mola) e o pior caso das plataformas que se movem.
+- A arte do quintal (`assets/quintal.png`, prompt em `assets/PROMPT-QUINTAL.md`) ainda não foi gerada. `build.py` pula imagem ausente e avisa; `renderer.js` cai no cenário do jardim enquanto faltar.
 - `engine.js` é independente de DOM e expõe `create(level)` e `step(state,input,dt)` via CommonJS e navegador. Índices de mundo são 0, 1 e 2.
 - `game.js` conecta a interface e usa atualização fixa de 1/120 s. `input.jump` é uma borda de pressão; `input.jumpHeld` é o estado sustentado. Não confundir os dois.
 - Preserve a limpeza de teclas ao pausar/perder foco e a captura de ponteiros. Um toque rápido deve sobreviver até o próximo passo de física.

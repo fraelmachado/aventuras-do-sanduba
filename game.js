@@ -15,7 +15,7 @@
   function load(){try{return {worlds:[],sound:false,...JSON.parse(localStorage.getItem(STORAGE)||localStorage.getItem('pudim-nas-nuvens')||'{}')};}catch{return {worlds:[],sound:false};}}
   function save(){try{localStorage.setItem(STORAGE,JSON.stringify(saved));}catch{}}
   const saved=load();
-  function cards(){for(let i=0;i<3;i++){const w=saved.worlds[i];$('stars-'+i).textContent=w?'★'.repeat(w.stars)+'☆'.repeat(5-w.stars)+(w.bow?' · Touquinha':''):'';}}
+  function cards(){for(let i=0;i<4;i++){const w=saved.worlds[i];$('stars-'+i).textContent=w?'★'.repeat(w.stars)+'☆'.repeat(5-w.stars)+(w.bow?' · Touquinha':''):'';}}
 
   function ensureAudio() {
     audio ||= new (window.AudioContext||window.webkitAudioContext)();
@@ -56,9 +56,9 @@
   function hud() {
     if(!state)return;
     const section=state.sections?.[state.activeSection||0];
-    $('level-number').textContent=`${['JARDIM','NUVENS','ESTRELAS'][state.level]} · TRECHO ${(state.activeSection||0)+1} / 3`;
+    $('level-number').textContent=`${['JARDIM','NUVENS','ESTRELAS','QUINTAL'][state.level]} · TRECHO ${(state.activeSection||0)+1} / 3`;
     const lit=Math.max(...state.bridgeTimers);
-    $('mechanic').textContent=state.level===0?'':state.level===1?(state.player.gliding?'☂ Guarda-chuva aberto · solte para descer':'☂ Segure Pular no ar para planar'):lit>0?`♫ Pontes acesas · ${lit.toFixed(1)} s`:'♫ Encoste no sininho para revelar a ponte';
+    $('mechanic').textContent=state.level===0?'':state.level===3?'⬆ Pise no cogumelo vermelho para saltar mais alto':state.level===1?(state.player.gliding?'☂ Guarda-chuva aberto · solte para descer':'☂ Segure Pular no ar para planar'):lit>0?`♫ Pontes acesas · ${lit.toFixed(1)} s`:'♫ Encoste no sininho para revelar a ponte';
     $('level-name').textContent=section?.name||state.name;
     $('counter').textContent=`★ ${state.stars.filter(s=>s.taken).length} / 5`;
     $('bow-status').classList.toggle('found',state.bow.taken);
@@ -98,11 +98,12 @@
     results[state.level]={stars:n,bow:state.bow.taken};
     const best=saved.worlds[state.level]||{stars:0,bow:false};
     saved.worlds[state.level]={stars:Math.max(best.stars,n),bow:best.bow||state.bow.taken};save();cards();
-    const end=state.level===2;
-    modal(end?'Bons sonhos, Sanduba!':state.level===0?'O jardim é seu!':'Que salto bonito!',
-      end?`Você levou Sanduba até a caminha!\n${results.reduce((a,r)=>a+(r?.stars||0),0)} estrelas encontradas nesta aventura.\nUma amizade cheia de histórias. ♡`:
-      `${n} de 5 estrelas · ${state.bow.taken?'touquinha encontrada!':'a touquinha ainda espera por você.'}\n${state.level===0?'Você atravessou a clareira, o lago e as nuvens!':'Você aprendeu a voar com o vento!'}\n${n===5&&state.bow.taken?'Todas as descobertas desta fase são suas.':'Você pode voltar para descobrir outros caminhos.'}`,
-      end?'Começar outra aventura':(state.level===0?'Voar pelas nuvens →':'Acender as estrelas →'),()=>{if(end)results=[];start(end?0:state.level+1);},end?'☾':'✦',end?'UM FINAL CHEIO DE ACONCHEGO':'AVENTURA CONCLUÍDA');
+    const bedtime=state.level===2,last=bedtime||state.level===3;
+    const feito=['Você atravessou a clareira, o lago e as nuvens!','Você aprendeu a voar com o vento!','','Você subiu o quintal inteiro, de cogumelo em cogumelo!'][state.level];
+    modal(bedtime?'Bons sonhos, Sanduba!':state.level===0?'O jardim é seu!':state.level===3?'Que altura, Sanduba!':'Que salto bonito!',
+      bedtime?`Você levou Sanduba até a caminha!\n${results.reduce((a,r)=>a+(r?.stars||0),0)} estrelas encontradas nesta aventura.\nUma amizade cheia de histórias. ♡`:
+      `${n} de 5 estrelas · ${state.bow.taken?'touquinha encontrada!':'a touquinha ainda espera por você.'}\n${feito}\n${n===5&&state.bow.taken?'Todas as descobertas desta fase são suas.':'Você pode voltar para descobrir outros caminhos.'}`,
+      last?'Começar outra aventura':(state.level===0?'Voar pelas nuvens →':'Acender as estrelas →'),()=>{if(last)results=[];start(last?0:state.level+1);},bedtime?'☾':'✦',bedtime?'UM FINAL CHEIO DE ACONCHEGO':'AVENTURA CONCLUÍDA');
   }
   function events() {
     for(const event of state.events) {
@@ -128,6 +129,7 @@
   $('world-garden').onclick=()=>{results=[];start(0);};
   $('world-sky').onclick=()=>{results=[];start(1);};
   $('world-night').onclick=()=>{results=[];start(2);};
+  $('world-tree').onclick=()=>{results=[];start(3);};
   $('continue').onclick=()=>modalAction?.();$('home-button').onclick=home;$('pause').onclick=pause;
   $('replay').onclick=()=>start(state.level);
   $('sound').onclick=$('sound-home').onclick=()=>setSound(muted);
