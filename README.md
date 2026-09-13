@@ -5,7 +5,7 @@ Jogo de plataforma para uma criança de 10 anos, inspirado em seu porquinho de p
 ## Pasta oficial
 
 ```text
-/Users/fraelmachado/Projects/pudim-nas-nuvens
+/Users/fraelmachado/Projects/sanduba-nas-nuvens
 ```
 
 Abra essa pasta como projeto na próxima sessão. O arquivo `AGENTS.md` registra as decisões e orientações para continuar o desenvolvimento. Esta pasta contém o código, as artes, os testes, o gerador e o HTML independente. As antigas pastas de trabalho em Documents/Codex não são necessárias para executar ou editar o jogo.
@@ -17,7 +17,7 @@ Abra `Pudim nas Nuvens.html` em um navegador. Ele contém todos os scripts e ima
 Para desenvolver, prefira servir a pasta e abrir `index.html`:
 
 ```sh
-cd /Users/fraelmachado/Projects/pudim-nas-nuvens
+cd /Users/fraelmachado/Projects/sanduba-nas-nuvens
 python3 -m http.server 8767 --bind 127.0.0.1
 ```
 

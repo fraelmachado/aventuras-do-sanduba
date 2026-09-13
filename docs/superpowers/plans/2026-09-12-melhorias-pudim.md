@@ -12,7 +12,7 @@
 
 ## Global Constraints
 
-- Raiz oficial: `/Users/fraelmachado/Projects/pudim-nas-nuvens`. Trabalhar só nela.
+- Raiz oficial: `/Users/fraelmachado/Projects/sanduba-nas-nuvens`. Trabalhar só nela.
 - Sem framework, biblioteca externa, rede ou pacote npm. Node 22 e Python 3 apenas para desenvolvimento.
 - Textos de interface em português brasileiro; identificadores e comentários de código em inglês, como o restante do código.
 - Não alterar geometria nem dificuldade do Jardim dos Pulos. A única exceção aprovada neste plano é mover a posição de **uma** estrela por mundo (Tarefa 6); plataformas, ventos, sinos e checkpoints não mudam.
@@ -78,7 +78,7 @@ A pasta não é um repositório git. Cada tarefa termina com um commit; sem git 
 - [ ] **Step 2: Inicializar e registrar a linha de base**
 
 ```bash
-cd /Users/fraelmachado/Projects/pudim-nas-nuvens
+cd /Users/fraelmachado/Projects/sanduba-nas-nuvens
 git init -b main
 git add -A
 git commit -m "chore: linha de base antes das melhorias de 2026-09-12"

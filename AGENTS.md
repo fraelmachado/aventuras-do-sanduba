@@ -2,7 +2,7 @@
 
 ## Comece aqui
 
-- A raiz oficial é `/Users/fraelmachado/Projects/pudim-nas-nuvens`. Trabalhe nesta pasta, não nas antigas cópias em Documents/Codex.
+- A raiz oficial é `/Users/fraelmachado/Projects/sanduba-nas-nuvens`. Trabalhe nesta pasta, não nas antigas cópias em Documents/Codex.
 - Leia `README.md`, este arquivo e o código relevante antes de alterar algo. Verifique alterações locais e eventuais instruções adicionais.
 - Converse em português brasileiro. O usuário prefere execução direta dentro do escopo autorizado, sem pedidos repetidos de confirmação.
 - O jogo foi criado para a filha de 10 anos do usuário e usa o porquinho de pelúcia **Sanduba** como protagonista.
@@ -114,4 +114,4 @@ Substitui visualmente o lacinho por touquinha lilás, com estrela e pompom. `ass
 
 ## Nome do personagem
 
-O nome aprovado agora é **Sanduba**, e o título visível é **Sanduba nas Nuvens**. Os nomes técnicos legados (pasta pudim-nas-nuvens, arquivo Pudim nas Nuvens.html, imagens, identificadores JS e chave do localStorage) permanecem para preservar links, recursos e progresso. Não usar Pudim em textos apresentados ao jogador.
+O nome aprovado agora é **Sanduba**, e o título visível é **Sanduba nas Nuvens**. Os nomes técnicos legados (arquivo Pudim nas Nuvens.html, imagens, identificadores JS e chave do localStorage) permanecem para preservar links, recursos e progresso. Não usar Pudim em textos apresentados ao jogador.
