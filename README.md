@@ -2,13 +2,7 @@
 
 Jogo de plataforma para uma criança de 10 anos, inspirado em seu porquinho de pelúcia, chamado **Sanduba**. Desenvolvido em HTML5, CSS e JavaScript puros, sem framework, bibliotecas externas ou serviços de rede.
 
-## Pasta oficial
-
-```text
-/Users/fraelmachado/Projects/sanduba-nas-nuvens
-```
-
-Abra essa pasta como projeto na próxima sessão. O arquivo `AGENTS.md` registra as decisões e orientações para continuar o desenvolvimento. Esta pasta contém o código, as artes, os testes, o gerador e o HTML independente. As antigas pastas de trabalho em Documents/Codex não são necessárias para executar ou editar o jogo.
+O repositório contém o código, as artes, os testes, o gerador e o HTML independente. O arquivo `AGENTS.md` registra as decisões e orientações para continuar o desenvolvimento.
 
 ## Jogar
 
@@ -17,11 +11,11 @@ Abra `Sanduba nas Nuvens.html` em um navegador. Ele contém todos os scripts e i
 Para desenvolver, prefira servir a pasta e abrir `index.html`:
 
 ```sh
-cd /Users/fraelmachado/Projects/sanduba-nas-nuvens
+cd sanduba-nas-nuvens
 python3 -m http.server 8767 --bind 127.0.0.1
 ```
 
-Acesse <http://127.0.0.1:8767/index.html>. Se a porta estiver ocupada, reutilize o servidor correto ou escolha outra porta. Não dependa das prévias antigas na porta 8765: elas apontavam para uma pasta que foi movida. Encerre o servidor com Ctrl+C.
+Acesse <http://127.0.0.1:8767/index.html>. Se a porta estiver ocupada, escolha outra. Encerre o servidor com Ctrl+C.
 
 No celular, use um navegador que execute HTML local ou uma hospedagem. A prévia de anexos de alguns aplicativos não executa JavaScript. O servidor acima fica acessível apenas no próprio computador.
 

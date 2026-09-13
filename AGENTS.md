@@ -2,7 +2,7 @@
 
 ## Comece aqui
 
-- A raiz oficial é `/Users/fraelmachado/Projects/sanduba-nas-nuvens`. Trabalhe nesta pasta, não nas antigas cópias em Documents/Codex.
+- Trabalhe na raiz do repositório. Cópias antigas da pasta, fora do git, não são fonte de verdade.
 - Leia `README.md`, este arquivo e o código relevante antes de alterar algo. Verifique alterações locais e eventuais instruções adicionais.
 - Converse em português brasileiro. O usuário prefere execução direta dentro do escopo autorizado, sem pedidos repetidos de confirmação.
 - O jogo foi criado para a filha de 10 anos do usuário e usa o porquinho de pelúcia **Sanduba** como protagonista.
