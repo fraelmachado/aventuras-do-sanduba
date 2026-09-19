@@ -20,3 +20,4 @@ body[data-world="2"] .level-label strong{color:#786095}body[data-world="3"] .lev
 .return-item{position:absolute;z-index:3;left:50%;bottom:72px;transform:translateX(-50%);max-width:90%;padding:10px 16px;border-radius:20px;background:#fff9e8;color:#526d46;box-shadow:0 4px 14px #263e242b;font-size:12px;font-weight:700;white-space:normal;text-align:center}
 .return-item:hover{background:#fff1cd}
 @media(max-width:700px){.return-item{bottom:66px;font-size:10px;padding:8px 12px}}
+.title-lead{font-size:.72em;letter-spacing:-2px}

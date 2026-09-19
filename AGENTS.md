@@ -1,10 +1,10 @@
-# Contexto para agentes — Sanduba nas Nuvens
+# Contexto para agentes — As aventuras do Sanduba
 
 ## Antes de editar
 
 - Trabalhe nesta raiz Git. Leia `README.md`, este arquivo, os módulos envolvidos e `git status` antes de alterar.
 - Converse em português brasileiro. O usuário prefere execução direta no escopo autorizado.
-- O jogo é para a filha de 10 anos do usuário e tem como protagonista o porquinho de pelúcia **Sanduba**. O título visível continua **Sanduba nas Nuvens**.
+- O jogo é para a filha de 10 anos do usuário e tem como protagonista o porquinho de pelúcia **Sanduba**. O título visível aprovado em 2026-09-19 é **As aventuras do Sanduba**. O nome técnico do arquivo offline e a chave de `localStorage` permanecem para preservar acessos e progresso.
 - Preserve HTML5, CSS e JavaScript puros, Canvas, Web Audio e jogo offline. Não introduza framework, dependência de rede ou publicação sem pedido.
 - Arte de livro infantil ilustrado, personagem fofinho e próximo da pelúcia. Não substitua as artes por figuras geométricas simplificadas. Não desenhe sombra oval abaixo do Sanduba.
 

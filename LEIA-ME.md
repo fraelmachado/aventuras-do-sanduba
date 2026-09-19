@@ -1,4 +1,4 @@
-# Sanduba nas Nuvens — quatro aventuras
+# As aventuras do Sanduba — quatro mundos
 
 Abra **Sanduba nas Nuvens.html** no navegador. Tudo já está incorporado e funciona offline, sem instalar nada. Em alguns aplicativos a prévia de anexos não executa JavaScript; nesse caso, abra o arquivo em um navegador.
 

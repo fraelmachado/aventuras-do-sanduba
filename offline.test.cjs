@@ -6,6 +6,9 @@ const path=require('node:path');
 
 test('standalone HTML boots the bundled four-world game without external files',()=>{
  const html=fs.readFileSync(path.join(__dirname,'Sanduba nas Nuvens.html'),'utf8');
+ assert.ok(html.includes('<title>As aventuras do Sanduba</title>'));
+ assert.ok(html.includes('aria-label="As aventuras do Sanduba"'));
+ assert.ok(html.includes('<h1><span class="title-lead">As aventuras</span><br>do <em>Sanduba</em>'));
  assert.ok(Buffer.byteLength(html)<4_000_000);
  assert.ok(!html.includes('<script src='));
  assert.ok(!html.includes('rel="stylesheet"'));

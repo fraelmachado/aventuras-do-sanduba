@@ -1,10 +1,10 @@
-# Sanduba nas Nuvens
+# As aventuras do Sanduba
 
 Jogo ilustrado em HTML5, CSS e JavaScript puros para uma criança de 10 anos. O porquinho de pelúcia Sanduba atravessa quatro mundos. O jogo roda offline, sem frameworks, pacotes ou serviços de rede.
 
 ## Jogar
 
-Abra `Sanduba nas Nuvens.html` no navegador. Esse arquivo inclui o código e todas as imagens. Para desenvolvimento, sirva esta pasta com `python3 -m http.server 8767 --bind 127.0.0.1` e abra `http://127.0.0.1:8767/index.html`. Use recarga sem cache após mudar scripts.
+Abra `Sanduba nas Nuvens.html` no navegador. O nome do arquivo foi mantido para preservar acessos existentes; o título apresentado ao jogador é **As aventuras do Sanduba**. Esse arquivo inclui o código e todas as imagens. Para desenvolvimento, sirva esta pasta com `python3 -m http.server 8767 --bind 127.0.0.1` e abra `http://127.0.0.1:8767/index.html`. Use recarga sem cache após mudar scripts.
 
 O Jardim dos Pulos fica disponível desde o início. Cada fase seguinte é desbloqueada ao concluir a anterior com seu item especial. Os quatro cartões permanecem visíveis; um cartão bloqueado explica o requisito ao receber foco ou ser ativado. Vitórias e melhores resultados persistem no navegador quando `localStorage` está disponível.
 
