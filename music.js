@@ -8,9 +8,12 @@
   {name:'Valsa de algodão',bpm:66,attack:.16,release:2.6,
    chords:[[53,57,60],[48,52,55],[50,53,57],[46,50,53]],
    melody:[77,null,null,81,84,null,81,null,79,null,77,null,76,null,null,null,76,null,null,79,84,null,79,null,76,null,74,null,72,null,null,null,74,null,null,77,81,null,77,null,76,null,74,null,72,null,null,null,74,null,77,null,81,null,79,null,77,null,74,null,77,null,null,null]},
-  {name:'Boa noite, Sanduba',bpm:54,attack:.06,release:2.3,
+  {name:'Luzes de estrelas',bpm:54,attack:.06,release:2.3,
    chords:[[48,52,55],[53,57,60],[45,48,52],[55,59,62]],
-   melody:[76,null,null,null,79,null,76,null,74,null,null,null,72,null,null,null,77,null,null,null,76,null,72,null,69,null,null,null,72,null,null,null,76,null,null,null,72,null,69,null,71,null,null,null,72,null,null,null,74,null,71,null,67,null,null,null,71,null,74,null,72,null,null,null]}
+   melody:[76,null,null,null,79,null,76,null,74,null,null,null,72,null,null,null,77,null,null,null,76,null,72,null,69,null,null,null,72,null,null,null,76,null,null,null,72,null,69,null,71,null,null,null,72,null,null,null,74,null,71,null,67,null,null,null,71,null,74,null,72,null,null,null]},
+  {name:'Canção das conchas',bpm:70,attack:.12,release:2.1,
+   chords:[[50,53,57],[55,59,62],[53,57,60],[48,53,57]],
+   melody:[74,null,77,null,81,null,77,null,76,null,74,null,72,null,null,null,69,null,72,null,77,null,74,null,72,null,69,null,67,null,null,null,72,null,76,null,79,null,76,null,74,null,72,null,69,null,null,null,67,null,69,null,74,null,72,null,69,null,72,null,74,null,null,null]}
  ];
  const hz=n=>440*Math.pow(2,(n-69)/12);
  function create(){

@@ -11,10 +11,10 @@ function FakeAudio(){
 }
 function harness({store=storage()}={}){
  const listeners={},nodes={},touches=['left','right','jump'].map((key)=>node('touch-'+key,{key}));
- function node(id,dataset={}){return {id,dataset,hidden:false,disabled:false,style:{},textContent:'',innerHTML:'',classList:{add(){},remove(){},toggle(){}},firstElementChild:{style:{}},events:{},focus(){},setAttribute(){},addEventListener(type,fn){this.events[type]=fn;},setPointerCapture(){},querySelectorAll(){return []}};}
- const document={getElementById(id){return nodes[id]??=node(id)},querySelectorAll(){return touches},addEventListener(type,fn){listeners[type]=fn},body:{dataset:{},classList:{add(){},remove(){}}}};
+ function node(id,dataset={}){return {id,dataset,hidden:false,disabled:false,style:{},textContent:'',innerHTML:'',attributes:{},classList:{add(){},remove(){},toggle(){}},firstElementChild:{style:{}},events:{},focus(){},setAttribute(k,v){this.attributes[k]=v;},getAttribute(k){return this.attributes[k]},addEventListener(type,fn){this.events[type]=fn;},setPointerCapture(){},querySelectorAll(){return []}};}
+ const document={getElementById(id){return nodes[id]??=node(id)},querySelectorAll(){return touches},querySelector(selector){return selector==='[data-key="jump"]'?touches[2]:null},addEventListener(type,fn){listeners[type]=fn},body:{dataset:{},classList:{add(){},remove(){}}}};
  let frame,state,t=0;
- const context={SandubaMusic:require('./music.js'),document,window:{AudioContext:FakeAudio},SandubaRenderer:()=>({ready:Promise.resolve(),resize(){},draw(){}}),SandubaEngine:{create(l){return state=engine.create(l)},step:engine.step},addEventListener(type,fn){listeners[type]=fn},requestAnimationFrame(fn){frame=fn},Math,JSON,console:{logs:[],info(...a){this.logs.push(a);}}};
+ const context={SandubaMusic:require('./music.js'),document,window:{AudioContext:FakeAudio},SandubaRenderer:()=>({ready:Promise.resolve(),resize(){},draw(){}}),SandubaEngine:{create(l){return state=engine.create(l)},step:engine.step,returnToItem:engine.returnToItem,names:engine.names},addEventListener(type,fn){listeners[type]=fn},requestAnimationFrame(fn){frame=fn},Math,JSON,console:{logs:[],info(...a){this.logs.push(a);}}};
  if(store)context.localStorage=store;
  vm.runInNewContext(fs.readFileSync(require('node:path').join(__dirname,'game.js'),'utf8'),context);
  nodes.start.onclick();
@@ -34,31 +34,32 @@ test('blur pauses and resume clears held input',()=>{
  const h=harness();h.key('keydown','ArrowRight');h.tick(5);h.blur();const x=h.state.player.x;h.tick(20);assert.equal(h.state.player.x,x);h.nodes.continue.onclick();h.tick(5);assert.equal(h.state.player.x,x);
 });
 test('victory opens result, replay resets current level and next advances',()=>{
- const h=harness();h.tick();const s=h.state,q=s.platforms[s.goal.platform];Object.assign(s.player,{x:s.goal.x,y:q.y-64,grounded:true,support:s.goal.platform});h.tick(540);assert.equal(h.nodes['modal-title'].textContent,'O jardim é seu!');h.nodes.replay.onclick();assert.equal(h.state.level,0);assert.equal(h.state.complete,false);
- Object.assign(h.state.player,{x:h.state.goal.x,y:q.y-64,grounded:true,support:h.state.goal.platform});h.tick(540);h.nodes.continue.onclick();assert.equal(h.state.level,1);
+ const h=harness();h.tick();finish(h);assert.equal(h.nodes['modal-title'].textContent,'O jardim é seu!');h.nodes.replay.onclick();assert.equal(h.state.level,0);assert.equal(h.state.complete,false);
+ finish(h);h.nodes.continue.onclick();assert.equal(h.state.level,1);
 });
-test('world cards open new adventures directly and show their control tips',()=>{const h=harness();h.nodes['world-sky'].onclick();assert.equal(h.state.level,1);assert.ok(h.nodes['touch-tip'].innerHTML.includes('PLANAR'));h.nodes['world-night'].onclick();assert.equal(h.state.level,2);const q=h.state.platforms[h.state.goal.platform];Object.assign(h.state.player,{x:h.state.goal.x,y:q.y-64,grounded:true,support:h.state.goal.platform});h.tick(540);assert.equal(h.nodes['modal-title'].textContent,'Bons sonhos, Sanduba!');assert.ok(!h.nodes['modal-copy'].textContent.includes('NaN'));});
+test('locked cards stay focusable and explain the prerequisite',()=>{const h=harness();assert.equal(h.nodes['world-sky'].getAttribute?.('aria-disabled'),'true');h.nodes['world-sky'].onclick();assert.equal(h.state.level,0);assert.ok(h.nodes.toast.textContent.includes('Jardim'));});
 
-test('bedtime delays results and pauses its timer when focus is lost',()=>{
- const h=harness();h.tick();const s=h.state,q=s.platforms[s.goal.platform];Object.assign(s.player,{x:s.goal.x,y:q.y-64,grounded:true,support:s.goal.platform});h.tick(2);
+test('celebration delays results and pauses its timer when focus is lost',()=>{
+ const h=harness();h.tick();const s=h.state,q=s.platforms[s.goal.platform];s.item.taken=true;Object.assign(s.player,{x:s.goal.x,y:q.y-64,grounded:true,support:s.goal.platform});h.tick(2);
  assert.equal(s.complete,true);assert.equal(h.nodes.modal.hidden,true);assert.ok(s.endingTime>=0);
  h.tick(100);const at=s.endingTime;h.blur();h.tick(100);assert.equal(s.endingTime,at);
  h.nodes.continue.onclick();h.tick(540);assert.equal(h.nodes['modal-title'].textContent,'O jardim é seu!');
 });
-function finish(h){const s=h.state,q=s.platforms[s.goal.platform];Object.assign(s.player,{x:s.goal.x,y:q.y-64,grounded:true,support:s.goal.platform});h.tick(540);}
+function finish(h){const s=h.state;s.item.taken=true;if(s.level===3)Object.assign(s.player,{x:s.goal.x-24,y:s.goal.y-32,vx:0,vy:0});else{const q=s.platforms[s.goal.platform];Object.assign(s.player,{x:s.goal.x,y:q.y-64,grounded:true,support:s.goal.platform});}h.tick(540);}
 test('progress is saved per world and shown on the home cards',()=>{
- const store=storage();const h=harness({store});h.tick();h.state.stars[0].taken=true;h.state.stars[1].taken=true;h.state.bow.taken=true;finish(h);
- assert.deepEqual(JSON.parse(store.getItem('sanduba-nas-nuvens')).worlds[0],{stars:2,bow:true});
- const again=harness({store});assert.equal(again.nodes['stars-0'].textContent,'★★☆☆☆ · Touquinha');assert.equal(again.nodes['stars-1'].textContent,'');
+ const store=storage();const h=harness({store});h.tick();h.state.stars[0].taken=true;h.state.stars[1].taken=true;finish(h);
+ assert.deepEqual(JSON.parse(store.getItem('sanduba-nas-nuvens')).worlds[0],{stars:2,item:true,complete:true});
+ const again=harness({store});assert.ok(again.nodes['stars-0'].textContent.includes('Flor Dourada'));assert.equal(again.nodes['world-sky'].getAttribute('aria-disabled'),'false');
 });
 test('replaying with fewer stars never lowers the saved best',()=>{
  const store=storage({'sanduba-nas-nuvens':JSON.stringify({worlds:[{stars:4,bow:true}],sound:false})});const h=harness({store});h.tick();finish(h);
- assert.deepEqual(JSON.parse(store.getItem('sanduba-nas-nuvens')).worlds[0],{stars:4,bow:true});
+ assert.deepEqual(JSON.parse(store.getItem('sanduba-nas-nuvens')).worlds[0],{stars:4,item:true,complete:true});
 });
 test('progress saved before the rename is still read and migrates to the new key',()=>{
  const store=storage({'pudim-nas-nuvens':JSON.stringify({worlds:[{stars:3,bow:true}],sound:false})});const h=harness({store});h.tick();
- assert.equal(h.nodes['stars-0'].textContent,'★★★☆☆ · Touquinha');
- finish(h);assert.deepEqual(JSON.parse(store.getItem('sanduba-nas-nuvens')).worlds[0],{stars:3,bow:true});
+ assert.ok(h.nodes['stars-0'].textContent.includes('Flor Dourada'));
+ assert.equal(h.nodes['world-sky'].getAttribute('aria-disabled'),'false');
+ finish(h);assert.deepEqual(JSON.parse(store.getItem('sanduba-nas-nuvens')).worlds[0],{stars:3,item:true,complete:true});
 });
 test('game runs when storage is unavailable',()=>{const h=harness({store:null});h.tick(5);assert.ok(h.state);finish(h);assert.equal(h.nodes['modal-title'].textContent,'O jardim é seu!');});
 test('home sound button turns music on, persists, and is restored on the next visit',()=>{
@@ -78,8 +79,35 @@ test('each fall logs world, section and position for the observation session',()
  assert.equal(h.console.logs.length,1);assert.deepEqual(JSON.parse(JSON.stringify(h.console.logs[0])),['queda',{mundo:1,trecho:1,x:700}]);
 });
 
-test('nightcap messages replace the ribbon and wearing resets in each world',()=>{
- const h=harness();h.tick();h.state.bow.taken=true;h.tick();assert.equal(h.nodes['bow-status'].title,'Touquinha encontrada!');
- finish(h);assert.ok(h.nodes['modal-copy'].textContent.includes('touquinha encontrada'));
- h.nodes.continue.onclick();assert.equal(h.state.bow.taken,false);h.tick();assert.ok(h.nodes['bow-status'].title.includes('touquinha'));
+test('special item names replace the nightcap and reset in each world',()=>{
+ const h=harness();h.tick();h.state.item.taken=true;h.tick();assert.ok(h.nodes['item-status'].title.includes('Flor Dourada'));
+ finish(h);assert.ok(h.nodes['modal-copy'].textContent.includes('Flor Dourada'));
+ h.nodes.continue.onclick();assert.equal(h.state.item.taken,false);h.tick();assert.ok(h.nodes['item-status'].title.includes('Gota de Nuvem'));
+});
+test('missing item offers an accessible shortcut back before the detour',()=>{
+ const h=harness(),s=h.state,q=s.platforms[s.goal.platform];
+ Object.assign(s.player,{x:s.goal.x,y:q.y-64,grounded:true,support:s.goal.platform});h.tick(2);
+ assert.equal(s.complete,false);assert.equal(h.nodes['return-item'].hidden,false);
+ assert.ok(h.nodes['return-item'].textContent.includes('Flor Dourada'));
+ h.nodes['return-item'].onclick();assert.ok(s.player.x<s.item.x);assert.equal(h.nodes['return-item'].hidden,true);
+});
+test('all four worlds unlock in order and the reef ends the adventure',()=>{
+ const h=harness();h.tick();
+ for(let level=0;level<3;level++){
+  finish(h);
+  assert.equal(h.nodes[['world-sky','world-night','world-ocean'][level]].getAttribute('aria-disabled'),'false');
+  h.nodes.continue.onclick();assert.equal(h.state.level,level+1);
+ }
+ assert.ok(h.nodes['touch-tip'].innerHTML.includes('SUBIR'));
+ finish(h);assert.equal(h.nodes['modal-title'].textContent,'A aventura brilhou, Sanduba!');
+ assert.ok(h.nodes['modal-copy'].textContent.includes('Pérola-Coração'));
+ h.nodes.continue.onclick();assert.equal(h.state.level,0);
+});
+test('reef movement and celebration freeze during pause',()=>{
+ const seed={worlds:[{stars:0,item:true,complete:true},{stars:0,item:true,complete:true},{stars:0,item:true,complete:true}]};
+ const h=harness({store:storage({'sanduba-nas-nuvens':JSON.stringify(seed)})});h.nodes['world-ocean'].onclick();
+ h.key('keydown','ArrowRight');h.tick(20);h.nodes.pause.onclick();const x=h.state.player.x;h.tick(90);assert.equal(h.state.player.x,x);
+ h.nodes.continue.onclick();h.tick(20);assert.ok(h.state.player.x>=x);
+ h.state.item.taken=true;Object.assign(h.state.player,{x:h.state.goal.x-24,y:h.state.goal.y-32,vx:0,vy:0});h.tick(2);const at=h.state.endingTime;
+ h.blur();h.tick(90);assert.equal(h.state.endingTime,at);
 });

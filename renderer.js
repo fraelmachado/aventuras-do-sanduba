@@ -2,8 +2,8 @@
 window.SandubaRenderer = function(canvas) {
   'use strict';
   const c = canvas.getContext('2d');
-  let width = 1100, height = 650, camera = 0, cameraY = 0, sprite = null, flight = null, sleeping = null, sleepBounds = null;
-  const garden = new Image(), sky = new Image(), night = new Image(), source = new Image(), flightSource = new Image(), sleepSource = new Image(), capSource = new Image();
+  let width = 1100, height = 650, camera = 0, cameraY = 0, sprite = null, flight = null;
+  const garden = new Image(), sky = new Image(), night = new Image(), reef = new Image(), source = new Image(), flightSource = new Image(), swimSource = new Image(), swimKickSource = new Image();
   function keyImage(image) {
         // Runtime color key for the intentionally green game sprite atlas.
         const atlas = document.createElement('canvas');
@@ -19,16 +19,10 @@ window.SandubaRenderer = function(canvas) {
         a.putImageData(pixels,0,0); return atlas;
   }
   const ready = Promise.all([
-    new Promise(resolve=>{capSource.onload=resolve;capSource.onerror=resolve;capSource.src=SandubaAssets.cap;}),
-    new Promise(resolve=>{sleepSource.onload=()=>{
-      sleeping=keyImage(sleepSource);
-      const d=sleeping.getContext('2d').getImageData(0,0,sleeping.width,sleeping.height).data;
-      let l=sleeping.width,r=0,top=sleeping.height,b=0;
-      for(let y=0;y<sleeping.height;y++)for(let x=0;x<sleeping.width;x++)if(d[(y*sleeping.width+x)*4+3]>100){l=Math.min(l,x);r=Math.max(r,x);top=Math.min(top,y);b=Math.max(b,y);}
-      sleepBounds=[l,top,r-l+1,b-top+1];resolve();
-    };sleepSource.onerror=resolve;sleepSource.src=SandubaAssets.sleep;}),
+    new Promise(resolve=>{swimSource.onload=resolve;swimSource.onerror=resolve;swimSource.src=SandubaAssets.swim;}),
+    new Promise(resolve=>{swimKickSource.onload=resolve;swimKickSource.onerror=resolve;swimKickSource.src=SandubaAssets.swimKick;}),
     new Promise(resolve=>{flightSource.onload=()=>{flight=keyImage(flightSource);resolve();};flightSource.onerror=resolve;flightSource.src=SandubaAssets.flight;}),
-    ...[[sky,SandubaAssets.sky],[night,SandubaAssets.night]].map(([im,src])=>new Promise(resolve=>{im.onload=resolve;im.onerror=resolve;im.src=src;})),
+    ...[[sky,SandubaAssets.sky],[night,SandubaAssets.night],[reef,SandubaAssets.reef]].map(([im,src])=>new Promise(resolve=>{im.onload=resolve;im.onerror=resolve;im.src=src;})),
     new Promise(resolve => { garden.onload = resolve; garden.onerror = resolve; garden.src = SandubaAssets.garden; }),
     new Promise(resolve => {
       source.onload = () => {
@@ -48,13 +42,7 @@ window.SandubaRenderer = function(canvas) {
     for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,k=i%2?r*.45:r;c.lineTo(Math.cos(a)*k,Math.sin(a)*k);}
     c.closePath();c.fill();c.restore();
   }
-  function nightcap(x,y,w=64,angle=0) {
-    if(!capSource.complete||!capSource.naturalWidth)return;
-    c.save();c.translate(x,y);c.rotate(angle);
-    // Anchor the center of the knitted brim to the crown; leave both ears visible.
-    c.drawImage(capSource,-w*49.5/120,-w*91/120,w,w*100/120);c.restore();
-  }
-  function pig(x,feet,h,t,{walking=false,air=false,face=1,hasBow=false,land=0,gliding=false}={}) {
+  function pig(x,feet,h,t,{walking=false,air=false,face=1,land=0,gliding=false}={}) {
     if(!sprite)return;
     const pose=air?3:walking?1+Math.floor(t*9)%2:0;
     const b=walking?Math.sin(t*18)*1.5:Math.sin(t*2.5)*1;
@@ -68,15 +56,13 @@ window.SandubaRenderer = function(canvas) {
       const size=hh/.59;
       c.drawImage(flight,-size*.43,-size*.915,size,size);
     } else c.drawImage(sprite,pose*384+2,215,380,584,-w/2,-hh,w,hh);
-    if(hasBow){
-      nightcap(0,-hh*.88,h*.66);
-      if(gliding&&flight){
-        // Canopy passes in front of the tip of the cap, without covering the face.
-        const size=hh/.59;c.save();c.beginPath();c.rect(-size*.43,-size*.915,size,size*.32);c.clip();
-        c.drawImage(flight,-size*.43,-size*.915,size,size);c.restore();
-      }
-    }
     c.restore();
+  }
+  function swimmer(x,y,t,face=1){
+    if(!swimSource.complete||!swimSource.naturalWidth)return;
+    const kick=Math.floor(t*4.4)%2===1&&swimKickSource.complete&&swimKickSource.naturalWidth;
+    c.save();c.translate(x,y+Math.sin(t*5)*2);c.scale(face,1);c.rotate(Math.sin(t*4)*.035);
+    c.drawImage(kick?swimKickSource:swimSource,-72,-48,144,96);c.restore();
   }
   function cloud(x,y,w,color='#fffdf1') {
     const g=c.createLinearGradient(0,y-12,0,y+35);g.addColorStop(0,color);g.addColorStop(1,'#b9cbd2');
@@ -90,7 +76,7 @@ window.SandubaRenderer = function(canvas) {
     ellipse(x,y-22*size,2.7*size,2.7*size,'#eebf55');
   }
   function background(level,t,home) {
-    const picture=level===1?sky:level===2?night:garden;
+    const picture=level===1?sky:level===2?night:level===3?reef:garden;
     if(picture.complete&&picture.naturalWidth) {
       const dw=Math.max(width+180,height*1.5),dh=dw/1.5;
       const drift=home?Math.sin(t*.05)*8:Math.sin(camera/2100)*65;
@@ -99,12 +85,13 @@ window.SandubaRenderer = function(canvas) {
 
     if(!home) {
       // Calm the distant painting so real platforms remain easy to identify.
-      const mist=c.createLinearGradient(0,80,0,650);mist.addColorStop(0,'#f4f6db10');mist.addColorStop(.5,level===2?'#13194618':level===1?'#ebf3ff28':'#f3f6d352');mist.addColorStop(1,'#1e6b670a');c.fillStyle=mist;c.fillRect(0,0,width,height);
+      const mist=c.createLinearGradient(0,80,0,650);mist.addColorStop(0,'#f4f6db10');mist.addColorStop(.5,level===3?'#0b76961c':level===2?'#13194618':level===1?'#ebf3ff28':'#f3f6d352');mist.addColorStop(1,'#1e6b670a');c.fillStyle=mist;c.fillRect(0,0,width,height);
     }
     for(let i=0;i<32;i++) {
       const x=((i*137-camera*.15+t*(4+i%3))%(width+60)+width+60)%(width+60)-30;
       const y=80+(i*89)%510+Math.sin(t*.8+i)*14;
-      ellipse(x,y,i%4?1.4:2.4,i%4?1.4:2.4,level===2?'#fff1a277':'#fff9cf88');
+      if(level===3){c.strokeStyle='#d7fbff85';c.lineWidth=1.3;c.beginPath();c.arc(x,y,2+i%4,0,Math.PI*2);c.stroke();}
+      else ellipse(x,y,i%4?1.4:2.4,i%4?1.4:2.4,level===2?'#fff1a277':'#fff9cf88');
     }
     for(let i=0;i<(level===0?4:0);i++) {
       const x=((i*337-camera*.35+t*13)%(width+180)+width+180)%(width+180)-90;
@@ -176,34 +163,54 @@ window.SandubaRenderer = function(canvas) {
     }
     flag(q,index,state,x,y,t);c.restore();
   }
-  function bed(x,y) {
-    c.shadowColor='#3d392f33';c.shadowBlur=12;ellipse(x,y+6,60,9,'#52473122');c.shadowBlur=0;
-    round(x-52,y-55,12,61,5,'#87613f');round(x+44,y-39,10,45,4,'#87613f');round(x-44,y-28,91,19,5,'#ba8e61');
-    round(x-43,y-40,84,19,7,'#fff5d7');round(x-38,y-52,31,16,8,'#fff9e7');round(x-8,y-46,48,24,7,'#b87588');
-    star(x+15,y-35,7,'#f8d99b');
+  function heart(x,y,r,color){
+    c.save();c.translate(x,y);c.scale(r/20,r/20);c.fillStyle=color;c.beginPath();c.moveTo(0,18);
+    c.bezierCurveTo(-28,0,-20,-18,-8,-16);c.bezierCurveTo(-2,-16,0,-10,0,-10);
+    c.bezierCurveTo(0,-10,2,-16,8,-16);c.bezierCurveTo(20,-18,28,0,0,18);c.fill();c.restore();
   }
-  function bedtime(state,t) {
-    const a=state.endingTime, p=state.player, x=state.goal.x-camera, y=state.goal.y;
-    const ease=v=>{v=Math.max(0,Math.min(1,v));return v*v*(3-2*v);};
-    const approach=ease(a/.8), settle=ease((a-.8)/1.1);
-    const px=(p.x+p.w/2-camera)*(1-approach)+(x-18)*approach;
-    if(settle<1||!sleeping){
-      c.save();c.globalAlpha=1-settle;
-      c.translate(px,y-approach*38);c.rotate(-settle*.8);
-      pig(0,0,87*(1-settle*.22),t,{walking:a<.8,hasBow:state.bow.taken});c.restore();
+  function arrival(x,y,level,t){
+    c.save();c.translate(x,y);
+    if(level===3){
+      c.strokeStyle='#f69d91';c.lineWidth=20;c.lineCap='round';c.beginPath();c.moveTo(-65,30);c.bezierCurveTo(-85,-145,85,-145,65,30);c.stroke();
+      c.strokeStyle='#ffd6ad';c.lineWidth=5;c.beginPath();c.moveTo(-65,30);c.bezierCurveTo(-85,-145,85,-145,65,30);c.stroke();
+      for(let i=0;i<8;i++){const a=Math.PI+(i/7)*Math.PI,px=Math.cos(a)*72,py=-36+Math.sin(a)*78;ellipse(px,py,7+i%3*3,6,'#efb3a5');}
+      heart(0,-68,14,'#fdf0c8');
+    }else if(level===2){
+      c.strokeStyle='#d5c9ee';c.lineWidth=14;c.beginPath();c.arc(0,-22,62,Math.PI,0);c.stroke();
+      for(let i=0;i<7;i++)star(Math.cos(i*.52+Math.PI)*66,Math.sin(i*.52+Math.PI)*65-22,7,'#ffe5a0',t*.3);
+      round(-60,-8,120,15,8,'#d8d3e8');
+    }else if(level===1){
+      cloud(-70,-17,140,'#fff9df');
+      c.strokeStyle='#b6d1e1';c.lineWidth=9;c.beginPath();c.arc(0,-22,52,Math.PI,0);c.stroke();
+      star(0,-88,12,'#ffe5a1',t*.2);
+    }else{
+      c.strokeStyle='#779363';c.lineWidth=10;c.beginPath();c.arc(0,-28,57,Math.PI,0);c.stroke();
+      for(let i=0;i<7;i++)flower(-53+i*18,-69-Math.sin(i/6*Math.PI)*35,.52,i%2?'#f5c2be':'#ffe7a6');
+      round(-59,-5,118,12,6,'#c9ab75');
     }
-    if(sleeping&&settle>0){
-      const h=84*sleepBounds[3]/sleepBounds[2], breath=Math.sin(a*2.4)*.55;
-      c.save();c.globalAlpha=settle;c.drawImage(sleeping,...sleepBounds,x-42,y-40-h+breath,84,h-breath);
-      if(state.bow.taken)nightcap(x-24,y-40-h*.73+breath,36,-.32);
-      c.restore();
-      // The blanket is in front of the body, while the head rests on the pillow.
-      c.save();c.globalAlpha=settle;round(x-5,y-49+breath,46,23,7,'#b87588');star(x+15,y-38+breath,6,'#f8d99b');c.restore();
-    }
-    if(a>2){
-      c.save();c.fillStyle='#fff4db';c.textAlign='center';
-      for(let i=0;i<3;i++){const v=((a-2)*.4+i/3)%1;c.globalAlpha=Math.sin(v*Math.PI)*.8;c.font=`${10+v*6}px Georgia`;c.fillText('z',x-25+v*18,y-90-v*35);}
-      c.restore();
+    c.restore();
+  }
+  function specialItem(item,level,t){
+    const x=item.x-camera,y=item.y+Math.sin(t*3)*4;
+    c.save();c.shadowColor=level===3?'#d2ffff':'#ffe8a6';c.shadowBlur=18;
+    if(level===0){flower(x,y+21,.9,'#f6c851');star(x,y,8,'#fff0aa',t*.3);}
+    else if(level===1){c.fillStyle='#e6f8ff';c.beginPath();c.moveTo(x,y-24);c.bezierCurveTo(x+25,y+6,x+13,y+19,x,y+20);c.bezierCurveTo(x-13,y+19,x-25,y+6,x,y-24);c.fill();ellipse(x-6,y+3,4,7,'#ffffffbb');}
+    else if(level===2){ellipse(x,y,22,22,'#ffe9a9');ellipse(x+9,y-8,19,19,'#40446e');star(x+15,y+13,5,'#fff4c5',t*.3);}
+    else{ellipse(x,y+12,27,15,'#da94aa');ellipse(x,y-2,21,21,'#fff6e5');heart(x,y-3,11,'#f2a4b3');}
+    c.shadowBlur=0;c.restore();
+  }
+  function shell(x,y,t,color){
+    c.save();c.translate(x-camera,y+Math.sin(t*3+x)*3);c.fillStyle=color;c.beginPath();c.arc(0,5,17,Math.PI,0);c.lineTo(13,13);c.quadraticCurveTo(0,21,-13,13);c.closePath();c.fill();
+    c.strokeStyle='#fff8dc';c.lineWidth=2;for(let i=-2;i<=2;i++){c.beginPath();c.moveTo(0,15);c.lineTo(i*6,-9+Math.abs(i)*3);c.stroke();}c.restore();
+  }
+  function celebrate(state,t){
+    const a=state.endingTime,p=state.player,x=state.goal.x-camera,y=state.goal.y;
+    const k=Math.min(1,a/.6),px=(p.x+p.w/2-camera)*(1-k)+x*k;
+    if(state.level===3)swimmer(px,y-29+Math.sin(a*10)*4,a,p.face);
+    else pig(px,y-8-Math.max(0,Math.sin((a-.6)*13))*10,94,a,{air:a>.6,face:p.face});
+    if(a>1.25){const rise=Math.min(1,(a-1.25)/1.3);c.globalAlpha=1-rise*.55;
+      if(state.level===3){c.strokeStyle='#e6ffff';c.lineWidth=2;c.beginPath();c.arc(x+32,y-102-rise*90,29,0,Math.PI*2);c.stroke();}
+      heart(x+32,y-102-rise*90,18+rise*5,'#f8a9bb');c.globalAlpha=1;
     }
   }
   function sign(x,y,text) {
@@ -211,11 +218,44 @@ window.SandubaRenderer = function(canvas) {
     c.font='bold 11px Trebuchet MS';const w=c.measureText(text).width+28;
     round(x-camera-w/2,y,w,30,9,'#fff9e8ed');c.fillStyle='#68563d';c.textAlign='center';c.fillText(text,x-camera,y+19);
   }
+  function drawSea(state,t){
+    const left=camera,right=camera+width;
+    // The pale surface and sandy floor show the swimming bounds.
+    c.fillStyle='#c5f7f780';c.fillRect(0,0,width,29);
+    c.fillStyle='#f5d2a669';c.fillRect(0,620,width,30);
+    c.strokeStyle='#e7ffff8e';c.lineWidth=3;c.beginPath();
+    for(let x=0;x<=width;x+=12)c.lineTo(x,29+Math.sin(x*.025+t*2)*3);c.stroke();
+    for(const w of state.currents){
+      if(w.x+w.w<left||w.x>right)continue;const x=w.x-camera;
+      const g=c.createLinearGradient(x,0,x+w.w,0);g.addColorStop(0,'#a5faff00');g.addColorStop(.5,'#c4ffff30');g.addColorStop(1,'#a5faff00');c.fillStyle=g;c.fillRect(x,w.y,w.w,w.h);
+      c.strokeStyle='#ddffff87';c.lineWidth=1.8;
+      for(let i=0;i<7;i++){const bx=x+25+i*(w.w-50)/6,by=w.y+((i*83-t*44)%w.h+w.h)%w.h;c.beginPath();c.arc(bx,by,5+i%3,0,Math.PI*2);c.stroke();}
+    }
+    for(const q of state.checkpoints){
+      if(q.x<left-80||q.x>right+80)continue;const x=q.x-camera,active=state.checkpoint===state.checkpoints.indexOf(q);
+      c.strokeStyle='#f8e9bc';c.lineWidth=3;c.beginPath();c.moveTo(x,612);c.lineTo(x,q.y+37);c.stroke();
+      ellipse(x,q.y+37,21,16,active?'#ffe2a1':'#dfbfd0');
+      star(x,q.y+34,7,active?'#fff9d5':'#f9e7ee',t*.2);
+    }
+    for(const a of state.animals){
+      if(a.x<left-150||a.x>right+150)continue;
+      const x=(a.liveX??a.x)-camera,y=a.liveY??a.y;
+      if(a.kind==='fish'){
+        c.save();c.translate(x,y);c.scale(Math.cos(t*a.speed+a.phase)>0?1:-1,1);
+        ellipse(0,0,a.r*.8,a.r*.48,'#f4c6a5');
+        c.fillStyle='#eaa99d';c.beginPath();c.moveTo(-a.r*.63,0);c.lineTo(-a.r*1.3,-a.r*.55);c.lineTo(-a.r*1.3,a.r*.55);c.closePath();c.fill();
+        ellipse(a.r*.36,-a.r*.09,2.7,2.7,'#5e6471');c.restore();
+      }else{
+        c.fillStyle='#d9b8e9bb';c.beginPath();c.arc(x,y,24,Math.PI,0);c.lineTo(x+24,y+9);c.quadraticCurveTo(x,y+18,x-24,y+9);c.closePath();c.fill();
+        c.strokeStyle='#ecdbf4bb';c.lineWidth=3;for(let i=-2;i<=2;i++){c.beginPath();c.moveTo(x+i*9,y+10);c.quadraticCurveTo(x+i*9+Math.sin(t*3+i)*6,y+28,x+i*9,y+39);c.stroke();}
+      }
+    }
+  }
   function draw(state,mode,t,particles) {
     const home=!state||mode==='home';
     if(!home)camera=Math.max(0,Math.min(Math.max(0,(state.width||2440)-width),state.player.x-width*.32));else camera=0;
     background(state?.level||0,t,home);
-    cameraY=!home&&state.level>0?Math.min(0,state.player.y-290):0;
+    cameraY=!home&&state.level>0&&state.level<3?Math.min(0,state.player.y-290):0;
     if(home) {
       const mobile=width<800,x=mobile?width*.72:width*.74,feet=mobile?height*.92:height*.85,h=mobile?205:345;
       leaf({w:h*.86},x-h*.43,feet+5,t);pig(x,feet,h,t);
@@ -223,32 +263,35 @@ window.SandubaRenderer = function(canvas) {
     }
     c.save();c.translate(0,-cameraY);
     for(const w of state.winds||[])drawWind(w,t,state.level);
+    if(state.level===3)drawSea(state,t);
     state.platforms.forEach((q,i)=>platform(q,i,state,t));
     for(const b of state.bells||[])drawBell(b,state,t);
     for(const s of state.stars)if(!s.taken) {
       const x=s.x-camera,y=s.y+Math.sin(t*3+s.x)*4;
       if(x< -30||x>width+30)continue;
+      if(state.level===3){shell(s.x,s.y,t,['#f3b5ae','#ffe0a6','#c7b9ec','#f6aaba','#f0d49a'][state.stars.indexOf(s)]);continue;}
       c.shadowColor='#ffe396';c.shadowBlur=18;star(x,y,17,'#ba813d',-.05);star(x,y-2,15,'#ffda78',-.05);c.shadowBlur=0;star(x-2,y-4,8,'#fff0b6',-.05);
       ellipse(x-6,y-8,2,2,'#fff9e8');
     }
-    if(!state.bow.taken) {const b=state.bow;c.shadowColor='#dbc4f5';c.shadowBlur=15;nightcap(b.x-camera,b.y+17+Math.sin(t*3)*4,54);c.shadowBlur=0;}
-    bed(state.goal.x-camera,state.goal.y);
+    if(!state.item.taken)specialItem(state.item,state.level,t);
+    arrival(state.goal.x-camera,state.goal.y,state.level,t);
     if(state.level===0) {
       sign(165,405,'Segure para um salto maior ↑');
       sign(2040,330,'As folhas levam você ↔');
       sign(4070,320,'Nuvem dourada? Não demore!');
     }
     const p=state.player;
-    if(state.endingTime!==undefined)bedtime(state,t);else {
+    if(state.endingTime!==undefined)celebrate(state,t);else {
     // Fade back in after a rescue; physics already moved Sanduba to the flag.
     c.globalAlpha=state.rescueAt===undefined?1:Math.min(1,(t-state.rescueAt)/.55);
-    pig(p.x+p.w/2-camera,p.y+p.h,87,t,{walking:Math.abs(p.vx)>30&&p.grounded,air:!p.grounded,face:p.face,hasBow:state.bow.taken,land:p.landTimer||0,gliding:p.gliding});
+    if(state.level===3)swimmer(p.x+p.w/2-camera,p.y+p.h/2,state.time,p.face);
+    else pig(p.x+p.w/2-camera,p.y+p.h,87,t,{walking:Math.abs(p.vx)>30&&p.grounded,air:!p.grounded,face:p.face,land:p.landTimer||0,gliding:p.gliding});
     c.globalAlpha=1;
     }
     for(const a of particles){c.globalAlpha=Math.max(0,a.life);star(a.x-camera,a.y,a.life*5,a.color,a.life*2);}c.globalAlpha=1;c.restore();
-    if(state.complete&&state.level===2){
+    if(state.complete&&state.level===3){
       for(let k=0;k<28;k++){const x=(k*97+t*8)%width,y=(k*61+t*24)%height;star(x,y,3+k%4,k%2?'#ffe1a0':'#dfb3db',t*.2);}
-      c.font='italic 26px Georgia';c.textAlign='center';c.fillStyle='#fff1c8';c.fillText('Bons sonhos, Sanduba…',width/2,120);
+      c.font='italic 26px Georgia';c.textAlign='center';c.fillStyle='#fff1c8';c.fillText('Fim da aventura ♡',width/2,120);
     }
   }
 

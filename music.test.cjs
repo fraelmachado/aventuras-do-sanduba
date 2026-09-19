@@ -8,10 +8,10 @@ function context(){
  const param=()=>({value:0,setValueAtTime(){},linearRampToValueAtTime(){},exponentialRampToValueAtTime(){},cancelScheduledValues(){}});
  return {currentTime:0,destination:{},voices,createGain(){return {gain:param(),connect(){},disconnect(){}}},createOscillator(){const o={frequency:param(),connect(){},disconnect(){},start(t){this.startAt=t},stop(t){this.stopAt=t}};voices.push(o);return o;}};
 }
-test('three distinct, finite looping scores with gentle tempos',()=>{
+test('four distinct, finite looping scores with gentle tempos',()=>{
  assert.ok(Music,'music module exists');
- assert.equal(Music.tracks.length,3);
- assert.equal(new Set(Music.tracks.map(x=>JSON.stringify(x.melody))).size,3);
+ assert.equal(Music.tracks.length,4);
+ assert.equal(new Set(Music.tracks.map(x=>JSON.stringify(x.melody))).size,4);
  for(const t of Music.tracks){assert.ok(t.bpm>=50&&t.bpm<=85);assert.equal(t.melody.length,64);assert.ok(t.melody.every(n=>n===null||Number.isFinite(n)));}
 });
 test('silence before activation, no duplicate scheduling, immediate stop on pause/mute',()=>{

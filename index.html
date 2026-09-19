@@ -6,14 +6,15 @@
 <main>
  <div class="topline"><span>ESTRELANDO O SEU PORQUINHO FAVORITO</span><span>✦ &nbsp; UM SALTINHO DE CADA VEZ</span></div>
  <div id="play-area"><section class="game" aria-label="Sanduba nas Nuvens">
- <canvas id="world" width="1100" height="650" aria-label="Jogo de plataforma. Use as setas para andar e espaço para pular."></canvas>
+ <canvas id="world" width="1100" height="650" aria-label="Aventura de Sanduba. Use as setas para se mover e espaço para pular ou subir na água."></canvas>
  <div id="home" class="screen home">
-   <div class="intro"><span class="tag">TRÊS MUNDOS, UMA GRANDE AMIZADE</span><h1>Sanduba<br>nas <em>Nuvens</em><span class="title-star">✦</span></h1><p>Pule pelo jardim. Flutue nas nuvens.<br>Acenda as estrelas.<br>Uma aventura até o aconchego.</p><button id="start" class="primary">Entrar no jardim <span>→</span></button><button id="sound-home" class="secondary sound-home">♫ Ligar a música</button><div class="home-hint">Explore, tente de novo, descubra seu caminho.</div></div>
+   <div class="intro"><span class="tag">QUATRO MUNDOS, UMA GRANDE AMIZADE</span><h1>Sanduba<br>nas <em>Nuvens</em><span class="title-star">✦</span></h1><p>Pule pelo jardim. Flutue nas nuvens.<br>Acenda as estrelas. Nade no recife.<br>Encontre os tesouros de cada mundo.</p><button id="start" class="primary">Entrar no jardim <span>→</span></button><button id="sound-home" class="secondary sound-home">♫ Ligar a música</button><div class="home-hint">Explore, tente de novo, descubra seu caminho.</div></div>
    <div class="hello">Oi! Eu sou o Sanduba <span>♡</span></div><span class="hero-caption">FOFINHO. CURIOSO. PRONTO PARA EXPLORAR.</span>
  </div>
- <div id="hud" hidden><div class="level-label"><small id="level-number">MUNDO 01 / 03</small><strong id="level-name"></strong></div><div class="hud-right"><span id="counter" aria-label="Estrelas coletadas">★ 0 / 5</span><span id="bow-status" title="Touquinha escondida" aria-label="Touquinha escondida"><img src="assets/touquinha.svg" alt="" width="28" height="24"></span><button id="sound" aria-label="Ativar som" title="Ativar som">♫</button><button id="fullscreen" aria-label="Tela cheia" title="Tela cheia">⛶</button><button id="pause" aria-label="Pausar" title="Pausar">Ⅱ</button></div><div id="mechanic"></div><div id="progress"><i></i></div></div>
+ <div id="hud" hidden><div class="level-label"><small id="level-number">MUNDO 01 / 04</small><strong id="level-name"></strong></div><div class="hud-right"><span id="counter" aria-label="Colecionáveis coletados">★ 0 / 5</span><span id="item-status" title="Item especial escondido" aria-label="Item especial escondido"></span><button id="sound" aria-label="Ativar som" title="Ativar som">♫</button><button id="fullscreen" aria-label="Tela cheia" title="Tela cheia">⛶</button><button id="pause" aria-label="Pausar" title="Pausar">Ⅱ</button></div><div id="mechanic"></div><div id="progress"><i></i></div></div>
  <div id="modal" class="screen modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden><div class="modal-card"><span id="modal-icon">☁</span><p class="tag" id="modal-tag"></p><h2 id="modal-title"></h2><p id="modal-copy"></p><button class="primary" id="continue"></button><button class="secondary" id="replay" hidden>Explorar esta fase outra vez</button><button class="secondary" id="home-button">Voltar ao início</button></div></div>
  <div id="toast" role="status"></div>
+ <button id="return-item" class="return-item" hidden>↶ Voltar para buscar o item</button>
  </section>
  <div id="touch" hidden><div><button data-key="left" aria-label="Andar para a esquerda">←</button><button data-key="right" aria-label="Andar para a direita">→</button></div><span class="touch-tip" id="touch-tip">TOQUE: SALTO CURTO<br>SEGURE: SALTO ALTO</span><button data-key="jump" class="jump">Pular ↑</button></div>
  </div>
@@ -22,6 +23,7 @@
  <button id="world-garden"><span class="world-num">01</span><span><strong>Jardim dos Pulos</strong><small>Saltos, folhas e descobertas</small><em class="world-stars" id="stars-0"></em></span><span class="world-art">✿</span></button>
  <button id="world-sky"><span class="world-num">02</span><span><strong>Nuvens de Algodão</strong><small>Abra as asas do guarda-chuva</small><em class="world-stars" id="stars-1"></em></span><span class="world-art">☂</span></button>
  <button id="world-night"><span class="world-num">03</span><span><strong>Céu Estrelado</strong><small>Acenda o caminho de casa</small><em class="world-stars" id="stars-2"></em></span><span class="world-art">☾</span></button>
+ <button id="world-ocean"><span class="world-num">04</span><span><strong>Recife dos Abraços</strong><small>Nade entre bolhas e corais</small><em class="world-stars" id="stars-3"></em></span><span class="world-art">♡</span></button>
  </div>
  <footer>Um mundo pequenininho, uma amizade gigante. <span>♡</span></footer>
 </main>

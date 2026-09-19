@@ -10,12 +10,14 @@ Objetivo: ver onde ela se diverte, onde trava e o que ignora. Não ensinar; só 
 ## Durante (anotar)
 | Momento | O que aconteceu | Reação dela |
 | --- | --- | --- |
-| Tela inicial | Leu os cartões? Escolheu qual mundo? Achou o botão de música? | |
+| Tela inicial | Leu os quatro cartões? Entendeu o bloqueio? Achou o botão de música? | |
 | Jardim, trecho 1 | Entendeu toque × segurar? Tentou a estrela alta? | |
-| Jardim, cogumelo | Achou o caminho do laço? | |
+| Jardim, cogumelo | Achou a Flor Dourada? Entendeu que precisa dela para chegar? | |
 | Nuvens | Abriu o guarda-chuva sozinha? Usou a corrente de ar? Pairou pela estrela? | |
 | Noite | Entendeu o sino? Esperou a ponte apagar alguma vez? | |
-| Caminha | Assistiu o descanso ou clicou para pular? | |
+| Recife | Entendeu segurar para subir e soltar para descer? Viu os bracinhos e perninhas nadando? Conseguiu desviar dos animais? | |
+| Chegada sem item | Leu a dica? Usou o botão para voltar? | |
+| Comemoração | Viu o beijinho e o coração? | |
 
 ## Depois
 - Copiar as linhas `queda` do console e agrupar por mundo/trecho. Três ou mais quedas no mesmo `x` indicam um vão para revisar.

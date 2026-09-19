@@ -11,11 +11,29 @@
   let state=null, mode='home', last=0, clock=0, accumulator=0;
   let muted=true, audio=null, toastUntil=0, modalAction=null, results=[], particles=[];
   const STORAGE='sanduba-nas-nuvens';
+  const ITEM_NAMES=['Flor Dourada','Gota de Nuvem','Luazinha','Pérola-Coração'];
+  const ITEM_ICONS=['✿','☁','☾','♡'];
+  const CARD_IDS=['world-garden','world-sky','world-night','world-ocean'];
   // ponytail: lê a chave antiga como reserva para não perder o progresso de quem jogou antes do rename; o próximo save() já grava na chave nova. Remover quando ninguém mais tiver save antigo.
-  function load(){try{return {worlds:[],sound:false,...JSON.parse(localStorage.getItem(STORAGE)||localStorage.getItem('pudim-nas-nuvens')||'{}')};}catch{return {worlds:[],sound:false};}}
+  function load(){
+    try{
+      const raw=JSON.parse(localStorage.getItem(STORAGE)||localStorage.getItem('pudim-nas-nuvens')||'{}');
+      const worlds=Array.isArray(raw.worlds)?raw.worlds.slice(0,4).map(w=>w?{stars:Math.max(0,Math.min(5,Number(w.stars)||0)),item:!!(w.item||w.bow),complete:!!(w.complete||w.bow)}:null):[];
+      return {worlds,sound:!!raw.sound};
+    }catch{return {worlds:[],sound:false};}
+  }
   function save(){try{localStorage.setItem(STORAGE,JSON.stringify(saved));}catch{}}
   const saved=load();
-  function cards(){for(let i=0;i<3;i++){const w=saved.worlds[i];$('stars-'+i).textContent=w?'★'.repeat(w.stars)+'☆'.repeat(5-w.stars)+(w.bow?' · Touquinha':''):'';}}
+  function unlocked(i){return i===0||!!saved.worlds[i-1]?.complete;}
+  function cards(){
+    for(let i=0;i<4;i++){
+      const w=saved.worlds[i],card=$(CARD_IDS[i]),open=unlocked(i);
+      $('stars-'+i).textContent=w?'★'.repeat(w.stars)+'☆'.repeat(5-w.stars)+(w.item?' · '+ITEM_NAMES[i]:'')+(w.complete?' · Concluído':''):'';
+      const reason=open?'':`Conclua ${SandubaEngine.names[i-1]} com ${ITEM_NAMES[i-1]} para desbloquear.`;
+      card.setAttribute('aria-disabled',String(!open));card.setAttribute('aria-label',`${SandubaEngine.names[i]}. ${reason||'Disponível.'}`);
+      card.title=reason;card.classList.toggle('locked',!open);
+    }
+  }
 
   function ensureAudio() {
     audio ||= new (window.AudioContext||window.webkitAudioContext)();
@@ -31,7 +49,7 @@
     if(muted || type==='land' || type==='section')return;
     try {
       ensureAudio();
-      const notes = {win:[523,659,784,1047],star:[880,1175],bow:[659,880,1047],spring:[330,660],bell:[659,880,1318],checkpoint:[523,784],rescue:[330,392],jump:[350]}[type]||[];
+      const notes = {win:[523,659,784,1047],star:[880,1175],item:[659,880,1047],spring:[330,660],bell:[659,880,1318],checkpoint:[523,784],rescue:[330,392],bump:[392,494],jump:[350]}[type]||[];
       notes.forEach((f,i)=>{
         const o=audio.createOscillator(),g=audio.createGain(),at=audio.currentTime+i*.105;
         o.type='sine';o.frequency.setValueAtTime(f,at);
@@ -56,22 +74,27 @@
   function hud() {
     if(!state)return;
     const section=state.sections?.[state.activeSection||0];
-    $('level-number').textContent=`${['JARDIM','NUVENS','ESTRELAS'][state.level]} · TRECHO ${(state.activeSection||0)+1} / 3`;
+    $('level-number').textContent=`${['JARDIM','NUVENS','ESTRELAS','RECIFE'][state.level]} · TRECHO ${(state.activeSection||0)+1} / 3`;
     const lit=Math.max(...state.bridgeTimers);
-    $('mechanic').textContent=state.level===0?'':state.level===1?(state.player.gliding?'☂ Guarda-chuva aberto · solte para descer':'☂ Segure Pular no ar para planar'):lit>0?`♫ Pontes acesas · ${lit.toFixed(1)} s`:'♫ Encoste no sininho para revelar a ponte';
+    $('mechanic').textContent=state.level===3?'◌ Segure Pular para subir · solte para descer':state.level===0?'':state.level===1?(state.player.gliding?'☂ Guarda-chuva aberto · solte para descer':'☂ Segure Pular no ar para planar'):lit>0?`♫ Pontes acesas · ${lit.toFixed(1)} s`:'♫ Encoste no sininho para revelar a ponte';
     $('level-name').textContent=section?.name||state.name;
-    $('counter').textContent=`★ ${state.stars.filter(s=>s.taken).length} / 5`;
-    $('bow-status').classList.toggle('found',state.bow.taken);
-    $('bow-status').title=state.bow.taken?'Touquinha encontrada!':'Uma touquinha espera no caminho mais alto';
-    $('bow-status').setAttribute('aria-label',$('bow-status').title);
+    $('counter').textContent=`${state.level===3?'◉':'★'} ${state.stars.filter(s=>s.taken).length} / 5`;
+    $('item-status').textContent=ITEM_ICONS[state.level];
+    $('item-status').classList.toggle('found',state.item.taken);
+    $('item-status').title=state.item.taken?`${state.item.name} encontrada!`:`Encontre ${state.item.name} para concluir`;
+    $('item-status').setAttribute('aria-label',$('item-status').title);
+    $('return-item').hidden=!state.offeredReturn||state.item.taken;
+    $('return-item').textContent=`↶ Voltar para buscar ${state.item.name}`;
     $('progress').firstElementChild.style.width=Math.min(100,state.player.x/(state.width||2440)*100)+'%';
   }
   function start(level=0) {
     state=SandubaEngine.create(level);document.body.dataset.world=String(level+1);mode='playing';clearKeys();particles=[];
+    $('return-item').hidden=true;
     if(!muted)try{ensureAudio();}catch{muted=true;}
     $('home').hidden=true;$('modal').hidden=true;$('help').disabled=false;$('hud').hidden=false;$('touch').hidden=false;
     document.body.classList.add('playing');renderer.resize();hud();
-    $('touch-tip').innerHTML=level===0?'TOQUE: SALTO CURTO<br>SEGURE: SALTO ALTO':'SEGURE NO AR: PLANAR<br>SOLTE: DESCER';
+    $('touch-tip').innerHTML=level===0?'TOQUE: SALTO CURTO<br>SEGURE: SALTO ALTO':level===3?'SEGURE: SUBIR<br>SOLTE: DESCER DEVAGAR':'SEGURE NO AR: PLANAR<br>SOLTE: DESCER';
+    document.querySelector('[data-key="jump"]').textContent=level===3?'Subir ↑':'Pular ↑';
     notify(state.sections[0].hint,6);
     $('pause').focus({preventScroll:true});
   }
@@ -82,7 +105,7 @@
     $('continue').focus({preventScroll:true});
   }
   function home() {
-    mode='home';state=null;clearKeys();$('home').hidden=false;$('hud').hidden=true;$('modal').hidden=true;
+    mode='home';state=null;clearKeys();$('home').hidden=false;$('hud').hidden=true;$('modal').hidden=true;$('return-item').hidden=true;
     $('help').disabled=false;$('touch').hidden=true;$('toast').classList.remove('show');
     document.body.classList.remove('playing');renderer.resize();$('start').focus({preventScroll:true});
   }
@@ -95,14 +118,14 @@
   }
   function complete() {
     mode='result';const n=state.stars.filter(s=>s.taken).length;
-    results[state.level]={stars:n,bow:state.bow.taken};
-    const best=saved.worlds[state.level]||{stars:0,bow:false};
-    saved.worlds[state.level]={stars:Math.max(best.stars,n),bow:best.bow||state.bow.taken};save();cards();
-    const end=state.level===2;
-    modal(end?'Bons sonhos, Sanduba!':state.level===0?'O jardim é seu!':'Que salto bonito!',
-      end?`Você levou Sanduba até a caminha!\n${results.reduce((a,r)=>a+(r?.stars||0),0)} estrelas encontradas nesta aventura.\nUma amizade cheia de histórias. ♡`:
-      `${n} de 5 estrelas · ${state.bow.taken?'touquinha encontrada!':'a touquinha ainda espera por você.'}\n${state.level===0?'Você atravessou a clareira, o lago e as nuvens!':'Você aprendeu a voar com o vento!'}\n${n===5&&state.bow.taken?'Todas as descobertas desta fase são suas.':'Você pode voltar para descobrir outros caminhos.'}`,
-      end?'Começar outra aventura':(state.level===0?'Voar pelas nuvens →':'Acender as estrelas →'),()=>{if(end)results=[];start(end?0:state.level+1);},end?'☾':'✦',end?'UM FINAL CHEIO DE ACONCHEGO':'AVENTURA CONCLUÍDA');
+    results[state.level]={stars:n,item:true};
+    const best=saved.worlds[state.level]||{stars:0,item:false,complete:false};
+    saved.worlds[state.level]={stars:Math.max(best.stars,n),item:true,complete:true};save();cards();
+    const end=state.level===3;
+    modal(end?'A aventura brilhou, Sanduba!':state.level===0?'O jardim é seu!':state.level===1?'Que voo bonito!':'As estrelas são suas!',
+      end?`Você encontrou a Pérola-Coração e atravessou o arco de coral!\n${results.reduce((a,r)=>a+(r?.stars||0),0)} colecionáveis nesta aventura.\nUm beijinho para guardar no coração. ♡`:
+      `${n} de 5 ${state.level===3?'conchas':'estrelas'} · ${state.item.name} encontrada!\n${n===5?'Todas as descobertas desta fase são suas.':'Você pode voltar para descobrir outros caminhos.'}`,
+      end?'Começar outra aventura':['Voar pelas nuvens →','Acender as estrelas →','Nadar no recife →'][state.level],()=>{if(end)results=[];start(end?0:state.level+1);},end?'♡':'✦',end?'FIM DA AVENTURA':'AVENTURA CONCLUÍDA');
   }
   function events() {
     for(const event of state.events) {
@@ -116,20 +139,28 @@
       }
       if(event==='checkpoint')notify('Bandeirinha acesa! Agora você volta para cá.',3);
       if(event==='section')notify(state.sections?.[state.activeSection]?.hint||'Um novo caminho!',5);
-      if(event==='bow')notify('O caminho secreto guardava a touquinha! ♡');
-      if(['star','bow','checkpoint','land','spring'].includes(event)) {
+      if(event==='item')notify(`${state.item.name} encontrada! Agora siga até a chegada. ♡`);
+      if(event==='needItem'){state.offeredReturn=true;notify(`A chegada espera por ${state.item.name}. Use “Voltar para buscar” se quiser!`,5);}
+      if(event==='bump')notify('Foi só um esbarrãozinho. Continue nadando!',2);
+      if(['star','item','checkpoint','land','spring'].includes(event)) {
         const p=state.player,amount=event==='land'?5:14;
-        for(let i=0;i<amount;i++)particles.push({x:p.x+p.w/2,y:p.y+(event==='land'?p.h:20),vx:Math.cos(i*2.4)*60,vy:Math.sin(i*2.4)*60-20,life:event==='land'?.4:1,color:event==='bow'?'#c4a9e0':event==='land'?'#e3e0b8':'#f4d391'});
+        for(let i=0;i<amount;i++)particles.push({x:p.x+p.w/2,y:p.y+(event==='land'?p.h:20),vx:Math.cos(i*2.4)*60,vy:Math.sin(i*2.4)*60-20,life:event==='land'?.4:1,color:event==='item'?'#c4a9e0':event==='land'?'#e3e0b8':'#f4d391'});
       }
-      if(event==='win'){state.endingTime=0;mode='ending';clearKeys();notify('Hora de um descanso, Sanduba…',4);}
+      if(event==='win'){state.endingTime=0;mode='ending';clearKeys();notify('Um abraço e um beijinho para celebrar! ♡',4);}
     }
   }
   $('start').onclick=()=>{results=[];start();};
   $('world-garden').onclick=()=>{results=[];start(0);};
-  $('world-sky').onclick=()=>{results=[];start(1);};
-  $('world-night').onclick=()=>{results=[];start(2);};
+  for(let i=1;i<4;i++)$(CARD_IDS[i]).onclick=()=>{if(!unlocked(i)){notify($(CARD_IDS[i]).title,5);return;}results=[];start(i);};
   $('continue').onclick=()=>modalAction?.();$('home-button').onclick=home;$('pause').onclick=pause;
   $('replay').onclick=()=>start(state.level);
+  $('return-item').onclick=()=>{
+    if(!state||state.item.taken)return;
+    if(SandubaEngine.returnToItem(state)){
+      state.offeredReturn=false;state.rescueAt=clock;clearKeys();hud();notify(`De volta ao caminho de ${state.item.name}. Você consegue! ♡`,4);
+      $('pause').focus({preventScroll:true});
+    }
+  };
   $('sound').onclick=$('sound-home').onclick=()=>setSound(muted);
   $('fullscreen').onclick=async()=>{
     try {if(document.fullscreenElement)await document.exitFullscreen();else if($('play-area').requestFullscreen)await $('play-area').requestFullscreen();else notify('Use o celular deitado para ampliar o cenário.');}
@@ -138,7 +169,7 @@
   $('help').onclick=()=>{
     const previous=mode;mode='help';
     modal('Aprenda os pequenos truques',
-      '← → ou A / D para andar. Espaço, ↑ ou W para pular.\nJardim: toque para um salto curto; segure para pular alto.\nNuvens e estrelas: segure no ar para abrir o guarda-chuva; solte para descer. As correntes de ar levam você para cima.\nNoite: encoste nos sininhos para acender pontes temporárias. Afaste-se e volte para tocar de novo.\nBandeirinhas são pontos de retorno. Estrelas e touquinhas são opcionais.',
+      '← → ou A / D para se mover. Espaço, ↑ ou W para pular ou subir.\nJardim: toque para um salto curto; segure para pular alto.\nNuvens e estrelas: segure no ar para abrir o guarda-chuva; solte para descer.\nNoite: encoste nos sininhos para acender pontes temporárias.\nRecife: segure Pular para subir; solte para descer devagar. Os animais só dão um empurrãozinho.\nBandeirinhas e boias são pontos de retorno. Estrelas e conchas são opcionais. Encontre o item especial de cada mundo antes da chegada.',
       'Vamos lá!',()=>{mode=previous;$('modal').hidden=true;$('help').disabled=false;(mode==='home'?$('start'):$('pause')).focus({preventScroll:true});});
   };
   const mapping={ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right',Space:'jump',ArrowUp:'jump',KeyW:'jump'};
@@ -173,7 +204,7 @@
       }
       hud();
     }
-    if(mode==='ending'){state.endingTime+=dt;if(state.endingTime>=4.2)complete();}
+    if(mode==='ending'){state.endingTime+=dt;if(state.endingTime>=3)complete();}
     for(const a of particles){a.x+=a.vx*dt;a.y+=a.vy*dt;a.vy+=70*dt;a.life-=dt;}
     particles=particles.filter(a=>a.life>0);
     if(clock>toastUntil)$('toast').classList.remove('show');

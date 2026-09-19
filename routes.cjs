@@ -1,6 +1,6 @@
 const E=require('./engine.js');
 function simulate(level,fps=60){
- const s=E.create(level);let at=0,flying=false;
+ const s=E.create(level);s.item.taken=true;let at=0,flying=false; // This helper verifies traversal; item detours have separate tests.
  for(let f=0;f<fps*150&&!s.complete;f++){
   const p=s.player,q=s.platforms[at],n=s.platforms[at+1];if(!n)break;
   let right=false,left=false,jump=false;
