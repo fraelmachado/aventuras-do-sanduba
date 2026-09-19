@@ -33,7 +33,7 @@
    if(!context)return;
    if(ctx!==context||level!==world){if(ctx)stop();ctx=context;level=world;step=0;}
    if(!playing){if(active)stop();return;}
-   const t=tracks[level]||tracks[0];if(!t)return;
+   const t=tracks[level];if(!t)return;
    if(!active){active=true;next=ctx.currentTime+.04;}
    const beat=60/t.bpm,interval=beat/2;
    // Drop missed beats after a suspended tab instead of catching up audibly.
