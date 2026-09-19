@@ -17,9 +17,9 @@ O Jardim dos Pulos fica disponível desde o início. Cada fase seguinte é desbl
 | Céu Estrelado | Sinos, pontes temporárias, ventos e guarda-chuva | Luazinha |
 | Recife dos Abraços | Nado, bolhas, algas, animais e correntes até o arco de coral | Pérola-Coração |
 
-Setas ou A/D movem Sanduba. Espaço, ↑ ou W servem para Pular. No jardim, um toque dá um salto curto e segurar dá um salto alto. Nas nuvens e estrelas, segurar Pular durante a queda abre o guarda-chuva; soltar fecha. No recife, esquerda/direita nadam, segurar Pular sobe e soltar desce devagar. O sprite subaquático alterna dois quadros com batidas de bracinhos e perninhas; a animação congela na pausa. Os mesmos controles aparecem em botões de toque; no recife o botão se chama **Subir**. Esc ou Ⅱ pausa. O jogo também pausa ao perder foco.
+Setas ou A/D movem Sanduba. ↑ (ou Espaço/W) serve para pular e subir; no toque, use o botão com ↑. No jardim, um toque dá um salto curto e segurar dá um salto alto. Nas nuvens e estrelas, segurar ↑ durante a queda abre o guarda-chuva; soltar fecha. No recife, esquerda/direita nadam, segurar ↑ sobe e soltar desce devagar. O sprite subaquático alterna dois quadros com batidas de bracinhos e perninhas; a animação congela na pausa. No recife o botão de toque se chama **Subir**. Esc ou Ⅱ pausa. O jogo também pausa ao perder foco.
 
-Cada mundo tem três trechos e cinco colecionáveis comuns: estrelas nos três primeiros, conchas no recife. Uma fica em desvio opcional. Bandeirinhas e boias são checkpoints. Tentativas ilimitadas e nenhum cronômetro de oxigênio. Animais marinhos seguem movimentos previsíveis; contato causa empurrão leve e breve invulnerabilidade. O snorkel já está vestido ao entrar no recife. Não há combate nem guarda-chuva subaquático.
+Cada mundo tem três trechos e cinco colecionáveis comuns: estrelas nos três primeiros, conchas no recife. Uma fica em desvio opcional. Bandeirinhas e boias são checkpoints. Tentativas ilimitadas e nenhum cronômetro de oxigênio. Peixes e águas-vivas têm artes ilustradas mais detalhadas e seguem movimentos previsíveis; contato leva Sanduba à última boia, com breve invulnerabilidade e sem perder itens coletados. As correntes ascendentes permitem descer ao soltar ↑. O snorkel já está vestido ao entrar no recife. Não há combate nem guarda-chuva subaquático.
 
 O item especial de cada fase aparece antes da chegada. Chegar sem ele mostra uma dica gentil e um botão acessível para voltar a um ponto seguro antes do item, preservando o que já foi coletado. Também é possível voltar nadando ou pelo caminho. Depois da chegada, Sanduba comemora com as patinhas e manda um beijinho que vira coração. No recife, o coração aparece numa bolha. Após as fases 1–3, o resultado oferece a próxima fase; após a quarta, mostra o fim da aventura.
 
@@ -50,6 +50,6 @@ python3 build.py
 
 O HTML offline deve ficar abaixo de 4 MB; o gerador aborta caso ultrapasse. `python3 build.py --zip ./Sanduba-nas-Nuvens.zip` gera um ZIP opcional com apenas o HTML e `LEIA-ME.md`. O ZIP não é necessário para desenvolvimento.
 
-A física e os percursos automatizados verificam 30/60/120 FPS, mas não substituem uma sessão de diversão com a criança nem uma conferência visual em desktop e celular. `docs/sessao-de-teste.md` contém um roteiro de observação. Cada resgate é registrado como `console.info('queda', {mundo,trecho,x})`.
+A física e os percursos automatizados verificam 30/60/120 FPS, mas não substituem uma sessão de diversão com a criança nem uma conferência visual em desktop e celular. `docs/sessao-de-teste.md` contém um roteiro de observação. Quedas e saídas da água são registradas como `console.info('queda', {mundo,trecho,x})`; esbarrões em animais retornam à boia sem entrar no registro de quedas.
 
 `assets/referencia-pelucia.png` é uma referência pessoal, não entra no jogo nem no ZIP. A touquinha e a pose de dormir de versões antigas também não são incorporadas ao HTML atual.

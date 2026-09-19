@@ -111,3 +111,24 @@ test('reef movement and celebration freeze during pause',()=>{
  h.state.item.taken=true;Object.assign(h.state.player,{x:h.state.goal.x-24,y:h.state.goal.y-32,vx:0,vy:0});h.tick(2);const at=h.state.endingTime;
  h.blur();h.tick(90);assert.equal(h.state.endingTime,at);
 });
+test('instructions name the shared arrow control for keyboard and touch',()=>{
+ const seed={worlds:[0,1,2].map(()=>({stars:0,item:true,complete:true}))};
+ const h=harness({store:storage({'sanduba-nas-nuvens':JSON.stringify(seed)})});
+ h.nodes['world-sky'].onclick();h.tick();
+ assert.ok(h.nodes.toast.textContent.includes('↑ (ou Espaço/W)'));
+ assert.ok(h.nodes.mechanic.textContent.includes('↑ (ou Espaço/W)'));
+ h.nodes.help.onclick();assert.ok(h.nodes['modal-copy'].textContent.includes('↑ (ou Espaço/W)'));
+ assert.ok(h.nodes['modal-copy'].textContent.includes('pressione e solte rapidamente'));
+ h.nodes.continue.onclick();h.nodes['world-ocean'].onclick();h.tick();
+ assert.ok(h.nodes.toast.textContent.includes('↑ (ou Espaço/W)'));
+ assert.ok(h.nodes.mechanic.textContent.includes('↑ (ou Espaço/W)'));
+});
+test('meeting an ocean animal returns to the buoy with a clear message',()=>{
+ const seed={worlds:[0,1,2].map(()=>({stars:0,item:true,complete:true}))};
+ const h=harness({store:storage({'sanduba-nas-nuvens':JSON.stringify(seed)})});h.nodes['world-ocean'].onclick();
+ const s=h.state;s.player.x=s.checkpoints[1].x;s.player.y=s.checkpoints[1].y;h.tick();
+ const a=s.animals[0];s.player.x=a.x-24;s.player.y=a.y-32;h.tick();
+ assert.equal(s.player.x,s.checkpoints[1].x);
+ assert.ok(h.nodes.toast.textContent.includes('boia'));
+ assert.equal(h.console.logs.length,0);
+});

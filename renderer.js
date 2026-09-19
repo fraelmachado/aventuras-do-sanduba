@@ -3,7 +3,7 @@ window.SandubaRenderer = function(canvas) {
   'use strict';
   const c = canvas.getContext('2d');
   let width = 1100, height = 650, camera = 0, cameraY = 0, sprite = null, flight = null;
-  const garden = new Image(), sky = new Image(), night = new Image(), reef = new Image(), source = new Image(), flightSource = new Image(), swimSource = new Image(), swimKickSource = new Image();
+  const garden = new Image(), sky = new Image(), night = new Image(), reef = new Image(), source = new Image(), flightSource = new Image(), swimSource = new Image(), swimKickSource = new Image(), fishSource = new Image(), jellySource = new Image();
   function keyImage(image) {
         // Runtime color key for the intentionally green game sprite atlas.
         const atlas = document.createElement('canvas');
@@ -21,6 +21,7 @@ window.SandubaRenderer = function(canvas) {
   const ready = Promise.all([
     new Promise(resolve=>{swimSource.onload=resolve;swimSource.onerror=resolve;swimSource.src=SandubaAssets.swim;}),
     new Promise(resolve=>{swimKickSource.onload=resolve;swimKickSource.onerror=resolve;swimKickSource.src=SandubaAssets.swimKick;}),
+    ...[[fishSource,SandubaAssets.fish],[jellySource,SandubaAssets.jelly]].map(([im,src])=>new Promise(resolve=>{im.onload=resolve;im.onerror=resolve;im.src=src;})),
     new Promise(resolve=>{flightSource.onload=()=>{flight=keyImage(flightSource);resolve();};flightSource.onerror=resolve;flightSource.src=SandubaAssets.flight;}),
     ...[[sky,SandubaAssets.sky],[night,SandubaAssets.night],[reef,SandubaAssets.reef]].map(([im,src])=>new Promise(resolve=>{im.onload=resolve;im.onerror=resolve;im.src=src;})),
     new Promise(resolve => { garden.onload = resolve; garden.onerror = resolve; garden.src = SandubaAssets.garden; }),
@@ -242,12 +243,12 @@ window.SandubaRenderer = function(canvas) {
       const x=(a.liveX??a.x)-camera,y=a.liveY??a.y;
       if(a.kind==='fish'){
         c.save();c.translate(x,y);c.scale(Math.cos(t*a.speed+a.phase)>0?1:-1,1);
-        ellipse(0,0,a.r*.8,a.r*.48,'#f4c6a5');
-        c.fillStyle='#eaa99d';c.beginPath();c.moveTo(-a.r*.63,0);c.lineTo(-a.r*1.3,-a.r*.55);c.lineTo(-a.r*1.3,a.r*.55);c.closePath();c.fill();
-        ellipse(a.r*.36,-a.r*.09,2.7,2.7,'#5e6471');c.restore();
+        if(fishSource.complete&&fishSource.naturalWidth)c.drawImage(fishSource,-59,-38,118,76);
+        else{ellipse(0,0,a.r*.8,a.r*.48,'#f4c6a5');ellipse(a.r*.36,-a.r*.09,2.7,2.7,'#5e6471');}
+        c.restore();
       }else{
-        c.fillStyle='#d9b8e9bb';c.beginPath();c.arc(x,y,24,Math.PI,0);c.lineTo(x+24,y+9);c.quadraticCurveTo(x,y+18,x-24,y+9);c.closePath();c.fill();
-        c.strokeStyle='#ecdbf4bb';c.lineWidth=3;for(let i=-2;i<=2;i++){c.beginPath();c.moveTo(x+i*9,y+10);c.quadraticCurveTo(x+i*9+Math.sin(t*3+i)*6,y+28,x+i*9,y+39);c.stroke();}
+        if(jellySource.complete&&jellySource.naturalWidth)c.drawImage(jellySource,x-40,y-39+Math.sin(t*2+a.phase)*2,80,80);
+        else ellipse(x,y,24,30,'#d9b8e9bb');
       }
     }
   }

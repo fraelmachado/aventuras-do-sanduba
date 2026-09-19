@@ -8,8 +8,8 @@ O Jardim dos Pulos começa desbloqueado. Ao concluir uma fase com seu item espec
 
 - **← →** ou **A/D:** mover. **Espaço**, **↑** ou **W:** pular ou subir na água.
 - **Jardim:** toque para um salto curto; segure para um salto alto.
-- **Nuvens e estrelas:** segure Pular durante a queda para abrir o guarda-chuva; solte para fechá-lo. As correntes de ar ajudam a subir.
-- **Recife:** segure Pular para subir suavemente; solte para descer devagar. Sanduba já começa com snorkel e bate bracinhos e perninhas ao nadar. Não há limite de oxigênio.
+- **Nuvens e estrelas:** segure ↑ (ou Espaço/W) durante a queda para abrir o guarda-chuva; solte para fechá-lo. As correntes de ar ajudam a subir.
+- **Recife:** segure ↑ (ou Espaço/W) para subir suavemente; solte para descer devagar. No celular, use o botão **Subir ↑**. Sanduba já começa com snorkel e bate bracinhos e perninhas ao nadar. Não há limite de oxigênio.
 - **Celular:** use os botões abaixo do cenário. **Esc** ou **Ⅱ** pausa. **♫** liga ou desliga música e efeitos. **⛶** amplia nos navegadores compatíveis.
 
 ## Os mundos
@@ -19,6 +19,6 @@ O Jardim dos Pulos começa desbloqueado. Ao concluir uma fase com seu item espec
 3. **Céu Estrelado:** sininhos, pontes de luz e Luazinha.
 4. **Recife dos Abraços:** bolhas, algas, animais, correntes e Pérola-Coração antes do arco de coral.
 
-Bandeirinhas e boias são pontos de retorno. Se chegar ao final sem o item especial, um botão leva Sanduba de volta a um ponto seguro antes dele, preservando o que já foi encontrado. Ao vencer, Sanduba comemora e manda um beijinho em forma de coração.
+Bandeirinhas e boias são pontos de retorno. No recife, encostar num peixe ou numa água-viva leva Sanduba à última boia, preservando as coletas. Se chegar ao final sem o item especial, um botão leva Sanduba de volta a um ponto seguro antes dele, preservando o que já foi encontrado. Ao vencer, Sanduba comemora e manda um beijinho em forma de coração.
 
 O melhor resultado e os mundos desbloqueados ficam salvos neste navegador. Rejogar não diminui o progresso anterior. A preferência de som também é lembrada quando o navegador permite salvar dados.

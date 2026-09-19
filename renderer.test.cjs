@@ -16,7 +16,7 @@ test('renderer can draw every world and celebration using the packaged asset con
  const canvas={width:1100,height:650,getContext:()=>ctx,getBoundingClientRect:()=>({width:1100,height:650})};
  class ImageStub{constructor(){this.width=this.height=this.naturalWidth=1;this.complete=true;}set src(value){this._src=value;this.onload?.();}}
  const window={devicePixelRatio:1};
- const assets={garden:'garden',sky:'sky',night:'night',reef:'reef',pig:'pig',flight:'flight',swim:'swim1',swimKick:'swim2'};
+ const assets={garden:'garden',sky:'sky',night:'night',reef:'reef',pig:'pig',flight:'flight',swim:'swim1',swimKick:'swim2',fish:'fish',jelly:'jelly'};
  vm.runInNewContext(fs.readFileSync(require('node:path').join(__dirname,'renderer.js'),'utf8'),
   {window,document:{createElement:()=>({width:1,height:1,getContext:()=>ctx})},Image:ImageStub,SandubaAssets:assets,devicePixelRatio:1});
  const renderer=window.SandubaRenderer(canvas);await renderer.ready;
@@ -32,4 +32,7 @@ test('renderer can draw every world and celebration using the packaged asset con
  assert.equal(first,'swim1');assert.equal(second,'swim2');
  drawn.length=0;renderer.draw(sea,'paused',20,[]);
  assert.equal(drawn.find(x=>x?.startsWith('swim')),'swim2');
+ sea.player.x=1750;drawn.length=0;renderer.draw(sea,'playing',.5,[]);
+ assert.ok(drawn.includes('fish'));
+ assert.ok(drawn.includes('jelly'));
 });

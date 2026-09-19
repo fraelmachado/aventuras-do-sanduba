@@ -12,7 +12,7 @@ function create(level=0){
   const ys=[530,510,480,525,470,375,485,395,500,520,490,455,500,465,420,460,500,460,520,480,435,480,440,485,450,500,475,500];
   platforms=xs.map((x,i)=>platform(x,ys[i],[0,9,18,27].includes(i)?210:([10,12,16].includes(i)?120:([3,7,14,22].includes(i)?145:170)),{checkpoint:[0,9,18,26].includes(i),kind:i>=19&&i<=25?([20,22,24].includes(i)?'crumbly':'cloud'):i>=10&&i<=17?'leaf':'island',spring:i===15,moving:[10,12,16].includes(i),ax:[10,12,16].includes(i)?35:0,ay:[10,12,16].includes(i)?15:0,phase:i*0.4,speed:1.1}));
   platforms.push(platform(3460,285,165,{kind:'leaf',optional:true}),platform(3680,260,170,{kind:'cloud',optional:true}));
-  sections=[{x:0,name:'Passinhos no jardim',hint:'Segure o pulo para subir mais. Solte para um pulinho.'},{x:1980,name:'Lago das folhas',hint:'As folhas passeiam. O cogumelo leva à Flor Dourada!'},{x:4000,name:'Caminho das nuvens',hint:'Nuvens pontilhadas somem por um instante. Continue pulando!'}];
+  sections=[{x:0,name:'Passinhos no jardim',hint:'Segure ↑ (ou Espaço/W) para saltar mais alto. Solte antes para um pulinho.'},{x:1980,name:'Lago das folhas',hint:'As folhas passeiam. O cogumelo leva à Flor Dourada!'},{x:4000,name:'Caminho das nuvens',hint:'Nuvens pontilhadas somem por um instante. Continue pulando!'}];
   width=6150;starIndices=[2,{i:7,dx:0,dy:-110},11,17,23];goalIndex=27;bow={x:3730,y:207,taken:false};
  }else{
   ({platforms,sections,width,starIndices,goalIndex,bow,winds,bells,currents,animals,checkpoints}=buildWorld(level,platform));
@@ -31,6 +31,12 @@ function atGoal(s,arrived){
  if(s.item.taken){s.complete=true;s.events.push('win');}
  else if(!s.goalHinted){s.goalHinted=true;s.events.push('needItem');}
 }
+function rescueWater(s,reason){
+ const p=s.player,q=s.checkpoints[s.checkpoint];
+ s.lastFall={x:Math.round(p.x),y:p.y};s.rescueReason=reason;
+ Object.assign(p,{x:q.x,y:q.y,vx:0,vy:0,invulnerable:.8});
+ s.rescues++;s.events.push('rescue');
+}
 function stepWater(s,input,dt){
  const p=s.player;s.events=[];s.time+=dt;
  p.invulnerable=Math.max(0,p.invulnerable-dt);
@@ -43,18 +49,15 @@ function stepWater(s,input,dt){
  p.vx=Math.max(-230,Math.min(230,p.vx));p.vy=Math.max(-160,Math.min(115,p.vy));
  p.x=Math.max(0,Math.min(s.width-p.w,p.x+p.vx*dt));p.y+=p.vy*dt;
  for(let i=s.checkpoints.length-1;i>s.checkpoint;i--)if(p.x>=s.checkpoints[i].x){s.checkpoint=i;s.events.push('checkpoint');break;}
+ let rescued=false;
  for(const a of s.animals){
   a.liveX=a.x+Math.sin(s.time*a.speed+a.phase)*a.ax;
   a.liveY=a.y+Math.sin(s.time*a.speed*.7+a.phase)*a.ay;
   if(p.invulnerable<=0&&Math.hypot(p.x+p.w/2-a.liveX,p.y+p.h/2-a.liveY)<a.r+22){
-   p.invulnerable=.9;p.vx=(p.x+p.w/2<a.liveX?-135:135);p.vy=p.y+p.h/2<a.liveY?-90:90;s.events.push('bump');
+   rescueWater(s,'animal');rescued=true;break;
   }
  }
- collect(s);
- if(p.y<28||p.y>620){
-  s.lastFall={x:Math.round(p.x),y:p.y};const q=s.checkpoints[s.checkpoint];
-  Object.assign(p,{x:q.x,y:q.y,vx:0,vy:0,invulnerable:.8});s.rescues++;s.events.push('rescue');
- }
+ if(!rescued){collect(s);if(p.y<28||p.y>620)rescueWater(s,'bounds');}
  let active=0;for(let i=1;i<s.sections.length;i++)if(p.x+p.w/2>=s.sections[i].x)active=i;
  if(active!==s.activeSection){s.activeSection=active;s.events.push('section');}
  atGoal(s,Math.hypot(p.x+p.w/2-s.goal.x,p.y+p.h/2-s.goal.y)<72);

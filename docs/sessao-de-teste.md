@@ -15,7 +15,7 @@ Objetivo: ver onde ela se diverte, onde trava e o que ignora. Não ensinar; só 
 | Jardim, cogumelo | Achou a Flor Dourada? Entendeu que precisa dela para chegar? | |
 | Nuvens | Abriu o guarda-chuva sozinha? Usou a corrente de ar? Pairou pela estrela? | |
 | Noite | Entendeu o sino? Esperou a ponte apagar alguma vez? | |
-| Recife | Entendeu segurar para subir e soltar para descer? Viu os bracinhos e perninhas nadando? Conseguiu desviar dos animais? | |
+| Recife | Entendeu segurar para subir e soltar para descer? Viu os bracinhos e perninhas nadando? Conseguiu desviar dos animais? Entendeu que o contato leva à última boia? | |
 | Chegada sem item | Leu a dica? Usou o botão para voltar? | |
 | Comemoração | Viu o beijinho e o coração? | |
 

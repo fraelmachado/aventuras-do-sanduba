@@ -12,7 +12,7 @@ function build(level,P){
   winds.push({x:4570,y:-510,w:130,h:660,lift:180,optional:true});
   platforms.push(P(4600,-330,140,{kind:'cloud',optional:true}));
   bow={x:4670,y:-385,taken:false};width=5850;goalIndex=14;starIndices=[1,3,{i:6,dx:-185,dy:-125},10,13];
-  sections=[{x:0,name:'O primeiro voo',hint:'No ar, segure Pular para abrir o guarda-chuva. Solte para descer!'},{x:1590,name:'Os moinhos do vento',hint:'Abra o guarda-chuva nas correntes de ar para subir.'},{x:3570,name:'Ilhas do pôr do sol',hint:'Escolha quando planar e quando pousar. A Gota de Nuvem está bem alta!'}];
+  sections=[{x:0,name:'O primeiro voo',hint:'No ar, segure ↑ (ou Espaço/W) para abrir o guarda-chuva. Solte para descer!'},{x:1590,name:'Os moinhos do vento',hint:'Abra o guarda-chuva nas correntes de ar para subir.'},{x:3570,name:'Ilhas do pôr do sol',hint:'Escolha quando planar e quando pousar. A Gota de Nuvem está bem alta!'}];
  }else if(level===2){
   const coords=[[0,530,250],[350,500,120],[550,470,120],[750,500,120],[960,510,250],[1320,450,130],[1560,390,130],[1800,450,130],[2040,400,130],[2310,440,250],[2780,500,150],[3100,400,150],[3460,330,150],[3880,430,150],[4270,390,250],[4620,340,190],[4930,410,330]];
   platforms=coords.map(([x,y,w],i)=>P(x,y,w,{kind:[0,4,9,14,15,16].includes(i)?'moon':'bridge',checkpoint:[0,4,9,14].includes(i),group:i<4?0:i<9?1:2}));
@@ -26,11 +26,11 @@ function build(level,P){
   width=4600;platforms=[];goalIndex=-1;
   checkpoints=[{x:70,y:310},{x:1510,y:320},{x:3070,y:340}];
   sections=[
-   {x:0,name:'Recife das Bolhas',hint:'Segure Pular para subir. Solte e desça devagar entre as bolhas.'},
-   {x:1510,name:'Bosque de Algas',hint:'Observe o vaivém dos cardumes e das águas-vivas. Um esbarrão é só um empurrãozinho!'},
+   {x:0,name:'Recife das Bolhas',hint:'Segure ↑ (ou Espaço/W) para subir. Solte para descer devagar entre as bolhas.'},
+   {x:1510,name:'Bosque de Algas',hint:'Observe o vaivém dos peixes e das águas-vivas. Encostar neles leva você à última boia.'},
    {x:3070,name:'Gruta da Pérola',hint:'As correntes ajudam a encontrar a Pérola-Coração antes do arco de coral.'}
   ];
-  currents=[{x:650,y:130,w:290,h:360,vx:18,vy:-70},{x:1850,y:120,w:320,h:400,vx:-45,vy:38},{x:3300,y:110,w:310,h:390,vx:52,vy:-64},{x:3950,y:150,w:260,h:330,vx:-40,vy:35}];
+  currents=[{x:650,y:130,w:290,h:360,vx:18,vy:-40},{x:1850,y:120,w:320,h:400,vx:-45,vy:38},{x:3300,y:110,w:310,h:390,vx:52,vy:-40},{x:3950,y:150,w:260,h:330,vx:-40,vy:35}];
   animals=[
    {kind:'fish',x:1740,y:250,ax:75,ay:20,speed:1.1,phase:0,r:35},
    {kind:'jelly',x:2200,y:410,ax:25,ay:85,speed:.8,phase:1,r:33},

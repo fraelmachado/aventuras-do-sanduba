@@ -49,7 +49,7 @@
     if(muted || type==='land' || type==='section')return;
     try {
       ensureAudio();
-      const notes = {win:[523,659,784,1047],star:[880,1175],item:[659,880,1047],spring:[330,660],bell:[659,880,1318],checkpoint:[523,784],rescue:[330,392],bump:[392,494],jump:[350]}[type]||[];
+      const notes = {win:[523,659,784,1047],star:[880,1175],item:[659,880,1047],spring:[330,660],bell:[659,880,1318],checkpoint:[523,784],rescue:[330,392],jump:[350]}[type]||[];
       notes.forEach((f,i)=>{
         const o=audio.createOscillator(),g=audio.createGain(),at=audio.currentTime+i*.105;
         o.type='sine';o.frequency.setValueAtTime(f,at);
@@ -76,7 +76,7 @@
     const section=state.sections?.[state.activeSection||0];
     $('level-number').textContent=`${['JARDIM','NUVENS','ESTRELAS','RECIFE'][state.level]} · TRECHO ${(state.activeSection||0)+1} / 3`;
     const lit=Math.max(...state.bridgeTimers);
-    $('mechanic').textContent=state.level===3?'◌ Segure Pular para subir · solte para descer':state.level===0?'':state.level===1?(state.player.gliding?'☂ Guarda-chuva aberto · solte para descer':'☂ Segure Pular no ar para planar'):lit>0?`♫ Pontes acesas · ${lit.toFixed(1)} s`:'♫ Encoste no sininho para revelar a ponte';
+    $('mechanic').textContent=state.level===3?'◌ Segure ↑ (ou Espaço/W) para subir · solte para descer':state.level===0?'':state.level===1?(state.player.gliding?'☂ Guarda-chuva aberto · solte para descer':'☂ Segure ↑ (ou Espaço/W) no ar para planar'):lit>0?`♫ Pontes acesas · ${lit.toFixed(1)} s`:'♫ Encoste no sininho para revelar a ponte';
     $('level-name').textContent=section?.name||state.name;
     $('counter').textContent=`${state.level===3?'◉':'★'} ${state.stars.filter(s=>s.taken).length} / 5`;
     $('item-status').textContent=ITEM_ICONS[state.level];
@@ -132,16 +132,15 @@
       tone(event);
       if(event==='bell')notify('As estrelas acenderam! Siga até a próxima ilha.',3);
       if(event==='rescue'){
-        console.info('queda',{mundo:state.level+1,trecho:state.activeSection+1,x:state.lastFall.x});
-        state.rescueAt=clock;notify('De volta à bandeirinha. Você consegue! ♡',3);
+        if(state.rescueReason!=='animal')console.info('queda',{mundo:state.level+1,trecho:state.activeSection+1,x:state.lastFall.x});
+        state.rescueAt=clock;notify(state.level===3?state.rescueReason==='animal'?'Você encostou em um animal. De volta à última boia! ♡':'De volta à última boia. Você consegue! ♡':'De volta à bandeirinha. Você consegue! ♡',3);
         const p=state.player;
         for(let i=0;i<12;i++)particles.push({x:p.x+p.w/2+Math.cos(i*.52)*26,y:p.y+p.h/2+Math.sin(i*.52)*20,vx:Math.cos(i*.52)*30,vy:-25+Math.sin(i*.52)*20,life:.7,color:'#fffaf0'});
       }
-      if(event==='checkpoint')notify('Bandeirinha acesa! Agora você volta para cá.',3);
+      if(event==='checkpoint')notify(state.level===3?'Boia ativada! Agora você volta para cá.':'Bandeirinha acesa! Agora você volta para cá.',3);
       if(event==='section')notify(state.sections?.[state.activeSection]?.hint||'Um novo caminho!',5);
       if(event==='item')notify(`${state.item.name} encontrada! Agora siga até a chegada. ♡`);
       if(event==='needItem'){state.offeredReturn=true;notify(`A chegada espera por ${state.item.name}. Use “Voltar para buscar” se quiser!`,5);}
-      if(event==='bump')notify('Foi só um esbarrãozinho. Continue nadando!',2);
       if(['star','item','checkpoint','land','spring'].includes(event)) {
         const p=state.player,amount=event==='land'?5:14;
         for(let i=0;i<amount;i++)particles.push({x:p.x+p.w/2,y:p.y+(event==='land'?p.h:20),vx:Math.cos(i*2.4)*60,vy:Math.sin(i*2.4)*60-20,life:event==='land'?.4:1,color:event==='item'?'#c4a9e0':event==='land'?'#e3e0b8':'#f4d391'});
@@ -169,7 +168,7 @@
   $('help').onclick=()=>{
     const previous=mode;mode='help';
     modal('Aprenda os pequenos truques',
-      '← → ou A / D para se mover. Espaço, ↑ ou W para pular ou subir.\nJardim: toque para um salto curto; segure para pular alto.\nNuvens e estrelas: segure no ar para abrir o guarda-chuva; solte para descer.\nNoite: encoste nos sininhos para acender pontes temporárias.\nRecife: segure Pular para subir; solte para descer devagar. Os animais só dão um empurrãozinho.\nBandeirinhas e boias são pontos de retorno. Estrelas e conchas são opcionais. Encontre o item especial de cada mundo antes da chegada.',
+      '← → ou A / D para se mover. ↑ (ou Espaço/W) para pular ou subir; na tela de toque, use o botão com ↑.\nJardim: pressione e solte rapidamente para um salto curto; segure para pular alto.\nNuvens e estrelas: segure ↑ (ou Espaço/W) no ar para abrir o guarda-chuva; solte para descer.\nNoite: encoste nos sininhos para acender pontes temporárias.\nRecife: segure ↑ (ou Espaço/W) para subir; solte para descer devagar. Encostar num animal leva você de volta à última boia.\nBandeirinhas e boias são pontos de retorno. Estrelas e conchas são opcionais. Encontre o item especial de cada mundo antes da chegada.',
       'Vamos lá!',()=>{mode=previous;$('modal').hidden=true;$('help').disabled=false;(mode==='home'?$('start'):$('pause')).focus({preventScroll:true});});
   };
   const mapping={ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right',Space:'jump',ArrowUp:'jump',KeyW:'jump'};

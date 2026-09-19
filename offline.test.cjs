@@ -33,6 +33,8 @@ test('standalone HTML boots the bundled four-world game without external files',
  assert.equal(sandbox.SandubaMusic.tracks.length,4);
  assert.ok(sandbox.SandubaAssets.swim.startsWith('data:image/webp;base64,'));
  assert.ok(sandbox.SandubaAssets.swimKick.startsWith('data:image/webp;base64,'));
+ assert.ok(sandbox.SandubaAssets.fish.startsWith('data:image/webp;base64,'));
+ assert.ok(sandbox.SandubaAssets.jelly.startsWith('data:image/webp;base64,'));
  nodes['world-ocean'].onclick();
  assert.doesNotThrow(()=>frame(16));
  assert.equal(nodes['level-number'].textContent.includes('RECIFE'),true);

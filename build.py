@@ -7,7 +7,8 @@ if not shutil.which('cwebp'):raise SystemExit('cwebp não encontrado. Instale co
 # Backgrounds tolerate lossy compression. Green-keyed sprites use high quality plus sharp_yuv
 # so chroma bleed does not leave fringes after the runtime color key. 'lossless' is the escape hatch.
 IMAGES=[('garden','jardim.png','82'),('sky','nuvens.png','82'),('night','noite.png','82'),('reef','recife.png','82'),
-        ('pig','sanduba-poses.png','96'),('flight','sanduba-guarda-chuva.png','96'),('swim','sanduba-nadando.png','96'),('swimKick','sanduba-nadando-2.png','96')]
+        ('pig','sanduba-poses.png','96'),('flight','sanduba-guarda-chuva.png','96'),('swim','sanduba-nadando.png','96'),('swimKick','sanduba-nadando-2.png','96'),
+        ('fish','peixe-recife.png','82'),('jelly','agua-viva.png','82')]
 def webp(name,quality):
  flags=['-lossless'] if quality=='lossless' else ['-q',quality,'-sharp_yuv']
  with tempfile.NamedTemporaryFile(suffix='.webp') as out:
@@ -24,7 +25,7 @@ assert '<script src=' not in page
 target=root/'Sanduba nas Nuvens.html';target.write_text(page)
 size=target.stat().st_size
 assert size<4_000_000,f'HTML offline com {size/1e6:.1f} MB; esperado abaixo de 4 MB'
-print(f'HTML offline atualizado: {size/1e6:.1f} MB, oito imagens WebP incorporadas.')
+print(f'HTML offline atualizado: {size/1e6:.1f} MB, {len(IMAGES)} imagens WebP incorporadas.')
 if opt.zip:
  # Only what someone needs to play. Sources, tests and reference art stay in the folder.
  with zipfile.ZipFile(opt.zip,'w',zipfile.ZIP_DEFLATED) as z:
